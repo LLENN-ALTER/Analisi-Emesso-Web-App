@@ -54,7 +54,7 @@
         </h1>
         <div class="flex items-center space-x-3">
             <!-- Backup Button -->
-            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
+            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-755 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span>Backup</span>
             </button>
@@ -205,30 +205,6 @@
                         <h4 id="statTotalCtrlDays" class="text-2xl font-extrabold text-indigo-400 mt-1">0</h4>
                     </div>
                     <span class="text-[9px] text-indigo-400 font-medium">Totale giorni CTRL</span>
-                </div>
-            </div>
-
-            <!-- Altri tipi di giorni: Ferie, Malattia, Permesso, Riposo -->
-            <div class="grid grid-cols-4 gap-2">
-                <!-- Ferie -->
-                <div class="bg-slate-900 rounded-2xl p-3 border border-slate-850 text-center flex flex-col justify-between">
-                    <span class="text-[10px] font-bold text-yellow-500 uppercase tracking-wide">Ferie</span>
-                    <h4 id="statTotalFerie" class="text-xl font-extrabold text-slate-100 mt-1">0</h4>
-                </div>
-                <!-- Malattia -->
-                <div class="bg-slate-900 rounded-2xl p-3 border border-slate-850 text-center flex flex-col justify-between">
-                    <span class="text-[10px] font-bold text-red-500 uppercase tracking-wide">Malat.</span>
-                    <h4 id="statTotalMalattia" class="text-xl font-extrabold text-slate-100 mt-1">0</h4>
-                </div>
-                <!-- Permesso -->
-                <div class="bg-slate-900 rounded-2xl p-3 border border-slate-850 text-center flex flex-col justify-between">
-                    <span class="text-[10px] font-bold text-[#60a5fa] uppercase tracking-wide">Perm.</span>
-                    <h4 id="statTotalPermesso" class="text-xl font-extrabold text-slate-100 mt-1">0</h4>
-                </div>
-                <!-- Riposo -->
-                <div class="bg-slate-900 rounded-2xl p-3 border border-slate-850 text-center flex flex-col justify-between">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Riposo</span>
-                    <h4 id="statTotalRiposo" class="text-xl font-extrabold text-slate-100 mt-1">0</h4>
                 </div>
             </div>
 
@@ -399,12 +375,12 @@
             updateUI();
         }
 
+        // Render Calendar Algorithm
         function nextMonth() {
             currentDate.setMonth(currentDate.getMonth() + 1);
             updateUI();
         }
 
-        // Render Calendar Algorithm
         function renderCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
@@ -466,7 +442,7 @@
                         if (isPositive) {
                             indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-emerald-555 leading-none" style="color: #2e7d32;">✔</span>`;
                         } else {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-655 leading-none" style="color: #d32f2f;">❌</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-650 leading-none" style="color: #d32f2f;">❌</span>`;
                         }
                     } else {
                         // Standard Dot indicators
@@ -646,16 +622,6 @@
             const totalCtrlDays = records.filter(r => r.shiftType === "CONTROLLERIA").length;
             document.getElementById("statTotalCtrlDays").innerText = totalCtrlDays;
 
-            // Other Days Stats
-            const totalFerie = records.filter(r => r.shiftType === "FERIE").length;
-            const totalMalattia = records.filter(r => r.shiftType === "MALATTIA").length;
-            const totalPermesso = records.filter(r => r.shiftType === "PERMESSO").length;
-            const totalRiposo = records.filter(r => r.shiftType === "RIPOSO").length;
-
-            document.getElementById("statTotalFerie").innerText = totalFerie;
-            document.getElementById("statTotalMalattia").innerText = totalMalattia;
-            document.getElementById("statTotalPermesso").innerText = totalPermesso;
-            document.getElementById("statTotalRiposo").innerText = totalRiposo;
 
             // ATB details filter
             const atbDocs = records.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda));
@@ -702,7 +668,7 @@
             const atbLabelStatus = document.getElementById("atbLabelStatus");
             if (atbDays === 0) {
                 atbLabelStatus.innerText = "Nessun giorno registrato";
-                atbLabelStatus.className = "text-[11px] text-slate-450";
+                atbLabelStatus.className = "text-[11px] text-slate-455";
             } else {
                 const targetEm = atbDays * 11;
                 const targetPag = atbDays * 3;
@@ -713,7 +679,7 @@
                 const pagSign = diffPag >= 0 ? `+${diffPag}` : `${diffPag}`;
                 
                 atbLabelStatus.innerText = `Stato: ${emSign} emesse / ${pagSign} pagate`;
-                atbLabelStatus.className = `text-[11px] font-semibold ${(diffEm >= 0 && diffPag >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
+                atbLabelStatus.className = `text-[11px] font-semibold ${(diffEm >= 0 && diffPag >= 0) ? 'text-emerald-400' : 'text-slate-350'}`;
             }
 
             // Render ARRIVA Objectives details & cumulative calculations
@@ -730,7 +696,7 @@
             const arrivaLabelStatus = document.getElementById("arrivaLabelStatus");
             if (arrivaDays === 0) {
                 arrivaLabelStatus.innerText = "Nessun giorno registrato";
-                arrivaLabelStatus.className = "text-[11px] text-slate-450";
+                arrivaLabelStatus.className = "text-[11px] text-slate-455";
             } else {
                 const targetEmArriva = arrivaDays * 7;
                 const targetPagArriva = arrivaDays * 1;
@@ -741,7 +707,7 @@
                 const pagSignArriva = diffPagArriva >= 0 ? `+${diffPagArriva}` : `${diffPagArriva}`;
 
                 arrivaLabelStatus.innerText = `Stato: ${emSignArriva} emesse / ${pagSignArriva} pagate`;
-                arrivaLabelStatus.className = `text-[11px] font-semibold ${(diffEmArriva >= 0 && diffPagArriva >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
+                arrivaLabelStatus.className = `text-[11px] font-semibold ${(diffEmArriva >= 0 && diffPagArriva >= 0) ? 'text-emerald-400' : 'text-slate-350'}`;
             }
 
             // --- Quarterly Statistics Calculation ---
@@ -884,33 +850,32 @@
             }
         }
 
-        // Export Data via JSON Download
+        // Backup Management Functions
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shiftDatabase));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", `Emesso_HolaBG_Backup_${new Date().toISOString().slice(0, 10)}.json`);
-            dlAnchorElem.click();
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `emesso_holabg_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
 
-        // Import Data via JSON upload
         function importData(event) {
             const input = event.target;
             const reader = new FileReader();
             reader.onload = function() {
                 try {
-                    const parsed = JSON.parse(reader.result);
-                    if (parsed && typeof parsed === 'object') {
-                        // Merge or replace
-                        shiftDatabase = { ...shiftDatabase, ...parsed };
+                    const parsedData = JSON.parse(reader.result);
+                    if (parsedData && typeof parsedData === 'object') {
+                        shiftDatabase = parsedData;
                         saveDatabase();
-                        selectDay(selectedDateStr);
-                        alert("Iati caricati con successo!");
+                        alert("I dati sono stati caricati e ripristinati correttamente!");
                     } else {
-                        alert("Formato file non valido.");
+                        alert("Errore: Formato dati non valido.");
                     }
                 } catch(e) {
-                    alert("Errore durante il caricamento del file backup: " + e.message);
+                    alert("Errore nell'analisi del file di backup.");
                 }
             };
             reader.readAsText(input.files[0]);
