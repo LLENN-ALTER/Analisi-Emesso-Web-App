@@ -283,7 +283,7 @@
                 </div>
             </div>
 
-            <!-- Verifica Bonus Trimestrale Expanded/Collapsed Card -->
+            <!-- Point Quarterly View Component -->
             <div class="bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
                 <!-- Clickable Header -->
                 <button onclick="toggleQuarterView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
@@ -306,7 +306,7 @@
                     <!-- Statistics View -->
                     <div id="qAtbStatsView" class="space-y-3">
                         <p id="qExplanation" class="text-[11px] text-slate-400">
-                            Obiettivo trimestrale basato su una media di 11 emesse e 3 pagate per turno ATB.
+                             Obiettivo trimestrale basato su una media di 11 emesse e 3 pagate per turno ATB.
                         </p>
 
                         <div class="grid grid-cols-2 gap-3">
@@ -346,7 +346,7 @@
         const ClassFerie = "border-yellow-500 bg-yellow-950/30 text-yellow-500";
         const ClassRiposo = "border-slate-500 bg-slate-950/30 text-slate-400";
         const ClassMalattia = "border-red-500 bg-red-950/30 text-red-500";
-        const ClassPermesso = "border-[#FFD600] bg-[#FFD600]/10 text-[#FFD600]";
+        const ClassPermesso = "border-[#0F4C81] bg-[#0F4C81]/15 text-[#0F4C81]";
 
         // Current UI Fields variables
         let activeShiftType = "CONTROLLERIA";
@@ -468,9 +468,9 @@
                         
                         // Render Check or Cross
                         if (isPositive) {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black leading-none" style="color: #2e7d32;">✔</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-emerald-550 leading-none" style="color: #2e7d32;">✔</span>`;
                         } else {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black leading-none" style="color: #d32f2f;">❌</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-650 leading-none" style="color: #d32f2f;">❌</span>`;
                         }
                     } else {
                         // Standard Dot indicators
@@ -479,7 +479,7 @@
                         if (record.shiftType === "FERIE") dotColor = "bg-yellow-500";
                         if (record.shiftType === "RIPOSO") dotColor = "bg-slate-500";
                         if (record.shiftType === "MALATTIA") dotColor = "bg-red-500";
-                        if (record.shiftType === "PERMESSO") dotColor = "bg-[#FFD600]";
+                        if (record.shiftType === "PERMESSO") dotColor = "bg-[#0F4C81]";
 
                         indicatorContainer.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>`;
                     }
@@ -599,7 +599,6 @@
         }
 
         // Insert / Update Record
-        // (Note: no hour tracking or unnecessary fields on non-controlleria entries)
         function saveRecord() {
             const shiftType = activeShiftType;
             let emesse = 0;
