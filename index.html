@@ -1,689 +1,662 @@
 <!DOCTYPE html>
-<html lang="it" class="dark">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Emesso HolaBG</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Turni & KPI</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Geist/Inter-like & Mono) -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        slate: {
-                            850: '#1e293b',
-                        }
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- PWA Manifest & App Icon Stuff -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="HolaBG">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617; /* Slate 950 */
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 3px;
+        /* Glassmorphism general helpers */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-12 transition-all duration-200">
+<body class="text-slate-100 min-h-screen pb-12">
 
-    <!-- Top Navbar -->
-    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 pt-10 pb-4 flex items-center justify-between">
-        <h1 class="text-xl font-extrabold text-indigo-400 tracking-wide select-none">
-            Emesso HolaBG <span class="text-xs text-slate-400 font-normal">Web</span>
-        </h1>
-        <div class="flex items-center space-x-3">
-            <!-- Backup Button -->
-            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                <span>Backup</span>
-            </button>
-            <label class="p-1.5 bg-indigo-900/40 hover:bg-indigo-900/60 text-indigo-300 rounded-lg text-xs flex items-center space-x-1 border border-indigo-800 cursor-pointer">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                <span>Carica</span>
-                <input type="file" id="importFile" onchange="importData(event)" class="hidden">
-            </label>
+    <!-- Top Navbar Bar -->
+    <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-900 px-4 py-3.5">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-extrabold shadow-lg shadow-indigo-500/20">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-base font-extrabold text-slate-100">Registro Turni</h1>
+                    <p class="text-[10px] text-slate-400 font-medium">Controllo KPI & Sanzioni</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <!-- Share/Backup Buttons inline -->
+                <button onclick="exportBackup()" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-indigo-400 hover:text-indigo-300 transition-colors" title="Esporta Backup JSON">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                </button>
+                <label for="importFile" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-pink-400 hover:text-pink-300 transition-colors cursor-pointer" title="Importa Backup JSON">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12V3m0 0l3 3m-3-3L9 6"></path></svg>
+                </label>
+                <input type="file" id="importFile" accept=".json" onchange="importBackup(event)" class="hidden">
+            </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto px-4 mt-4 space-y-6">
+    <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
 
-        <!-- Month Navigation Selector -->
-        <div class="bg-slate-900 rounded-2xl p-4 flex items-center justify-between shadow-xl border border-slate-850">
-            <button onclick="prevMonth()" class="p-2.5 hover:bg-slate-800 active:scale-95 transition-all text-indigo-400 rounded-xl">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-            </button>
-            <div class="text-center">
-                <h2 id="currentMonthYearLabel" class="text-lg font-bold text-slate-100 capitalize">Maggio 2026</h2>
-                <p class="text-xs text-indigo-400 font-semibold tracking-wider">REGISTRO TURNI</p>
-            </div>
-            <button onclick="nextMonth()" class="p-2.5 hover:bg-slate-800 active:scale-95 transition-all text-indigo-400 rounded-xl">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            </button>
-        </div>
-
-        <!-- Calendar Component -->
-        <div class="bg-slate-900 rounded-2xl p-4 shadow-xl border border-slate-850">
-            <!-- Days header -->
-            <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400 mb-2 border-b border-slate-800 pb-2">
-                <div>Lun</div>
-                <div>Mar</div>
-                <div>Mer</div>
-                <div>Gio</div>
-                <div>Ven</div>
-                <div>Sab</div>
-                <div>Dom</div>
-            </div>
-            <!-- Calendar Grid -->
-            <div id="calendarGrid" class="grid grid-cols-7 gap-1.5 text-center">
-                <!-- Programmatically populated -->
-            </div>
-        </div>
-
-        <!-- Active Edit Form Card -->
-        <div class="bg-slate-900 rounded-2xl p-4 shadow-xl border border-slate-850">
-            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
-                <h3 class="text-sm font-bold text-slate-350">
-                    Giorno: <span id="selectedDateLabel" class="text-indigo-400">2026-05-25</span>
-                </h3>
-                <span id="activeBadge" class="text-[10px] uppercase px-2 py-0.5 rounded-full font-bold bg-slate-800 text-slate-400">Nessun Turno</span>
+        <!-- Visual / Calendar Picker Panel -->
+        <section class="glass-panel rounded-2xl p-4 border border-slate-900 shadow-xl space-y-4">
+            
+            <!-- Month Selector Header -->
+            <div class="flex items-center justify-between">
+                <button onclick="changeMonth(-1)" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-850 hover:bg-slate-800 text-slate-300 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <span id="currentMonthYearLabel" class="text-sm font-extrabold tracking-wide uppercase text-slate-100">Mese Anno</span>
+                <button onclick="changeMonth(1)" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-850 hover:bg-slate-800 text-slate-300 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                </button>
             </div>
 
-            <!-- Form Content -->
-            <div class="space-y-4">
-                <!-- Shift Type Grid Selection -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-2">Seleziona Tipo di Turno</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="px-2 py-2.5 text-xs font-bold rounded-xl border transition-all text-center">
-                            Controlleria
-                        </button>
-                        <button onclick="setFormShiftType('BIGLIETTERIA_ORIO')" id="btnShiftOrio" class="px-2 py-2.5 text-xs font-bold rounded-xl border transition-all text-center">
-                            Biglietteria Orio
-                        </button>
-                        <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="px-2 py-2.5 text-xs font-bold rounded-xl border transition-all text-center">
-                            Ferie
-                        </button>
-                        <button onclick="setFormShiftType('RIPOSO')" id="btnShiftRiposo" class="px-2 py-2.5 text-xs font-bold rounded-xl border transition-all text-center">
-                            Riposo
-                        </button>
-                        <button onclick="setFormShiftType('MALATTIA')" id="btnShiftMalattia" class="px-2 py-2.5 text-xs font-bold rounded-xl border transition-all text-center">
-                            Malattia
-                        </button>
-                        <button onclick="setFormShiftType('PERMESSO')" id="btnShiftPermesso" class="px-2 py-2.5 text-xs font-bold rounded-xl border transition-all text-center">
-                            Permesso
-                        </button>
+            <!-- Calendar Days Grid -->
+            <div>
+                <div class="grid grid-cols-7 gap-1 text-center mb-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    <span>Dom</span><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span>
+                </div>
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1.5"></div>
+            </div>
+        </section>
+
+        <!-- KPI Section -->
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1 mt-6">Statistiche & Bonus</h2>
+        <div class="grid grid-cols-1 gap-3.5">
+
+            <!-- Primary Monthly Stats Card -->
+            <div class="glass-panel rounded-2xl p-5 border border-slate-900 shadow-xl space-y-4">
+                
+                <!-- Head -->
+                <div class="flex items-center justify-between border-b border-slate-900/80 pb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                        <h3 class="text-xs font-extrabold uppercase tracking-wide text-slate-300">Riepilogo Mensile</h3>
                     </div>
                 </div>
 
-                <!-- Controlleria Specific Fields -->
-                <div id="controlleriaFields" class="space-y-4 pt-2 border-t border-slate-800/60 hidden">
-                    <!-- Company Switcher -->
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Azienda di Riferimento</label>
-                        <div class="flex space-x-3">
-                            <button onclick="setFormAzienda('ATB')" id="btnAziendaAtb" class="flex-1 py-2 text-xs font-bold rounded-xl border transition-all">
-                                ATB (Target: 11 / 3)
-                            </button>
-                            <button onclick="setFormAzienda('ARRIVA')" id="btnAziendaArriva" class="flex-1 py-2 text-xs font-bold rounded-xl border transition-all">
-                                Arriva (Target: 7 / 1)
-                            </button>
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-955/50 border border-slate-900 rounded-xl p-3">
+                        <span class="text-[9px] uppercase font-bold text-slate-400">Giorni Lavorati</span>
+                        <div class="flex items-baseline space-x-1 mt-0.5">
+                            <h4 id="statTotalWorkDays" class="text-xl font-extrabold text-slate-100">0</h4>
+                            <span class="text-[10px] text-slate-450 font-medium">turni</span>
                         </div>
                     </div>
 
-                    <!-- Sanzioni Input Rows -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">Sanzioni Emesse</label>
+                    <div class="bg-slate-955/50 border border-slate-900 rounded-xl p-3">
+                        <span class="text-[9px] uppercase font-bold text-slate-400">Mese Corrente</span>
+                        <h4 id="statControlleriaDays" class="text-xl font-extrabold text-indigo-400 mt-0.5">0 <span class="text-[10px] text-slate-450 font-medium">ATB</span></h4>
+                    </div>
+                </div>
+
+                <!-- KPI Progress ATB & ARRIVA -->
+                <div class="space-y-3 pt-1">
+                    <!-- Progress Section ATB -->
+                    <div class="space-y-1.5 p-3 rounded-xl bg-slate-950/40 border border-slate-900/60">
+                        <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
-                                <button onclick="adjustInput('inputEmesse', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
-                                <input type="number" id="inputEmesse" value="0" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
-                                <button onclick="adjustInput('inputEmesse', 1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">+</button>
+                                <span class="text-xs font-bold text-slate-200">KPI Controlleria ATB</span>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-900/60 text-indigo-300 border border-indigo-850/50">Regola: 11 Em. / 3 Pag.</span>
                             </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">Pagate a Bordo</label>
+                        <!-- State values text for target status -->
+                        <p id="atbLabelStatus" class="text-[11px] font-semibold text-slate-300">Stato: 0 emesse / 0 pagate</p>
+                    </div>
+
+                    <!-- Progress Section Arriva -->
+                    <div class="space-y-1.5 p-3 rounded-xl bg-slate-950/40 border border-slate-900/60">
+                        <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
-                                <button onclick="adjustInput('inputPagate', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
-                                <input type="number" id="inputPagate" value="0" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
-                                <button onclick="adjustInput('inputPagate', 1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">+</button>
+                                <span class="text-xs font-bold text-slate-200">KPI Controlleria ARRIVA</span>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-pink-900/60 text-pink-300 border border-pink-850/50">Regola: 7 Em. / 2 Pag.</span>
                             </div>
                         </div>
+                        <!-- State values text for target status -->
+                        <p id="arrivaLabelStatus" class="text-[11px] font-semibold text-slate-300">Stato: 0 emesse / 0 pagate</p>
                     </div>
                 </div>
 
-                <!-- Form Buttons -->
-                <div class="flex space-x-3 pt-2">
-                    <button id="btnDelete" onclick="deleteRecord()" class="flex-1 py-3 bg-red-950/40 hover:bg-red-950/60 border border-red-900/50 text-red-400 font-extrabold text-sm rounded-xl transition-all active:scale-95">
-                        Elimina Giorno
-                    </button>
-                    <button onclick="saveRecord()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95">
-                        Salva Giorno
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Monthly KPI Badges and Stats -->
-        <div class="space-y-4">
-            <h3 class="text-xs font-bold text-indigo-400 tracking-wider">RIEPILOGO MENSILE</h3>
-
-            <!-- Grid 2 columns for quick KPIs -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 flex flex-col justify-between">
-                    <div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400">Giorni Lavorati</span>
-                        <h4 id="statTotalWorkDays" class="text-2xl font-extrabold text-slate-100 mt-1">0</h4>
-                    </div>
-                    <span class="text-[9px] text-indigo-400 font-medium">Lavoro effettivo</span>
-                </div>
-
-                <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 flex flex-col justify-between">
-                    <div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400">Giorni CTRL</span>
-                        <h4 id="statTotalCtrlDays" class="text-2xl font-extrabold text-indigo-400 mt-1">0</h4>
-                    </div>
-                    <span class="text-[9px] text-indigo-400 font-medium">Totale giorni CTRL</span>
-                </div>
-            </div>
-
-            <!-- Objectives & Daily Averages Separated for ATB & Arriva -->
-            <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 space-y-4 shadow-xl">
-                <h4 class="text-xs font-bold text-indigo-400">Obiettivi & Medie Giornaliere</h4>
-
-                <!-- ATB Stats Row -->
-                <div class="flex items-center justify-between">
+                <!-- Total Issued Monthly Stats (Fines & Bonus Card) -->
+                <div class="grid grid-cols-2 gap-3 pt-1 border-t border-slate-900/60">
                     <div class="space-y-0.5">
-                        <h5 id="atbTitleAndDays" class="text-sm font-bold text-slate-200">ATB (0 gg)</h5>
-                        <!-- Status text displaying missing or excess fines -->
-                        <p id="atbLabelStatus" class="text-[11px] text-slate-450">Nessun giorno registrato</p>
-                    </div>
-
-                    <div class="flex space-x-3 items-center">
-                        <div class="text-right">
-                            <span id="atbAvgEmesse" class="text-base font-extrabold text-red-500">0.00</span>
-                            <p class="text-[9px] text-slate-400">media emesse</p>
-                        </div>
-                        <div class="text-right">
-                            <span id="atbAvgPagate" class="text-base font-extrabold text-red-500">0.00</span>
-                            <p class="text-[9px] text-slate-400">media pagate</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="border-t border-slate-800/80"></div>
-
-                <!-- Arriva Stats Row -->
-                <div class="flex items-center justify-between">
-                    <div class="space-y-0.5">
-                        <h5 id="arrivaTitleAndDays" class="text-sm font-bold text-slate-200">ARRIVA (0 gg)</h5>
-                        <!-- Status text displaying missing or excess fines -->
-                        <p id="arrivaLabelStatus" class="text-[11px] text-slate-450">Nessun giorno registrato</p>
-                    </div>
-
-                    <div class="flex space-x-3 items-center">
-                        <div class="text-right">
-                            <span id="arrivaAvgEmesse" class="text-base font-extrabold text-red-500">0.00</span>
-                            <p class="text-[9px] text-slate-400">media emesse</p>
-                        </div>
-                        <div class="text-right">
-                            <span id="arrivaAvgPagate" class="text-base font-extrabold text-red-500">0.00</span>
-                            <p class="text-[9px] text-slate-400">media pagate</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Issued Monthly Stats (Fines & Bonus Card) -->
-            <div class="bg-gradient-to-br from-indigo-950/60 to-slate-900 rounded-2xl p-5 border border-indigo-900/50 space-y-4 shadow-xl">
-                <div class="flex items-center justify-between">
-                    <div class="space-y-1">
-                        <span class="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">Sanzioni Totali Mese</span>
-                        <!-- Main statistics row -->
-                        <div class="flex items-center space-x-4">
-                            <div>
-                                <h4 id="statTotalEmesse" class="text-2xl font-black text-slate-100">0</h4>
-                                <p class="text-[10px] text-slate-400">Emesse Totali</p>
-                            </div>
-                            <div class="w-px h-8 bg-slate-800"></div>
-                            <div>
-                                <h4 id="statTotalPagate" class="text-2xl font-black text-slate-100">0</h4>
-                                <p class="text-[10px] text-slate-400">Pagate a Bordo</p>
-                            </div>
+                        <span class="text-[9px] uppercase font-bold text-slate-400">Sanzioni Totali Mese</span>
+                        <div class="flex flex-col mt-0.5">
+                            <span class="text-xs text-slate-300 font-medium"><strong id="statTotalEmesse" class="text-slate-100 font-bold">0</strong> Emesse</span>
+                            <span class="text-xs text-slate-300 font-medium"><strong id="statTotalPagate" class="text-slate-100 font-bold">0</strong> Pagate Bordo</span>
                         </div>
                     </div>
 
                     <!-- Bonus Indicator Box -->
-                    <div class="text-right bg-indigo-900/40 p-3 rounded-xl border border-indigo-800/80">
+                    <div class="bg-indigo-950/25 border border-indigo-900/50 rounded-xl p-3 flex flex-col justify-center">
                         <span class="text-[9px] uppercase font-bold text-indigo-300">Bonus Stimato</span>
                         <h4 id="statMonthlyBonus" class="text-xl font-extrabold text-emerald-400 mt-0.5">€0.00</h4>
-                        <p class="text-[9px] text-slate-400 font-semibold">€1.50 cad.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verifica Bonus Trimestrale Expanded/Collapsed Card -->
+            <div class="glass-panel rounded-2xl border border-slate-900 overflow-hidden shadow-xl">
+                <!-- Clickable Header -->
+                <button onclick="toggleQuarterView()" class="w-full flex items-center justify-between p-4 bg-slate-950/20 hover:bg-slate-900/40 transition-colors focus:outline-none">
+                    <div class="flex items-center space-x-2 text-slate-100">
+                        <svg id="qToggleIcon" class="w-5 h-5 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                        <span class="text-sm font-bold text-indigo-300">Verifica Bonus Trimestrale</span>
+                    </div>
+                    <span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">Trimestre</span>
+                </button>
+
+                <!-- Expendable Body -->
+                <div id="qBody" class="hidden border-t border-slate-900/50 p-4 space-y-3 bg-slate-950/20">
+                    <!-- Empty View -->
+                    <div id="qAtbEmptyView" class="hidden text-xs text-slate-400">
+                        Nessun turno di Controlleria ATB registrato in questo trimestre.
+                    </div>
+
+                    <!-- Statistics View -->
+                    <div id="qAtbStatsView" class="space-y-3">
+                        <p id="qExplanation" class="text-[11px] text-slate-400">
+                            Obiettivo trimestrale basato su una media di 11 emesse e 3 pagate per turno ATB.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Card 1: Emesse -->
+                            <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-900 text-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">EMESSE</span>
+                                <h4 id="qEmesseProgress" class="text-[17px] font-extrabold text-slate-100 mt-0.5">0 / 0</h4>
+                                <p id="qEmesseDiff" class="text-[11px] font-bold text-emerald-400 mt-1">0 in più 🎉</p>
+                            </div>
+
+                            <!-- Card 2: Pagate -->
+                            <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-900 text-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">PAGATE</span>
+                                <h4 id="qPagateProgress" class="text-[17px] font-extrabold text-slate-100 mt-0.5">0 / 0</h4>
+                                <p id="qPagateDiff" class="text-[11px] font-bold text-emerald-400 mt-1">0 in più 🎉</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
         </div>
 
+        <!-- Selected Date Editing Card Panel -->
+        <h2 id="editingDateTitle" class="text-xs font-bold uppercase tracking-wider text-slate-400 px-1 mt-6">Dettagli Turno</h2>
+        <section class="glass-panel rounded-2xl p-5 border border-slate-900 shadow-xl space-y-5">
+            
+            <!-- Turn Selection Type Buttons (Segmented Control style) -->
+            <div class="space-y-2">
+                <label class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Tipo Servizio / Turno</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btnTypeControlleria" onclick="setType('CONTROLLERIA')" type="button" class="py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all">CONTROLLERIA</button>
+                    <button id="btnTypeBiglietteria" onclick="setType('BIGLIETTERIA_ORIO')" type="button" class="py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all">ORE ORIO</button>
+                    <button id="btnTypeFerie" onclick="setType('FERIE')" type="button" class="py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all">FERIE</button>
+                    <button id="btnTypeRiposo" onclick="setType('RIPOSO')" type="button" class="py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all">RIPOSO</button>
+                    <button id="btnTypeMalattia" onclick="setType('MALATTIA')" type="button" class="py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all">MALATTIA</button>
+                    <button id="btnTypePermesso" onclick="setType('PERMESSO')" type="button" class="py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all">PERMESSO</button>
+                </div>
+            </div>
+
+            <!-- Controlleria Specific Form View -->
+            <div id="formControlleria" class="hidden space-y-4 pt-1 transition-all">
+                <!-- Azienda Switcher -->
+                <div class="space-y-1.5">
+                    <label class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Azienda</label>
+                    <div class="flex items-center space-x-2">
+                        <button id="btnAziendaAtb" onclick="setAzienda('ATB')" type="button" class="flex-1 py-2 rounded-lg border text-xs font-bold transition-all">ATB</button>
+                        <button id="btnAziendaArriva" onclick="setAzienda('ARRIVA')" type="button" class="flex-1 py-2 rounded-lg border text-xs font-bold transition-all">ARRIVA</button>
+                    </div>
+                </div>
+
+                <!-- Quantities Input fields (Emesse & Pagate) -->
+                <div class="grid grid-cols-2 gap-3.5">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Sanzioni Emesse</label>
+                        <div class="flex items-center bg-slate-950 border border-slate-900 rounded-xl overflow-hidden focus-within:border-indigo-500/80 transition-colors">
+                            <button onclick="changeInp('sanzioniEmesse', -1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">-</button>
+                            <input id="inpEmesse" type="number" min="0" value="0" class="w-full text-center bg-transparent border-0 text-slate-100 text-sm font-bold focus:ring-0 outline-none p-0">
+                            <button onclick="changeInp('sanzioniEmesse', 1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">+</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Pagate a Bordo</label>
+                        <div class="flex items-center bg-slate-950 border border-slate-900 rounded-xl overflow-hidden focus-within:border-indigo-500/80 transition-colors">
+                            <button onclick="changeInp('sanzioniPagate', -1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">-</button>
+                            <input id="inpPagate" type="number" min="0" value="0" class="w-full text-center bg-transparent border-0 text-slate-100 text-sm font-bold focus:ring-0 outline-none p-0">
+                            <button onclick="changeInp('sanzioniPagate', 1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extra Notes / Sanzioni Ufficio (Non Immediate) -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                        <label class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Sanzioni Riscosse in Seguito (Ufficio)</label>
+                        <span class="text-[9px] text-indigo-400 font-semibold">Solo Informative</span>
+                    </div>
+                    <div class="flex items-center bg-slate-950 border border-slate-900 rounded-xl overflow-hidden focus-within:border-indigo-500/80 transition-colors">
+                        <button onclick="changeInp('sanzioniUfficio', -1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">-</button>
+                        <input id="inpUfficio" type="number" min="0" value="0" class="w-full text-center bg-transparent border-0 text-slate-100 text-sm font-bold focus:ring-0 outline-none p-0">
+                        <button onclick="changeInp('sanzioniUfficio', 1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biglietteria Specific Form View -->
+            <div id="formBiglietteria" class="hidden space-y-3.5 pt-1 transition-all">
+                <div class="space-y-1.5">
+                    <label class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Ore Lavorate (Orio)</label>
+                    <div class="flex items-center bg-slate-950 border border-slate-900 rounded-xl overflow-hidden focus-within:border-indigo-500/80 transition-colors">
+                        <button onclick="changeInp('oreOrio', -1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">-</button>
+                        <input id="inpOreOrio" type="number" min="0" step="1" value="0" class="w-full text-center bg-transparent border-0 text-slate-100 text-sm font-bold focus:ring-0 outline-none p-0">
+                        <button onclick="changeInp('oreOrio', 1)" class="px-3.5 py-2.5 text-slate-400 hover:text-white transition-colors">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Action Button -->
+            <button onclick="saveCurrentRecord()" type="button" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-extrabold text-sm rounded-xl tracking-wide shadow-lg shadow-indigo-600/20 transition-all">
+                Salva Registrazione Turno
+            </button>
+        </section>
+
     </main>
 
-    <!-- App State JavaScript Logic -->
+    <!-- JavaScript Handling Application Logic -->
     <script>
-        // App State
-        let currentDate = new Date();
-        // Database structured: key -> "yyyy-MM-dd"
+        // Local database storage logic (indexed on daily "yyyy-MM-dd" keys)
         let shiftDatabase = {};
-        let selectedDateStr = "";
-
-        // Shift Config Details
-        const ClassControlleria = "border-emerald-500 bg-emerald-950/30 text-emerald-400";
-        const ClassOrio = "border-purple-500 bg-purple-950/30 text-purple-400";
+        
+        // Colors & Classes for Calendly UI
+        const ClassControlleria = "border-indigo-500 bg-indigo-950/30 text-indigo-400";
+        const ClassBiglietteria = "border-pink-500 bg-pink-950/30 text-pink-400";
         const ClassFerie = "border-yellow-500 bg-yellow-950/30 text-yellow-500";
         const ClassRiposo = "border-slate-500 bg-slate-950/30 text-slate-400";
         const ClassMalattia = "border-red-500 bg-red-950/30 text-red-500";
-        const ClassPermesso = "border-sky-500 bg-sky-950/30 text-sky-400";
+        const ClassPermesso = "border-[#FFD600] bg-[#FFD600]/10 text-[#FFD600]";
 
         // Current UI Fields variables
         let activeShiftType = "CONTROLLERIA";
         let activeAzienda = "ATB";
+        
+        // Today State & Active Cursor Date
+        let currentDate = new Date();
+        let selectedDateString = getFormattedDateString(currentDate);
 
-        // Local Storage Sync
-        function loadDatabase() {
-            const data = localStorage.getItem("emesso_shifts_items");
-            if (data) {
+        // Utility to format date objects as "yyyy-MM-dd"
+        function getFormattedDateString(d) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Initialize App & Read Storage Saved Profile
+        window.addEventListener("DOMContentLoaded", () => {
+            const localSaved = localStorage.getItem("shift_calendar_db");
+            if (localSaved) {
                 try {
-                    shiftDatabase = JSON.parse(data);
+                    shiftDatabase = JSON.parse(localSaved);
                 } catch(e) {
                     shiftDatabase = {};
                 }
             }
-        }
-
-        function saveDatabase() {
-            localStorage.setItem("emesso_shifts_items", JSON.stringify(shiftDatabase));
-            updateUI();
-        }
-
-        // Helper to format date
-        function formatDateStr(year, month, day) {
-            const mm = String(month + 1).padStart(2, '0');
-            const dd = String(day).padStart(2, '0');
-            return `${year}-${mm}-${dd}`;
-        }
-
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            loadDatabase();
-            // Set current day as selected initially
-            const today = new Date();
-            selectedDateStr = formatDateStr(today.getFullYear(), today.getMonth(), today.getDate());
-            currentDate = new Date(today.getFullYear(), today.getMonth(), 1); // Align monthly calendar back to first
-            
-            // Set fields to appropriate states
-            setFormShiftType("CONTROLLERIA");
-            setFormAzienda("ATB");
-            
-            updateUI();
-            selectDay(selectedDateStr);
+            // Display & Grid Render
+            renderCalendar();
+            loadDateRecord(selectedDateString);
         });
 
-        function updateUI() {
-            renderCalendar();
-            renderStats();
+        // Safe database persisting trigger
+        function saveDatabase() {
+            localStorage.setItem("shift_calendar_db", JSON.stringify(shiftDatabase));
+            updateKPIs();
         }
 
-        // Month Selection Utilities
-        function prevMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            updateUI();
-        }
-
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            updateUI();
-        }
-
-        // Render Calendar Algorithm
+        // Calendar Screen Generator
         function renderCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
 
-            const monthNames = [
-                "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
-                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
-            ];
-            document.getElementById("currentMonthYearLabel").innerText = `${monthNames[month]} ${year}`;
+            // Setup Header String Label
+            const monthsNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+            document.getElementById("currentMonthYearLabel").innerText = `${monthsNames[month]} ${year}`;
 
-            const grid = document.getElementById("calendarGrid");
-            grid.innerHTML = "";
+            const gridContainer = document.getElementById("calendarGrid");
+            gridContainer.innerHTML = "";
 
-            // First day of current month (adjusted for Monday as start day of week)
-            let firstDayIndex = new Date(year, month, 1).getDay();
-            // Convert Sunday(0) to Index(6) and others to (day-1)
-            firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+            // Offset alignment calculations
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            const totalDays = new Date(year, month + 1, 0).getDate();
-
-            // Populate Empty Padding Grid cells
-            for (let i = 0; i < firstDayIndex; i++) {
-                const cell = document.createElement("div");
-                cell.className = "aspect-square";
-                grid.appendChild(cell);
+            // Print empty preceding offset empty containers to match exact Grid Day index
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyCell = document.createElement("div");
+                emptyCell.className = "h-11";
+                gridContainer.appendChild(emptyCell);
             }
 
-            // Populate Monthly Days
-            for (let day = 1; day <= totalDays; day++) {
-                const dateKey = formatDateStr(year, month, day);
-                const record = shiftDatabase[dateKey];
-                const isSelected = (dateKey === selectedDateStr);
-
-                const cell = document.createElement("button");
-                cell.onclick = () => selectDay(dateKey);
+            // Print each actual Month Day
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDateStr = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isSelected = dayDateStr === selectedDateString;
                 
-                // Styling day base cells
-                let baseStyle = "aspect-square flex flex-col items-center justify-between py-1.5 rounded-xl text-xs font-semibold transition-all relative border ";
+                const cellButton = document.createElement("button");
+                cellButton.setAttribute("type", "button");
+                cellButton.onclick = () => selectDate(dayDateStr);
+
+                // Base style classes
+                let borderThemeClasses = "border border-slate-900/50 bg-slate-900/10 hover:bg-slate-850/30 text-slate-300";
                 
-                if (isSelected) {
-                    baseStyle += "border-indigo-500 bg-indigo-950/40 text-indigo-300 ring-2 ring-indigo-500/30 shadow-lg ";
-                } else {
-                    baseStyle += "border-transparent bg-slate-850 hover:bg-slate-800 text-slate-300 ";
-                }
-
-                cell.className = baseStyle;
-                cell.innerHTML = `<span>${day}</span>`;
-
-                // Add indicator inside the day
+                // Color override if record exists in custom local client Database
+                const record = shiftDatabase[dayDateStr];
                 if (record) {
-                    const indicatorContainer = document.createElement("div");
-                    indicatorContainer.className = "flex items-center justify-center -mt-1 min-h-[14px]";
-
                     if (record.shiftType === "CONTROLLERIA") {
-                        // Success threshold evaluations
-                        const isPositive = record.azienda === "ARRIVA" ? record.sanzioniEmesse >= 7 : record.sanzioniEmesse >= 11;
-                        
-                        // Render Check or Cross
-                        if (isPositive) {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-emerald-550 leading-none" style="color: #2e7d32;">✔</span>`;
-                        } else {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-650 leading-none" style="color: #d32f2f;">❌</span>`;
-                        }
-                    } else {
-                        // Standard Dot indicators
-                        let dotColor = "bg-slate-400";
-                        if (record.shiftType === "BIGLIETTERIA_ORIO") dotColor = "bg-purple-500";
-                        if (record.shiftType === "FERIE") dotColor = "bg-yellow-500";
-                        if (record.shiftType === "RIPOSO") dotColor = "bg-slate-500";
-                        if (record.shiftType === "MALATTIA") dotColor = "bg-red-500";
-                        if (record.shiftType === "PERMESSO") dotColor = "bg-sky-500";
-
-                        indicatorContainer.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>`;
+                        borderThemeClasses = ClassControlleria;
+                    } else if (record.shiftType === "BIGLIETTERIA_ORIO") {
+                        borderThemeClasses = ClassBiglietteria;
+                    } else if (record.shiftType === "FERIE") {
+                        borderThemeClasses = ClassFerie;
+                    } else if (record.shiftType === "RIPOSO") {
+                        borderThemeClasses = ClassRiposo;
+                    } else if (record.shiftType === "MALATTIA") {
+                        borderThemeClasses = ClassMalattia;
+                    } else if (record.shiftType === "PERMESSO") {
+                        borderThemeClasses = ClassPermesso;
                     }
-                    cell.appendChild(indicatorContainer);
-                } else {
-                    // Empty bottom space for grid alignment
-                    const spacing = document.createElement("div");
-                    spacing.className = "h-3.5";
-                    cell.appendChild(spacing);
                 }
 
-                grid.appendChild(cell);
-            }
-        }
-
-        // Active selection
-        function selectDay(dateString) {
-            selectedDateStr = dateString;
-            document.getElementById("selectedDateLabel").innerText = dateString;
-
-            // Load Existing Day State
-            const record = shiftDatabase[dateString];
-            const badge = document.getElementById("activeBadge");
-
-            if (record) {
-                // Load existing configurations Into HTML Controls
-                setFormShiftType(record.shiftType);
-                if (record.shiftType === "CONTROLLERIA") {
-                    setFormAzienda(record.azienda || "ATB");
-                    document.getElementById("inputEmesse").value = record.sanzioniEmesse || 0;
-                    document.getElementById("inputPagate").value = record.sanzioniPagateBordo || 0;
-                } else {
-                    document.getElementById("inputEmesse").value = 0;
-                    document.getElementById("inputPagate").value = 0;
-                }
+                // Append customized UI attributes
+                cellButton.className = `h-11 rounded-lg flex flex-col items-center justify-between p-1 text-xs font-bold transition-all relative ${borderThemeClasses} ${isSelected ? 'ring-2 ring-indigo-500 ring-offset-2 ring-offset-slate-950 scale-[1.05] z-10' : ''}`;
                 
-                badge.className = "text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/25";
-                badge.innerText = record.shiftType.replace("_", " ");
-                document.getElementById("btnDelete").style.display = "block";
-            } else {
-                // Reset inputs to standard state for unused dates
-                setFormShiftType("CONTROLLERIA");
-                setFormAzienda("ATB");
-                document.getElementById("inputEmesse").value = 0;
-                document.getElementById("inputPagate").value = 0;
+                const spanNum = document.createElement("span");
+                spanNum.innerText = day;
+                cellButton.appendChild(spanNum);
 
-                badge.className = "text-[10px] uppercase px-2 py-0.5 rounded-full font-bold bg-slate-800 text-slate-400";
-                badge.innerText = "Nessun Turno";
-                document.getElementById("btnDelete").style.display = "none";
+                // Small dot-indicator if database contains stats records on sanzioni for Controlleria
+                if (record && record.shiftType === "CONTROLLERIA" && (record.sanzioniEmesse > 0 || record.sanzioniPagateBordo > 0)) {
+                    const indicatorContainer = document.createElement("div");
+                    indicatorContainer.className = "absolute bottom-0.5 inset-x-0 flex justify-center";
+                    
+                    let dotColor = "bg-indigo-400";
+                    if (record.shiftType === "FERIE") dotColor = "bg-yellow-500";
+                    if (record.shiftType === "RIPOSO") dotColor = "bg-slate-500";
+                    if (record.shiftType === "MALATTIA") dotColor = "bg-red-500";
+                    if (record.shiftType === "PERMESSO") dotColor = "bg-[#FFD600]";
+
+                    indicatorContainer.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>`;
+                    cellButton.appendChild(indicatorContainer);
+                }
+
+                gridContainer.appendChild(cellButton);
             }
 
-            // Highlighting refresh
-            const year = parseInt(dateString.split("-")[0]);
-            const month = parseInt(dateString.split("-")[1]) - 1;
-            
-            // If user clicked a day in another month, update calendar layout context
-            if (year !== currentDate.getFullYear() || month !== currentDate.getMonth()) {
-                currentDate = new Date(year, month, 1);
-            }
-            
-            updateUI();
+            updateKPIs();
         }
 
-        // Set actively chosen form shift type
-        function setFormShiftType(type) {
-            activeShiftType = type;
-            
-            // Update buttons visually
-            const map = {
-                'CONTROLLERIA': { btn: 'btnShiftControlleria', color: ClassControlleria },
-                'BIGLIETTERIA_ORIO': { btn: 'btnShiftOrio', color: ClassOrio },
-                'FERIE': { btn: 'btnShiftFerie', color: ClassFerie },
-                'RIPOSO': { btn: 'btnShiftRiposo', color: ClassRiposo },
-                'MALATTIA': { btn: 'btnShiftMalattia', color: ClassMalattia },
-                'PERMESSO': { btn: 'btnShiftPermesso', color: ClassPermesso }
+        // Navigate through different previous or next months
+        function changeMonth(step) {
+            currentDate.setMonth(currentDate.getMonth() + step);
+            renderCalendar();
+        }
+
+        // Action when user taps on any calendar grid date cell
+        function selectDate(dateStr) {
+            selectedDateString = dateStr;
+            renderCalendar();
+            loadDateRecord(dateStr);
+        }
+
+        // Loads localized day record values dynamically inside input panels
+        function loadDateRecord(dateStr) {
+            const dateParts = dateStr.split('-');
+            const formattedDateLabel = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            document.getElementById("editingDateTitle").innerText = `Turno Giorno: ${formattedDateLabel}`;
+
+            const record = shiftDatabase[dateStr];
+            if (record) {
+                activeShiftType = record.shiftType || "CONTROLLERIA";
+                activeAzienda = record.azienda || "ATB";
+                document.getElementById("inpEmesse").value = record.sanzioniEmesse !== undefined ? record.sanzioniEmesse : 0;
+                document.getElementById("inpPagate").value = record.sanzioniPagateBordo !== undefined ? record.sanzioniPagateBordo : 0;
+                document.getElementById("inpUfficio").value = record.sanzioniRiscosseUfficio !== undefined ? record.sanzioniRiscosseUfficio : 0;
+                document.getElementById("inpOreOrio").value = record.oreOrio !== undefined ? record.oreOrio : 0;
+            } else {
+                // Return default values
+                activeShiftType = "CONTROLLERIA";
+                activeAzienda = "ATB";
+                document.getElementById("inpEmesse").value = 0;
+                document.getElementById("inpPagate").value = 0;
+                document.getElementById("inpUfficio").value = 0;
+                document.getElementById("inpOreOrio").value = 0;
+            }
+
+            // Sync visual attributes for segment selections
+            updateTypeControlUI();
+            updateAziendaControlUI();
+            updateFormVisibility();
+        }
+
+        // Syncs active values with class buttons highlight states
+        function updateTypeControlUI() {
+            const types = ["CONTROLLERIA", "BIGLIETTERIA_ORIO", "FERIE", "RIPOSO", "MALATTIA", "PERMESSO"];
+            const btns = {
+                "CONTROLLERIA": document.getElementById("btnTypeControlleria"),
+                "BIGLIETTERIA_ORIO": document.getElementById("btnTypeBiglietteria"),
+                "FERIE": document.getElementById("btnTypeFerie"),
+                "RIPOSO": document.getElementById("btnTypeRiposo"),
+                "MALATTIA": document.getElementById("btnTypeMalattia"),
+                "PERMESSO": document.getElementById("btnTypePermesso")
             };
 
-            for (const key in map) {
-                const btn = document.getElementById(map[key].btn);
-                if (key === type) {
-                    btn.className = `px-2 py-2.5 text-xs font-bold rounded-xl border transition-all text-center ${map[key].color}`;
-                } else {
-                    btn.className = `px-2 py-2.5 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400 hover:text-slate-200 text-center`;
-                }
-            }
+            const colorsMap = {
+                "CONTROLLERIA": "border-indigo-500 bg-indigo-950/40 text-indigo-400 ring-2 ring-indigo-500/20",
+                "BIGLIETTERIA_ORIO": "border-pink-500 bg-pink-950/40 text-pink-400 ring-2 ring-pink-500/20",
+                "FERIE": "border-yellow-500 bg-yellow-950/40 text-yellow-500 ring-2 ring-yellow-500/20",
+                "RIPOSO": "border-slate-500 bg-slate-950/40 text-slate-400 ring-2 ring-slate-500/20",
+                "MALATTIA": "border-red-500 bg-red-950/40 text-red-500 ring-2 ring-red-500/20",
+                "PERMESSO": "border-[#FFD600] bg-[#FFD600]/10 text-[#FFD600] ring-2 ring-[#FFD600]/20"
+            };
 
-            // Toggle controlleria fields
-            const ctrlFields = document.getElementById("controlleriaFields");
-            if (type === "CONTROLLERIA") {
-                ctrlFields.classList.remove("hidden");
+            const defaultClass = "border-slate-900 bg-slate-950/10 text-slate-400 hover:text-slate-200 hover:bg-slate-900/30";
+
+            types.forEach(t => {
+                const btn = btns[t];
+                if (btn) {
+                    if (t === activeShiftType) {
+                        btn.className = `py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all ${colorsMap[t]}`;
+                    } else {
+                        btn.className = `py-2.5 px-3 rounded-xl border text-xs font-extrabold tracking-wide transition-all ${defaultClass}`;
+                    }
+                }
+            });
+        }
+
+        function setType(t) {
+            activeShiftType = t;
+            updateTypeControlUI();
+            updateFormVisibility();
+        }
+
+        function updateFormVisibility() {
+            const formCtrl = document.getElementById("formControlleria");
+            const formBigliett = document.getElementById("formBiglietteria");
+
+            if (activeShiftType === "CONTROLLERIA") {
+                formCtrl.classList.remove("hidden");
+                formBigliett.classList.add("hidden");
+            } else if (activeShiftType === "BIGLIETTERIA_ORIO") {
+                formCtrl.classList.add("hidden");
+                formBigliett.classList.remove("hidden");
             } else {
-                ctrlFields.classList.add("hidden");
+                formCtrl.classList.add("hidden");
+                formBigliett.classList.add("hidden");
             }
         }
 
-        // Set actively chosen Company (ATB, ARRIVA)
-        function setFormAzienda(azienda) {
-            activeAzienda = azienda;
+        // Azienda Switches handling ATB or ARRIVA
+        function updateAziendaControlUI() {
             const btnAtb = document.getElementById("btnAziendaAtb");
             const btnArriva = document.getElementById("btnAziendaArriva");
 
-            if (azienda === "ATB") {
-                btnAtb.className = "flex-1 py-2 text-xs font-bold rounded-xl border bg-emerald-950/30 border-emerald-500 text-emerald-400 shadow-md shadow-emerald-950/20";
-                btnArriva.className = "flex-1 py-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400";
+            if (activeAzienda === "ATB") {
+                btnAtb.className = "flex-1 py-2 rounded-lg border text-xs font-extrabold text-indigo-400 border-indigo-500 bg-indigo-950/30 transition-all";
+                btnArriva.className = "flex-1 py-2 rounded-lg border text-xs font-bold text-slate-450 border-slate-900/60 bg-transparent transition-all";
             } else {
-                btnArriva.className = "flex-1 py-2 text-xs font-bold rounded-xl border bg-emerald-950/30 border-emerald-500 text-emerald-400 shadow-md shadow-emerald-950/20";
-                btnAtb.className = "flex-1 py-2 text-xs font-bold rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400";
+                btnAtb.className = "flex-1 py-2 rounded-lg border text-xs font-bold text-slate-440 border-slate-900/60 bg-transparent transition-all";
+                btnArriva.className = "flex-1 py-2 rounded-lg border text-xs font-extrabold text-pink-400 border-pink-500 bg-pink-950/30 transition-all";
             }
         }
 
-        // Quick adjust counter buttons
-        function adjustInput(id, amt) {
-            const el = document.getElementById(id);
-            let val = parseInt(el.value) || 0;
-            val = Math.max(0, val + amt);
-            el.value = val;
+        function setAzienda(a) {
+            activeAzienda = a;
+            updateAziendaControlUI();
         }
 
-        // Insert / Update Record
-        function saveRecord() {
-            const shiftType = activeShiftType;
-            let emesse = 0;
-            let pagate = 0;
-            let azienda = "ATB";
+        // Direct increment or decrement handler helper
+        function changeInp(fieldId, step) {
+            let el;
+            if (fieldId === 'sanzioniEmesse') el = document.getElementById("inpEmesse");
+            if (fieldId === 'sanzioniPagate') el = document.getElementById("inpPagate");
+            if (fieldId === 'sanzioniUfficio') el = document.getElementById("inpUfficio");
+            if (fieldId === 'oreOrio') el = document.getElementById("inpOreOrio");
 
-            if (shiftType === "CONTROLLERIA") {
-                emesse = parseInt(document.getElementById("inputEmesse").value) || 0;
-                pagate = parseInt(document.getElementById("inputPagate").value) || 0;
-                azienda = activeAzienda;
+            if (el) {
+                let val = parseInt(el.value) || 0;
+                val += step;
+                if (val < 0) val = 0;
+                el.value = val;
             }
+        }
 
-            // Create record data entry
-            shiftDatabase[selectedDateStr] = {
-                shiftType: shiftType,
-                sanzioniEmesse: emesse,
-                sanzioniPagateBordo: pagate,
-                azienda: azienda
+        // Persistence trigger to persist active days records
+        function saveCurrentRecord() {
+            const emVal = parseInt(document.getElementById("inpEmesse").value) || 0;
+            const pbVal = parseInt(document.getElementById("inpPagate").value) || 0;
+            const ufVal = parseInt(document.getElementById("inpUfficio").value) || 0;
+            const orVal = parseInt(document.getElementById("inpOreOrio").value) || 0;
+
+            shiftDatabase[selectedDateString] = {
+                date: selectedDateString,
+                shiftType: activeShiftType,
+                azienda: activeAzienda,
+                sanzioniEmesse: emVal,
+                sanzioniPagateBordo: pbVal,
+                sanzioniRiscosseUfficio: ufVal,
+                oreOrio: orVal
             };
 
             saveDatabase();
-            selectDay(selectedDateStr);
+            renderCalendar();
         }
 
-        // Remove active Record entry
-        function deleteRecord() {
-            if (shiftDatabase[selectedDateStr]) {
-                delete shiftDatabase[selectedDateStr];
-                saveDatabase();
-                selectDay(selectedDateStr);
-            }
-        }
+        // KPI calculations engine
+        function updateKPIs() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth() + 1;
+            const monthPrefix = `${year}-${String(month).padStart(2, '0')}`;
 
-        // Calculate and Render Monthly report details
-        function renderStats() {
-            const yearStr = currentDate.getFullYear();
-            const monthStr = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const prefix = `${yearStr}-${monthStr}`;
+            // Filter relevant monthly records
+            const monthKeys = Object.keys(shiftDatabase).filter(k => k.startsWith(monthPrefix));
+            const records = monthKeys.map(k => shiftDatabase[k]);
 
-            // Filtering current month entries
-            const keys = Object.keys(shiftDatabase).filter(k => k.startsWith(prefix));
-            const records = keys.map(k => shiftDatabase[k]);
-
-            // Workday Calculation logic
+            // Filter days counts
             const totalWorkDays = records.filter(r => r.shiftType === "CONTROLLERIA" || r.shiftType === "BIGLIETTERIA_ORIO").length;
+            const controlleriaAtbDays = records.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda)).length;
+            const controlleriaArrivaDays = records.filter(r => r.shiftType === "CONTROLLERIA" && r.azienda === "ARRIVA").length;
+
+            // Fines aggregated counts for visual KPI evaluation
+            let totalEmesse = 0;
+            let totalPagate = 0;
+
+            // ATB Counters
+            let atbEmesse = 0;
+            let atbPagate = 0;
+
+            // ARRIVA Counters
+            let arrivaEmesse = 0;
+            let arrivaPagate = 0;
+
+            records.forEach(r => {
+                if (r.shiftType === "CONTROLLERIA") {
+                    const em = r.sanzioniEmesse || 0;
+                    const pag = r.sanzioniPagateBordo || 0;
+                    totalEmesse += em;
+                    totalPagate += pag;
+
+                    if (r.azienda === "ARRIVA") {
+                        arrivaEmesse += em;
+                        arrivaPagate += pag;
+                    } else { // ATB default fallback
+                        atbEmesse += em;
+                        atbPagate += pag;
+                    }
+                }
+            });
+
+            // Set simple metric value visuals
             document.getElementById("statTotalWorkDays").innerText = totalWorkDays;
-
-            // Tot Controlleria
-            const totalCtrlDays = records.filter(r => r.shiftType === "CONTROLLERIA").length;
-            document.getElementById("statTotalCtrlDays").innerText = totalCtrlDays;
-
-            // ATB details filter
-            const atbDocs = records.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda));
-            const atbDays = atbDocs.length;
-            
-            const totalEmAtb = atbDocs.reduce((acc, r) => acc + (r.sanzioniEmesse || 0), 0);
-            const totalPagAtb = atbDocs.reduce((acc, r) => acc + (r.sanzioniPagateBordo || 0), 0);
-
-            const avgEmAtb = atbDays > 0 ? totalEmAtb / atbDays : 0.0;
-            const avgPagAtb = atbDays > 0 ? totalPagAtb / atbDays : 0.0;
-
-            // ARRIVA details filter
-            const arrivaDocs = records.filter(r => r.shiftType === "CONTROLLERIA" && r.azienda === "ARRIVA");
-            const arrivaDays = arrivaDocs.length;
-
-            const totalEmArriva = arrivaDocs.reduce((acc, r) => acc + (r.sanzioniEmesse || 0), 0);
-            const totalPagArriva = arrivaDocs.reduce((acc, r) => acc + (r.sanzioniPagateBordo || 0), 0);
-
-            const avgEmArriva = arrivaDays > 0 ? totalEmArriva / arrivaDays : 0.0;
-            const avgPagArriva = arrivaDays > 0 ? totalPagArriva / arrivaDays : 0.0;
-
-            // Emesse and Pagate Totals
-            const totalEmesse = totalEmAtb + totalEmArriva;
-            const totalPagate = totalPagAtb + totalPagArriva;
-
+            document.getElementById("statControlleriaDays").innerText = `${controlleriaAtbDays} ATB`;
             document.getElementById("statTotalEmesse").innerText = totalEmesse;
             document.getElementById("statTotalPagate").innerText = totalPagate;
 
-            // Bonus evaluation (€1.50 per sanzione pagata a bordo)
-            const monthlyBonus = totalPagate * 1.50;
-            document.getElementById("statMonthlyBonus").innerText = `€${monthlyBonus.toFixed(2)}`;
-
-            // Render ATB Objectives details & cumulative calculations
-            document.getElementById("atbTitleAndDays").innerText = `ATB (${atbDays} gg)`;
-            
-            const atbEmesseSpan = document.getElementById("atbAvgEmesse");
-            atbEmesseSpan.innerText = avgEmAtb.toFixed(2);
-            atbEmesseSpan.className = `text-base font-extrabold ${avgEmAtb >= 11 ? 'text-emerald-500' : 'text-red-500'}`;
-
-            const atbPagateSpan = document.getElementById("atbAvgPagate");
-            atbPagateSpan.innerText = avgPagAtb.toFixed(2);
-            atbPagateSpan.className = `text-base font-extrabold ${avgPagAtb >= 3 ? 'text-emerald-500' : 'text-red-500'}`;
-
+            // ATB Target evaluations (Rule: 11 Em. / 3 Pag. per day)
             const atbLabelStatus = document.getElementById("atbLabelStatus");
-            if (atbDays === 0) {
-                atbLabelStatus.innerText = "Nessun giorno registrato";
-                atbLabelStatus.className = "text-[11px] text-slate-450";
+            if (controlleriaAtbDays === 0) {
+                atbLabelStatus.innerText = "Nessun turno ATB registrato questo mese.";
+                atbLabelStatus.className = "text-[11px] font-semibold text-slate-400";
             } else {
-                const targetEm = atbDays * 11;
-                const targetPag = atbDays * 3;
-                const diffEm = totalEmAtb - targetEm;
-                const diffPag = totalPagAtb - targetPag;
+                const targetEmAtb = controlleriaAtbDays * 11;
+                const targetPagAtb = controlleriaAtbDays * 3;
+                const diffEmAtb = atbEmesse - targetEmAtb;
+                const diffPagAtb = atbPagate - targetPagAtb;
 
-                const emSign = diffEm >= 0 ? `+${diffEm}` : `${diffEm}`;
-                const pagSign = diffPag >= 0 ? `+${diffPag}` : `${diffPag}`;
-                
-                atbLabelStatus.innerText = `Stato: ${emSign} emesse / ${pagSign} pagate`;
-                atbLabelStatus.className = `text-[11px] font-semibold ${(diffEm >= 0 && diffPag >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
+                const emSignAtb = diffEmAtb >= 0 ? `+${diffEmAtb}` : `${diffEmAtb}`;
+                const pagSignAtb = diffPagAtb >= 0 ? `+${diffPagAtb}` : `${diffPagAtb}`;
+
+                atbLabelStatus.innerText = `Stato: ${emSignAtb} emesse / ${pagSignAtb} pagate`;
+                atbLabelStatus.className = `text-[11px] font-semibold ${(diffEmAtb >= 0 && diffPagAtb >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
             }
 
-            // Render ARRIVA Objectives details & cumulative calculations
-            document.getElementById("arrivaTitleAndDays").innerText = `ARRIVA (${arrivaDays} gg)`;
-
-            const arrivaEmesseSpan = document.getElementById("arrivaAvgEmesse");
-            arrivaEmesseSpan.innerText = avgEmArriva.toFixed(2);
-            arrivaEmesseSpan.className = `text-base font-extrabold ${avgEmArriva >= 7 ? 'text-emerald-500' : 'text-red-500'}`;
-
-            const arrivaPagateSpan = document.getElementById("arrivaAvgPagate");
-            arrivaPagateSpan.innerText = avgPagArriva.toFixed(2);
-            arrivaPagateSpan.className = `text-base font-extrabold ${avgPagArriva >= 1 ? 'text-emerald-500' : 'text-red-500'}`;
-
+            // ARRIVA Target evaluations (Rule: 7 Em. / 2 Pag. per day)
             const arrivaLabelStatus = document.getElementById("arrivaLabelStatus");
-            if (arrivaDays === 0) {
-                arrivaLabelStatus.innerText = "Nessun giorno registrato";
-                arrivaLabelStatus.className = "text-[11px] text-slate-450";
+            if (controlleriaArrivaDays === 0) {
+                arrivaLabelStatus.innerText = "Nessun turno ARRIVA registrato questo mese.";
+                arrivaLabelStatus.className = "text-[11px] font-semibold text-slate-400";
             } else {
-                const targetEmArriva = arrivaDays * 7;
-                const targetPagArriva = arrivaDays * 1;
-                const diffEmArriva = totalEmArriva - targetEmArriva;
-                const diffPagArriva = totalPagArriva - targetPagArriva;
+                const targetEmArriva = controlleriaArrivaDays * 7;
+                const targetPagArriva = controlleriaArrivaDays * 2;
+                const diffEmArriva = arrivaEmesse - targetEmArriva;
+                const diffPagArriva = arrivaPagate - targetPagArriva;
 
                 const emSignArriva = diffEmArriva >= 0 ? `+${diffEmArriva}` : `${diffEmArriva}`;
                 const pagSignArriva = diffPagArriva >= 0 ? `+${diffPagArriva}` : `${diffPagArriva}`;
@@ -691,37 +664,130 @@
                 arrivaLabelStatus.innerText = `Stato: ${emSignArriva} emesse / ${pagSignArriva} pagate`;
                 arrivaLabelStatus.className = `text-[11px] font-semibold ${(diffEmArriva >= 0 && diffPagArriva >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
             }
+
+            // Bonus evaluation (€1.50 per sanzione pagata a bordo)
+            const monthlyBonus = totalPagate * 1.50;
+            document.getElementById("statMonthlyBonus").innerText = `€${monthlyBonus.toFixed(2)}`;
+
+            // --- Quarterly Statistics Calculation ---
+            const currentMonthIdx = currentDate.getMonth(); // 0..11
+            let quarterLabel = "";
+            let startMonth, endMonth; 
+            if (currentMonthIdx >= 0 && currentMonthIdx <= 2) {
+                quarterLabel = "Trimestre 1 (Gen-Mar)";
+                startMonth = 1; endMonth = 3;
+            } else if (currentMonthIdx >= 3 && currentMonthIdx <= 5) {
+                quarterLabel = "Trimestre 2 (Apr-Giu)";
+                startMonth = 4; endMonth = 6;
+            } else if (currentMonthIdx >= 6 && currentMonthIdx <= 8) {
+                quarterLabel = "Trimestre 3 (Lug-Set)";
+                startMonth = 7; endMonth = 9;
+            } else {
+                quarterLabel = "Trimestre 4 (Ott-Dic)";
+                startMonth = 10; endMonth = 12;
+            }
+
+            const currentYear = currentDate.getFullYear();
+            const qPrefixes = [];
+            for (let m = startMonth; m <= endMonth; m++) {
+                qPrefixes.push(`${currentYear}-${String(m).padStart(2, '0')}`);
+            }
+
+            const qKeys = Object.keys(shiftDatabase).filter(k => qPrefixes.some(p => k.startsWith(p)));
+            const qRecords = qKeys.map(k => shiftDatabase[k]);
+
+            const qAtbRecords = qRecords.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda));
+            const qAtbDays = qAtbRecords.length;
+
+            const qTotalEmesse = qAtbRecords.reduce((acc, r) => acc + (r.sanzioniEmesse || 0), 0);
+            const qTotalPagate = qAtbRecords.reduce((acc, r) => acc + (r.sanzioniPagateBordo || 0), 0);
+
+            const qTargetEmesse = qAtbDays * 11;
+            const qTargetPagate = qAtbDays * 3;
+
+            const qDiffEmesse = qTotalEmesse - qTargetEmesse;
+            const qDiffPagate = qTotalPagate - qTargetPagate;
+
+            document.getElementById("qLabelText").innerText = quarterLabel;
+            
+            if (qAtbDays === 0) {
+                document.getElementById("qAtbEmptyView").classList.remove("hidden");
+                document.getElementById("qAtbStatsView").classList.add("hidden");
+            } else {
+                document.getElementById("qAtbEmptyView").classList.add("hidden");
+                document.getElementById("qAtbStatsView").classList.remove("hidden");
+
+                document.getElementById("qExplanation").innerText = `Obiettivo trimestrale basato su una media di 11 emesse e 3 pagate per turno ATB (${qAtbDays} gg lavorati nel trimestre).`;
+                
+                // Emesse progress & diff
+                document.getElementById("qEmesseProgress").innerText = `${qTotalEmesse} / ${qTargetEmesse}`;
+                const qEmesseDiffEl = document.getElementById("qEmesseDiff");
+                if (qDiffEmesse >= 0) {
+                    qEmesseDiffEl.innerText = `+${qDiffEmesse} in più 🎉`;
+                    qEmesseDiffEl.className = "text-[11px] font-bold text-emerald-400 mt-1";
+                } else {
+                    qEmesseDiffEl.innerText = `${qDiffEmesse} mancano`;
+                    qEmesseDiffEl.className = "text-[11px] font-bold text-red-500 mt-1";
+                }
+
+                // Pagate progress & diff
+                document.getElementById("qPagateProgress").innerText = `${qTotalPagate} / ${qTargetPagate}`;
+                const qPagateDiffEl = document.getElementById("qPagateDiff");
+                if (qDiffPagate >= 0) {
+                    qDiffPagate.innerText = `+${qDiffPagate} in più 🎉`;
+                    qDiffPagate.className = "text-[11px] font-bold text-emerald-400 mt-1";
+                } else {
+                    qDiffPagate.innerText = `${qDiffPagate} mancano`;
+                    qDiffPagate.className = "text-[11px] font-bold text-red-500 mt-1";
+                }
+            }
+        }
+
+        let isQuarterExpanded = false;
+        function toggleQuarterView() {
+            isQuarterExpanded = !isQuarterExpanded;
+            const body = document.getElementById("qBody");
+            const icon = document.getElementById("qToggleIcon");
+            if (isQuarterExpanded) {
+                body.classList.remove("hidden");
+                icon.classList.add("rotate-180");
+            } else {
+                body.classList.add("hidden");
+                icon.classList.remove("rotate-180");
+            }
         }
 
         // Backup Management Functions
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shiftDatabase));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `emesso_holabg_backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+        function exportBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shiftDatabase, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `registro_turni_backup_${new Date().toISOString().substring(0,10)}.json`);
+            dlAnchorElem.click();
         }
 
-        function importData(event) {
-            const input = event.target;
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
-            reader.onload = function() {
+            reader.onload = function(e) {
                 try {
-                    const parsedData = JSON.parse(reader.result);
-                    if (parsedData && typeof parsedData === 'object') {
-                        shiftDatabase = parsedData;
+                    const importedObj = JSON.parse(e.target.result);
+                    if (importedObj && typeof importedObj === 'object') {
+                        shiftDatabase = importedObj;
                         saveDatabase();
-                        alert("I dati sono stati caricati e ripristinati correttamente!");
+                        renderCalendar();
+                        loadDateRecord(selectedDateString);
+                        alert("Backup importato con successo!");
                     } else {
-                        alert("Errore: Formato dati non valido.");
+                        alert("Formato file non valido!");
                     }
-                } catch(e) {
-                    alert("Errore nell'analisi del file di backup.");
+                } catch (err) {
+                    alert("Errore nella lettura del file backup: " + err.message);
                 }
             };
-            reader.readAsText(input.files[0]);
+            reader.readAsText(file);
         }
     </script>
 </body>
