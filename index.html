@@ -54,7 +54,7 @@
         </h1>
         <div class="flex items-center space-x-3">
             <!-- Backup Button -->
-            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
+            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-755 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span>Backup</span>
             </button>
@@ -155,7 +155,7 @@
                     <!-- Sanzioni Input Rows -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">Sanzioni Emesse</label>
+                            <label class="block text-xs font-semibold text-slate-450 mb-1">Sanzioni Emesse</label>
                             <div class="flex items-center space-x-2">
                                 <button onclick="adjustInput('inputEmesse', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
                                 <input type="number" id="inputEmesse" value="0" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
@@ -163,7 +163,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">Pagate a Bordo</label>
+                            <label class="block text-xs font-semibold text-slate-450 mb-1">Pagate a Bordo</label>
                             <div class="flex items-center space-x-2">
                                 <button onclick="adjustInput('inputPagate', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
                                 <input type="number" id="inputPagate" value="0" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
@@ -232,7 +232,7 @@
                     </div>
                 </div>
 
-                <div class="border-t border-slate-800/80"></div>
+                <div class="border-t border-slate-850"></div>
 
                 <!-- Arriva Stats Row -->
                 <div class="flex items-center justify-between">
@@ -283,7 +283,7 @@
                 </div>
             </div>
 
-            <!-- Point Quarterly View Component -->
+            <!-- Verifica Bonus Trimestrale Expanded/Collapsed Card -->
             <div class="bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
                 <!-- Clickable Header -->
                 <button onclick="toggleQuarterView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
@@ -306,7 +306,7 @@
                     <!-- Statistics View -->
                     <div id="qAtbStatsView" class="space-y-3">
                         <p id="qExplanation" class="text-[11px] text-slate-400">
-                             Obiettivo trimestrale basato su una media di 11 emesse e 3 pagate per turno ATB.
+                            Obiettivo trimestrale basato su una media di 11 emesse e 3 pagate per turno ATB.
                         </p>
 
                         <div class="grid grid-cols-2 gap-3">
@@ -468,9 +468,9 @@
                         
                         // Render Check or Cross
                         if (isPositive) {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-emerald-550 leading-none" style="color: #2e7d32;">✔</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-emerald-555 leading-none" style="color: #2e7d32;">✔</span>`;
                         } else {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-650 leading-none" style="color: #d32f2f;">❌</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-655 leading-none" style="color: #d32f2f;">❌</span>`;
                         }
                     } else {
                         // Standard Dot indicators
@@ -794,7 +794,7 @@
                     qEmesseDiffEl.innerText = `+${qDiffEmesse} in più 🎉`;
                     qEmesseDiffEl.className = "text-[11px] font-bold text-emerald-400 mt-1";
                 } else {
-                    qEmesseDiffEl.innerText = `${qDiffEmesse} mancano`;
+                    qEmesseDiffEl.innerText = `${qDiffEmesse} mancanti`;
                     qEmesseDiffEl.className = "text-[11px] font-bold text-red-500 mt-1";
                 }
 
@@ -805,7 +805,7 @@
                     qPagateDiffEl.innerText = `+${qDiffPagate} in più 🎉`;
                     qPagateDiffEl.className = "text-[11px] font-bold text-emerald-400 mt-1";
                 } else {
-                    qPagateDiffEl.innerText = `${qDiffPagate} mancano`;
+                    qPagateDiffEl.innerText = `${qDiffPagate} mancanti`;
                     qPagateDiffEl.className = "text-[11px] font-bold text-red-500 mt-1";
                 }
             }
