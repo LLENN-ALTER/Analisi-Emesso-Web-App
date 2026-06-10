@@ -54,7 +54,7 @@
         </h1>
         <div class="flex items-center space-x-3">
             <!-- Backup Button -->
-            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-755 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
+            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span>Backup</span>
             </button>
@@ -336,6 +336,7 @@
             }
         }
 
+        // Helper function to save
         function saveDatabase() {
             localStorage.setItem("emesso_shifts_items", JSON.stringify(shiftDatabase));
             updateUI();
@@ -375,12 +376,12 @@
             updateUI();
         }
 
-        // Render Calendar Algorithm
         function nextMonth() {
             currentDate.setMonth(currentDate.getMonth() + 1);
             updateUI();
         }
 
+        // Render Calendar Algorithm
         function renderCalendar() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
@@ -442,7 +443,7 @@
                         if (isPositive) {
                             indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-emerald-555 leading-none" style="color: #2e7d32;">✔</span>`;
                         } else {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-650 leading-none" style="color: #d32f2f;">❌</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black text-red-655 leading-none" style="color: #d32f2f;">❌</span>`;
                         }
                     } else {
                         // Standard Dot indicators
@@ -623,6 +624,7 @@
             document.getElementById("statTotalCtrlDays").innerText = totalCtrlDays;
 
 
+
             // ATB details filter
             const atbDocs = records.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda));
             const atbDays = atbDocs.length;
@@ -668,7 +670,7 @@
             const atbLabelStatus = document.getElementById("atbLabelStatus");
             if (atbDays === 0) {
                 atbLabelStatus.innerText = "Nessun giorno registrato";
-                atbLabelStatus.className = "text-[11px] text-slate-455";
+                atbLabelStatus.className = "text-[11px] text-slate-450";
             } else {
                 const targetEm = atbDays * 11;
                 const targetPag = atbDays * 3;
@@ -678,8 +680,8 @@
                 const emSign = diffEm >= 0 ? `+${diffEm}` : `${diffEm}`;
                 const pagSign = diffPag >= 0 ? `+${diffPag}` : `${diffPag}`;
                 
-                atbLabelStatus.innerText = `Stato: ${emSign} emesse / ${pagSign} pagate`;
-                atbLabelStatus.className = `text-[11px] font-semibold ${(diffEm >= 0 && diffPag >= 0) ? 'text-emerald-400' : 'text-slate-350'}`;
+                atbLabelStatus.innerHTML = `Stato: ${emSign} emesse / ${pagSign} pagate<br><span class="text-slate-400 font-normal">Totale: ${totalEmAtb} emesse / ${totalPagAtb} pagate</span>`;
+                atbLabelStatus.className = `text-[11px] font-semibold ${(diffEm >= 0 && diffPag >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
             }
 
             // Render ARRIVA Objectives details & cumulative calculations
@@ -696,7 +698,7 @@
             const arrivaLabelStatus = document.getElementById("arrivaLabelStatus");
             if (arrivaDays === 0) {
                 arrivaLabelStatus.innerText = "Nessun giorno registrato";
-                arrivaLabelStatus.className = "text-[11px] text-slate-455";
+                arrivaLabelStatus.className = "text-[11px] text-slate-450";
             } else {
                 const targetEmArriva = arrivaDays * 7;
                 const targetPagArriva = arrivaDays * 1;
@@ -706,8 +708,8 @@
                 const emSignArriva = diffEmArriva >= 0 ? `+${diffEmArriva}` : `${diffEmArriva}`;
                 const pagSignArriva = diffPagArriva >= 0 ? `+${diffPagArriva}` : `${diffPagArriva}`;
 
-                arrivaLabelStatus.innerText = `Stato: ${emSignArriva} emesse / ${pagSignArriva} pagate`;
-                arrivaLabelStatus.className = `text-[11px] font-semibold ${(diffEmArriva >= 0 && diffPagArriva >= 0) ? 'text-emerald-400' : 'text-slate-350'}`;
+                arrivaLabelStatus.innerHTML = `Stato: ${emSignArriva} emesse / ${pagSignArriva} pagate<br><span class="text-slate-400 font-normal">Totale: ${totalEmArriva} emesse / ${totalPagArriva} pagate</span>`;
+                arrivaLabelStatus.className = `text-[11px] font-semibold ${(diffEmArriva >= 0 && diffPagArriva >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
             }
 
             // --- Quarterly Statistics Calculation ---
