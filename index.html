@@ -206,17 +206,17 @@
                             <div>
                                 <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-450 mb-1">Sanzioni Emesse</label>
                                 <div class="flex items-center space-x-2">
-                                    <button onclick="adjustInput('inputEmesse', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputEmesse', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">-</button>
                                     <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
-                                    <button onclick="adjustInput('inputEmesse', 1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">+</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputEmesse', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">+</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-450 mb-1">Pagate a Bordo</label>
                                 <div class="flex items-center space-x-2">
-                                    <button onclick="adjustInput('inputPagate', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputPagate', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">-</button>
                                     <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
-                                    <button onclick="adjustInput('inputPagate', 1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">+</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputPagate', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">+</button>
                                 </div>
                             </div>
                         </div>
@@ -232,15 +232,15 @@
                             </div>
                             <div class="flex space-x-3 items-center">
                                 <div class="flex items-center space-x-1">
-                                    <button onclick="adjustInput('inputPermessoOre', -1); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">-</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', -1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
                                     <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-8 text-center bg-slate-950 border border-slate-850 rounded text-xs font-bold text-indigo-300 focus:outline-none focus:border-indigo-500 py-0.5">
-                                    <button onclick="adjustInput('inputPermessoOre', 1); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">+</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', 1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
                                     <span class="text-[10px] text-slate-400 font-bold ml-1">h</span>
                                 </div>
                                 <div class="flex items-center space-x-1">
-                                    <button onclick="adjustInput('inputPermessoMinuti', -5); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">-</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', -5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
                                     <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-8 text-center bg-slate-950 border border-slate-850 rounded text-xs font-bold text-indigo-300 focus:outline-none focus:border-indigo-500 py-0.5">
-                                    <button onclick="adjustInput('inputPermessoMinuti', 5); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">+</button>
+                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', 5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
                                     <span class="text-[10px] text-slate-400 font-bold ml-1">m</span>
                                 </div>
                             </div>
@@ -1087,6 +1087,38 @@
 
             // Sync input display colors
             updateInputColors();
+        }
+
+        // Long-press handler to replace single tap behavior
+        let longPressTimer = null;
+        let longPressRepeatTimer = null;
+        
+        function handleStartLongPress(e, inputId, delta, hasExtra) {
+            if (e && e.cancelable) {
+                e.preventDefault();
+            }
+            handleEndLongPress();
+            
+            longPressTimer = setTimeout(() => {
+                adjustInput(inputId, delta);
+                if (hasExtra) updatePermessoInputs();
+                
+                longPressRepeatTimer = setInterval(() => {
+                    adjustInput(inputId, delta);
+                    if (hasExtra) updatePermessoInputs();
+                }, 120);
+            }, 500); // 500ms long press threshold
+        }
+        
+        function handleEndLongPress() {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+            if (longPressRepeatTimer) {
+                clearInterval(longPressRepeatTimer);
+                longPressRepeatTimer = null;
+            }
         }
 
         // Quick adjust counter buttons
