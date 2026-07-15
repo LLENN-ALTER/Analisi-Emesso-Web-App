@@ -1099,10 +1099,11 @@
             }
             handleEndLongPress();
             
+            // Execute immediately for single click / touch down
+            adjustInput(inputId, delta);
+            if (hasExtra) updatePermessoInputs();
+            
             longPressTimer = setTimeout(() => {
-                adjustInput(inputId, delta);
-                if (hasExtra) updatePermessoInputs();
-                
                 longPressRepeatTimer = setInterval(() => {
                     adjustInput(inputId, delta);
                     if (hasExtra) updatePermessoInputs();
