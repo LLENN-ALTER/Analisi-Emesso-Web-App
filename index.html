@@ -21,7 +21,7 @@
         }
     </script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- PWA Manifest & App Icon Stuff -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -30,7 +30,6 @@
         body {
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -50,11 +49,11 @@
     <!-- Top Navbar -->
     <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 pt-10 pb-4 flex items-center justify-between">
         <h1 class="text-xl font-extrabold text-indigo-400 tracking-wide select-none">
-            Emesso HolaBG <span class="text-xs text-slate-400 font-normal">Web</span>
+            Emesso HolaBG
         </h1>
         <div class="flex items-center space-x-3">
             <!-- Backup Button -->
-            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-755 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
+            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span>Backup</span>
             </button>
@@ -70,14 +69,17 @@
     <main class="max-w-md md:max-w-4xl lg:max-w-5xl mx-auto px-4 mt-4 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:grid-flow-row md:gap-6">
 
         <!-- Left Side: Month navigation & Calendar -->
-        <div class="space-y-6">
+        <div class="space-y-6 md:sticky md:top-[100px] self-start">
             <!-- Month Navigation Selector -->
             <div class="bg-slate-900 rounded-2xl p-4 flex items-center justify-between shadow-xl border border-slate-850">
                 <button onclick="prevMonth()" class="p-2.5 hover:bg-slate-800 active:scale-95 transition-all text-indigo-400 rounded-xl">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
-                <div class="text-center">
-                    <h2 id="currentMonthYearLabel" class="text-lg font-bold text-slate-100 capitalize">Maggio 2026</h2>
+                <div onclick="openMonthYearPicker()" class="text-center cursor-pointer hover:bg-slate-800/50 px-4 py-1 rounded-xl transition flex flex-col items-center select-none">
+                    <div class="flex items-center space-x-1.5 text-slate-100">
+                        <h2 id="currentMonthYearLabel" class="text-lg font-bold capitalize">Maggio 2026</h2>
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
                     <p class="text-xs text-indigo-400 font-semibold tracking-wider">REGISTRO TURNI</p>
                 </div>
                 <button onclick="nextMonth()" class="p-2.5 hover:bg-slate-800 active:scale-95 transition-all text-indigo-400 rounded-xl">
@@ -102,7 +104,7 @@
                     <!-- Programmatically populated -->
                 </div>
 
-                <!-- Legend Indicators (explicitly 2 rows of 3 columns for clean, symmetrical split) -->
+                <!-- Legend Indicators -->
                 <div class="mt-4 pt-3 border-t border-slate-800/60 max-w-[280px] mx-auto">
                     <div class="grid grid-cols-3 gap-x-2 gap-y-2 justify-items-center">
                         <div id="legendCtrl" class="flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
@@ -166,8 +168,8 @@
                             <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
                                 Controlleria
                             </button>
-                            <button onclick="setFormShiftType('BIGLIETTERIA_ORIO')" id="btnShiftOrio" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
-                                Aeroporto (Orio)
+                            <button onclick="openSubTypeModal()" id="btnShiftOrio" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
+                                Aeroporto/Corso
                             </button>
                             <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
                                 Ferie
@@ -200,9 +202,9 @@
                         </div>
 
                         <!-- Sanzioni Input Rows -->
-                        <div class="grid grid-cols-2 gap-4">
+                        <div id="sanzioniInputsBlock" class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-455 mb-1">Sanzioni Emesse</label>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-450 mb-1">Sanzioni Emesse</label>
                                 <div class="flex items-center space-x-2">
                                     <button onclick="adjustInput('inputEmesse', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
                                     <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
@@ -210,7 +212,7 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-455 mb-1">Pagate a Bordo</label>
+                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-450 mb-1">Pagate a Bordo</label>
                                 <div class="flex items-center space-x-2">
                                     <button onclick="adjustInput('inputPagate', -1)" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300">-</button>
                                     <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
@@ -218,6 +220,37 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Ore di Permesso Parziale -->
+                    <div class="pt-2 border-t border-slate-800/60">
+                        <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-2">Ore di Permesso Parziale</label>
+                        <div class="flex items-center justify-between bg-slate-950/30 border border-slate-850 p-3 rounded-xl">
+                            <div class="space-y-0.5 text-left">
+                                <span class="text-xs font-bold text-slate-200">Permesso</span>
+                                <p class="text-[10px] text-slate-450">Ore e minuti di permesso</p>
+                            </div>
+                            <div class="flex space-x-3 items-center">
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="adjustInput('inputPermessoOre', -1); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">-</button>
+                                    <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-8 text-center bg-slate-950 border border-slate-850 rounded text-xs font-bold text-indigo-300 focus:outline-none focus:border-indigo-500 py-0.5">
+                                    <button onclick="adjustInput('inputPermessoOre', 1); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">+</button>
+                                    <span class="text-[10px] text-slate-400 font-bold ml-1">h</span>
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="adjustInput('inputPermessoMinuti', -5); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">-</button>
+                                    <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-8 text-center bg-slate-950 border border-slate-850 rounded text-xs font-bold text-indigo-300 focus:outline-none focus:border-indigo-500 py-0.5">
+                                    <button onclick="adjustInput('inputPermessoMinuti', 5); updatePermessoInputs();" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs">+</button>
+                                    <span class="text-[10px] text-slate-400 font-bold ml-1">m</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Note Field -->
+                    <div class="pt-2 border-t border-slate-800/60">
+                        <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-1">Note di oggi</label>
+                        <input type="text" id="inputNote" placeholder="Es: pioggia, sciopero, Corso..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
                     </div>
 
                     <!-- Form Buttons -->
@@ -279,7 +312,7 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-800/85"></div>
+                    <div class="border-t border-slate-800/80"></div>
 
                     <!-- Arriva Stats Row -->
                     <div class="flex items-center justify-between">
@@ -330,7 +363,24 @@
                     </div>
                 </div>
 
-                <!-- Quarterly Verification Card -->
+                <!-- Presenze & Assenze Mensili Card -->
+                <div class="bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
+                    <!-- Clickable Header -->
+                    <button onclick="togglePresenzeView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
+                        <div class="flex items-center space-x-2 text-slate-100">
+                            <svg id="pToggleIcon" class="w-5 h-5 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            <span class="text-sm font-bold text-indigo-400">Presenze & Assenze Mensili</span>
+                        </div>
+                        <span id="pLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">Riepilogo</span>
+                    </button>
+
+                    <!-- Expandable Body -->
+                    <div id="pBody" class="hidden border-t border-slate-850/80 p-4 space-y-3"></div>
+                </div>
+
+                <!-- Verifica Bonus Trimestrale Expanded/Collapsed Card -->
                 <div class="bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
                     <!-- Clickable Header -->
                     <button onclick="toggleQuarterView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
@@ -340,11 +390,49 @@
                             </svg>
                             <span class="text-sm font-bold text-indigo-400">Verifica Bonus Trimestrale</span>
                         </div>
-                        <span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">Trimestre</span>
+                        <div id="qHeaderBadges" class="flex items-center space-x-1.5">
+                            <span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">Trimestre</span>
+                        </div>
+                    </button>
+
+                    <!-- Expendable Body -->
+                    <div id="qBody" class="hidden border-t border-slate-850/80 p-4 space-y-3"></div>
+                </div>
+
+                <!-- Premio Valutazione Trimestrale Card (Condizionale) -->
+                <div id="evalBonusCardContainer" class="hidden bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
+                    <!-- Clickable Header -->
+                    <button onclick="toggleEvalView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
+                        <div class="flex items-center space-x-2 text-slate-100">
+                            <svg id="evalToggleIcon" class="w-5 h-5 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            <span class="text-sm font-bold text-indigo-400">Premio Valutazione Trimestrale</span>
+                        </div>
+                        <div id="evalHeaderBadges" class="flex items-center space-x-1.5">
+                            <span id="evalLabelText" class="text-[10px] bg-emerald-950/80 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">Valutazione</span>
+                        </div>
                     </button>
 
                     <!-- Expandable Body -->
-                    <div id="qBody" class="hidden border-t border-slate-850/80 p-4 space-y-3"></div>
+                    <div id="evalBody" class="hidden border-t border-slate-850/80 p-4 space-y-3"></div>
+                </div>
+
+                <!-- Verifica Premio Presenza Annuo Card -->
+                <div class="bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
+                    <!-- Clickable Header -->
+                    <button onclick="togglePresenzaAnnuoView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
+                        <div class="flex items-center space-x-2 text-slate-100">
+                            <svg id="paToggleIcon" class="w-5 h-5 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            <span class="text-sm font-bold text-indigo-400">Verifica Premio Presenza Annuo</span>
+                        </div>
+                        <span id="paLabelText" class="text-[10px] bg-emerald-950/80 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">Anno</span>
+                    </button>
+
+                    <!-- Expandable Body -->
+                    <div id="paBody" class="hidden border-t border-slate-850/80 p-4 space-y-4"></div>
                 </div>
 
             </div>
@@ -353,8 +441,152 @@
 
     </main>
 
+    <!-- Sub-Selection Dialog Modal -->
+    <div id="subTypeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl">
+            <h3 class="text-base font-bold text-slate-100">Seleziona Sottotipo Turno</h3>
+            <p class="text-xs text-slate-400">Scegli se registrare la giornata come servizio in aeroporto o corso di formazione:</p>
+            
+            <div class="space-y-2">
+                <button onclick="selectSubType('AEROPORTO')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-sky-500/20 hover:border-sky-500/40 rounded-xl transition text-left">
+                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0"></span>
+                    <span class="text-xs font-bold text-slate-200">Aeroporto (Biglietteria)</span>
+                </button>
+                <button onclick="selectSubType('CORSO')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-indigo-500/20 hover:border-indigo-500/40 rounded-xl transition text-left">
+                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-550 shrink-0" style="background-color: #6366f1;"></span>
+                    <span class="text-xs font-bold text-slate-200">Corso di formazione</span>
+                </button>
+            </div>
+            
+            <div class="flex justify-end pt-2">
+                <button onclick="closeSubTypeModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs hover:bg-slate-750 transition font-semibold">
+                    Annulla
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Month & Year Selector Dialog Modal -->
+    <div id="monthYearModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden" onclick="closeMonthYearModal()">
+        <!-- Inner container matching main layout constraint, grid on medium screens and up -->
+        <div class="w-full max-w-md md:max-w-4xl lg:max-w-5xl mx-auto h-full flex items-center justify-center md:grid md:grid-cols-2 md:gap-6 pointer-events-none">
+            <!-- Left Column: Modal is placed here, over the calendar -->
+            <div class="flex items-center justify-center w-full pointer-events-auto">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 max-w-[280px] w-full space-y-3 shadow-2xl" onclick="event.stopPropagation()">
+                    <h3 class="text-sm font-bold text-slate-100 text-center">Seleziona Mese e Anno</h3>
+                    
+                    <!-- Year Selector Control -->
+                    <div class="flex items-center justify-between bg-slate-950/50 rounded-xl p-1 border border-slate-800">
+                        <button onclick="changePickerYear(-1)" class="p-1 hover:bg-slate-800 text-indigo-400 rounded-lg transition active:scale-90" onclick="event.stopPropagation()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <div class="flex-1 px-2 text-center">
+                            <select id="pickerYearSelect" onchange="onPickerYearChange(this.value)" class="bg-transparent text-slate-100 font-bold text-sm focus:outline-none cursor-pointer w-full text-center">
+                                <!-- Programmatically populated from 1900 to 2100 -->
+                            </select>
+                        </div>
+                        <button onclick="changePickerYear(1)" class="p-1 hover:bg-slate-800 text-indigo-400 rounded-lg transition active:scale-90" onclick="event.stopPropagation()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Months Grid Selector -->
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button onclick="selectPickerMonth(0)" id="pickerMonth_0" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Gen</button>
+                        <button onclick="selectPickerMonth(1)" id="pickerMonth_1" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Feb</button>
+                        <button onclick="selectPickerMonth(2)" id="pickerMonth_2" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Mar</button>
+                        <button onclick="selectPickerMonth(3)" id="pickerMonth_3" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Apr</button>
+                        <button onclick="selectPickerMonth(4)" id="pickerMonth_4" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Mag</button>
+                        <button onclick="selectPickerMonth(5)" id="pickerMonth_5" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Giu</button>
+                        <button onclick="selectPickerMonth(6)" id="pickerMonth_6" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Lug</button>
+                        <button onclick="selectPickerMonth(7)" id="pickerMonth_7" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Ago</button>
+                        <button onclick="selectPickerMonth(8)" id="pickerMonth_8" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Set</button>
+                        <button onclick="selectPickerMonth(9)" id="pickerMonth_9" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Ott</button>
+                        <button onclick="selectPickerMonth(10)" id="pickerMonth_10" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Nov</button>
+                        <button onclick="selectPickerMonth(11)" id="pickerMonth_11" class="py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/40 border border-slate-800/80 rounded-xl text-xs font-bold text-slate-200 transition-all duration-150">Dic</button>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-1">
+                        <button onclick="selectCurrentMonthYear()" class="px-2.5 py-1.5 bg-indigo-950/60 hover:bg-indigo-900/40 text-indigo-300 rounded-xl text-[11px] transition font-semibold border border-indigo-900/50">
+                            Oggi
+                        </button>
+                        <div class="flex space-x-1.5">
+                            <button onclick="closeMonthYearModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-xl text-[11px] transition font-semibold border border-slate-700">
+                                Annulla
+                            </button>
+                            <button onclick="confirmMonthYearSelection()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[11px] transition font-bold">
+                                Conferma
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Empty Right column to push content to left on medium/large screens -->
+            <div class="hidden md:block pointer-events-none"></div>
+        </div>
+    </div>
+
     <!-- App State JavaScript Logic -->
     <script>
+        // Safe LocalStorage wrapper to prevent crash if disabled/blocked in iframe
+        let isLocalStorageAvailable = true;
+        try {
+            const testKey = "__test_local_storage__";
+            window.localStorage.setItem(testKey, "test");
+            window.localStorage.removeItem(testKey);
+        } catch (e) {
+            isLocalStorageAvailable = false;
+            console.warn("localStorage is not available. Using in-memory fallback.");
+        }
+
+        const safeLocalStorage = {
+            _memoryStore: {},
+            getItem(key) {
+                if (isLocalStorageAvailable) {
+                    try {
+                        return window.localStorage.getItem(key);
+                    } catch (e) {
+                        return this._memoryStore[key] || null;
+                    }
+                }
+                return this._memoryStore[key] || null;
+            },
+            setItem(key, value) {
+                if (isLocalStorageAvailable) {
+                    try {
+                        window.localStorage.setItem(key, value);
+                        return;
+                    } catch (e) {}
+                }
+                this._memoryStore[key] = String(value);
+            },
+            removeItem(key) {
+                if (isLocalStorageAvailable) {
+                    try {
+                        window.localStorage.removeItem(key);
+                        return;
+                    } catch (e) {}
+                }
+                delete this._memoryStore[key];
+            },
+            key(index) {
+                if (isLocalStorageAvailable) {
+                    try {
+                        return window.localStorage.key(index);
+                    } catch (e) {}
+                }
+                return Object.keys(this._memoryStore)[index] || null;
+            },
+            get length() {
+                if (isLocalStorageAvailable) {
+                    try {
+                        return window.localStorage.length;
+                    } catch (e) {}
+                }
+                return Object.keys(this._memoryStore).length;
+            }
+        };
+
         // App State
         let currentDate = new Date();
         // Database structured: key -> "yyyy-MM-dd"
@@ -365,9 +597,9 @@
         const ClassControlleria = "border-violet-500/40 bg-violet-950/10 text-violet-400";
         const ClassOrio = "border-sky-500/40 bg-sky-950/10 text-sky-400";
         const ClassFerie = "border-orange-500/40 bg-orange-950/10 text-orange-400";
-        const ClassRiposo = "border-slate-500/40 bg-slate-955/10 text-slate-400";
-        const ClassMalattia = "border-red-500/40 bg-red-955/10 text-red-400";
-        const ClassPermesso = "border-yellow-500/40 bg-yellow-955/10 text-yellow-500";
+        const ClassRiposo = "border-slate-500/40 bg-slate-950/10 text-slate-450";
+        const ClassMalattia = "border-red-500/40 bg-red-950/10 text-red-400";
+        const ClassPermesso = "border-yellow-500/40 bg-yellow-950/10 text-yellow-500";
 
         // Current UI Fields variables
         let activeShiftType = "CONTROLLERIA";
@@ -376,7 +608,7 @@
 
         // Local Storage Sync
         function loadDatabase() {
-            const data = localStorage.getItem("emesso_shifts_items");
+            const data = safeLocalStorage.getItem("emesso_shifts_items");
             if (data) {
                 try {
                     shiftDatabase = JSON.parse(data);
@@ -386,9 +618,8 @@
             }
         }
 
-        // Save entry
         function saveDatabase() {
-            localStorage.setItem("emesso_shifts_items", JSON.stringify(shiftDatabase));
+            safeLocalStorage.setItem("emesso_shifts_items", JSON.stringify(shiftDatabase));
             updateUI();
         }
 
@@ -450,13 +681,38 @@
 
         // Sync legend highlights dynamically based on selected date's type
         function updateLegendHighlight(selectedShiftType) {
+            const selectedRecord = shiftDatabase[selectedDateStr];
+            const isCorso = selectedRecord && selectedRecord.shiftType === 'BIGLIETTERIA_ORIO' && selectedRecord.note && selectedRecord.note.toLowerCase() === 'corso';
+
+            // Dynamically update legendAero text and dot color based on if selected is Corso
+            const legendAeroEl = document.getElementById('legendAero');
+            if (legendAeroEl) {
+                const dot = legendAeroEl.querySelector('span:first-child');
+                const text = legendAeroEl.querySelector('span:last-child');
+                if (isCorso) {
+                    if (dot) {
+                        dot.className = "w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0";
+                    }
+                    if (text) {
+                        text.innerText = "CORSO";
+                    }
+                } else {
+                    if (dot) {
+                        dot.className = "w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0";
+                    }
+                    if (text) {
+                        text.innerText = "AERO";
+                    }
+                }
+            }
+
             const types = {
                 'CONTROLLERIA': { id: 'legendCtrl', colorClass: 'border-violet-500/40 bg-violet-950/15 text-violet-400' },
-                'BIGLIETTERIA_ORIO': { id: 'legendAero', colorClass: 'border-sky-500/40 bg-sky-950/15 text-sky-400' },
+                'BIGLIETTERIA_ORIO': { id: 'legendAero', colorClass: isCorso ? 'border-indigo-500/40 bg-indigo-950/15 text-indigo-400' : 'border-sky-500/40 bg-sky-950/15 text-sky-400' },
                 'RIPOSO': { id: 'legendRip', colorClass: 'border-slate-500/40 bg-slate-900/40 text-slate-300' },
                 'FERIE': { id: 'legendFerie', colorClass: 'border-orange-500/40 bg-orange-950/15 text-orange-400' },
-                'MALATTIA': { id: 'legendMal', colorClass: 'border-red-500/40 bg-red-955/15 text-red-400' },
-                'PERMESSO': { id: 'legendPerm', colorClass: 'border-yellow-500/40 bg-yellow-955/15 text-yellow-500' }
+                'MALATTIA': { id: 'legendMal', colorClass: 'border-red-500/40 bg-red-950/15 text-red-400' },
+                'PERMESSO': { id: 'legendPerm', colorClass: 'border-yellow-500/40 bg-yellow-950/15 text-yellow-500' }
             };
 
             for (const key in types) {
@@ -470,6 +726,29 @@
                     el.style.opacity = selectedShiftType ? '0.45' : '1.0';
                 }
             }
+        }
+
+        // SubType Modal Dialog Interactions
+        function openSubTypeModal() {
+            document.getElementById("subTypeModal").classList.remove("hidden");
+        }
+
+        function closeSubTypeModal() {
+            document.getElementById("subTypeModal").classList.add("hidden");
+        }
+
+        function selectSubType(type) {
+            closeSubTypeModal();
+            setFormShiftType('BIGLIETTERIA_ORIO');
+            const noteInput = document.getElementById("inputNote");
+            if (type === 'CORSO') {
+                noteInput.value = "Corso";
+            } else {
+                if (noteInput.value.toLowerCase() === 'corso') {
+                    noteInput.value = "";
+                }
+            }
+            saveRecord();
         }
 
         // Initialize App
@@ -509,6 +788,95 @@
 
         function nextMonth() {
             currentDate.setMonth(currentDate.getMonth() + 1);
+            updateUI();
+        }
+
+        // Month & Year Picker Dialog interactions
+        let pickerSelectedYear = 2026;
+        let pickerSelectedMonth = 4; // 0-indexed (Maggio is 4)
+
+        function initYearSelect() {
+            const select = document.getElementById("pickerYearSelect");
+            if (select && select.children.length === 0) {
+                for (let y = 1900; y <= 2100; y++) {
+                    const opt = document.createElement("option");
+                    opt.value = y;
+                    opt.textContent = y;
+                    opt.className = "bg-slate-900 text-slate-100 font-sans";
+                    select.appendChild(opt);
+                }
+            }
+        }
+
+        function openMonthYearPicker() {
+            initYearSelect();
+            pickerSelectedYear = currentDate.getFullYear();
+            pickerSelectedMonth = currentDate.getMonth();
+            
+            document.getElementById("pickerYearSelect").value = pickerSelectedYear;
+            updatePickerMonthsUI();
+            
+            document.getElementById("monthYearModal").classList.remove("hidden");
+        }
+
+        function closeMonthYearModal() {
+            document.getElementById("monthYearModal").classList.add("hidden");
+        }
+
+        function onPickerYearChange(val) {
+            pickerSelectedYear = parseInt(val, 10);
+        }
+
+        function changePickerYear(delta) {
+            pickerSelectedYear += delta;
+            if (pickerSelectedYear < 1900) pickerSelectedYear = 1900;
+            if (pickerSelectedYear > 2100) pickerSelectedYear = 2100;
+            document.getElementById("pickerYearSelect").value = pickerSelectedYear;
+        }
+
+        // Handle year-wheel scrolling in custom selector if scrolled
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.getElementById("pickerYearSelect");
+            if (select) {
+                select.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    if (e.deltaY < 0) {
+                        changePickerYear(-1);
+                    } else {
+                        changePickerYear(1);
+                    }
+                });
+            }
+        });
+
+        function selectPickerMonth(m) {
+            pickerSelectedMonth = m;
+            updatePickerMonthsUI();
+        }
+
+        function selectCurrentMonthYear() {
+            const today = new Date();
+            pickerSelectedYear = today.getFullYear();
+            pickerSelectedMonth = today.getMonth();
+            document.getElementById("pickerYearSelect").value = pickerSelectedYear;
+            updatePickerMonthsUI();
+        }
+
+        function updatePickerMonthsUI() {
+            for (let m = 0; m < 12; m++) {
+                const btn = document.getElementById(`pickerMonth_${m}`);
+                if (!btn) continue;
+                if (m === pickerSelectedMonth) {
+                    btn.className = "py-1 px-2 bg-indigo-950/60 hover:bg-indigo-900/60 border border-indigo-500 text-xs font-black text-indigo-400 rounded-xl transition-all duration-150 shadow-md shadow-indigo-500/10";
+                } else {
+                    btn.className = "py-1 px-2 bg-slate-950/40 hover:bg-indigo-900/20 border border-slate-800/80 text-xs font-bold text-slate-200 rounded-xl transition-all duration-150";
+                }
+            }
+        }
+
+        function confirmMonthYearSelection() {
+            currentDate = new Date(pickerSelectedYear, pickerSelectedMonth, 1);
+            closeMonthYearModal();
             updateUI();
         }
 
@@ -553,9 +921,9 @@
                 let baseStyle = "aspect-square flex flex-col items-center justify-between py-1.5 rounded-xl text-xs font-semibold transition-all relative border ";
                 
                 if (isSelected) {
-                    baseStyle += "border-indigo-500 bg-indigo-955/40 text-indigo-300 ring-2 ring-indigo-500/30 shadow-lg ";
+                    baseStyle += "border-indigo-500 bg-indigo-950/40 text-indigo-300 ring-2 ring-indigo-500/30 shadow-lg ";
                 } else {
-                    baseStyle += "border-transparent bg-slate-850 hover:bg-slate-805 text-slate-300 ";
+                    baseStyle += "border-transparent bg-slate-850 hover:bg-slate-800 text-slate-300 ";
                 }
 
                 cell.className = baseStyle;
@@ -572,14 +940,16 @@
                         
                         // Render Check or Cross
                         if (isPositive) {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black" style="color: #2e7d32;">✔</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black leading-none" style="color: #10b981;">✔</span>`;
                         } else {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black" style="color: #d32f2f;">❌</span>`;
+                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black leading-none" style="color: #ef4444;">❌</span>`;
                         }
                     } else {
                         // Standard Dot indicators
                         let dotColor = "bg-slate-400";
-                        if (record.shiftType === "BIGLIETTERIA_ORIO") dotColor = "bg-sky-500";
+                        if (record.shiftType === "BIGLIETTERIA_ORIO") {
+                            dotColor = (record.note && record.note.toLowerCase() === 'corso') ? "bg-indigo-500" : "bg-sky-500";
+                        }
                         if (record.shiftType === "FERIE") dotColor = "bg-orange-500";
                         if (record.shiftType === "RIPOSO") dotColor = "bg-slate-500";
                         if (record.shiftType === "MALATTIA") dotColor = "bg-red-500";
@@ -611,17 +981,27 @@
             if (record) {
                 // Load existing configurations Into HTML Controls
                 setFormShiftType(record.shiftType);
-                if (record.shiftType === "CONTROLLERIA") {
+                if (record.shiftType === "CONTROLLERIA" || record.shiftType === "PERMESSO" || record.shiftType === "MALATTIA") {
                     setFormAzienda(record.azienda || "ATB");
-                    document.getElementById("inputEmesse").value = record.sanzioniEmesse || 0;
-                    document.getElementById("inputPagate").value = record.sanzioniPagateBordo || 0;
+                    if (record.shiftType === "CONTROLLERIA") {
+                        document.getElementById("inputEmesse").value = record.sanzioniEmesse || 0;
+                        document.getElementById("inputPagate").value = record.sanzioniPagateBordo || 0;
+                    } else {
+                        document.getElementById("inputEmesse").value = 0;
+                        document.getElementById("inputPagate").value = 0;
+                    }
                 } else {
                     document.getElementById("inputEmesse").value = 0;
                     document.getElementById("inputPagate").value = 0;
                 }
                 
+                document.getElementById("inputPermessoOre").value = record.permessoOre || 0;
+                document.getElementById("inputPermessoMinuti").value = record.permessoMinuti || 0;
+                document.getElementById("inputNote").value = record.note || "";
+                
                 badge.className = "text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/25";
-                badge.innerText = record.shiftType === "BIGLIETTERIA_ORIO" ? "AEROPORTO (Orio)" : record.shiftType.replace("_", " ");
+                const isCorso = record.shiftType === "BIGLIETTERIA_ORIO" && record.note && record.note.toLowerCase() === "corso";
+                badge.innerText = isCorso ? "CORSO" : (record.shiftType === "BIGLIETTERIA_ORIO" ? "AEROPORTO" : record.shiftType.replace("_", " "));
                 document.getElementById("btnDelete").style.display = "block";
             } else {
                 // Reset inputs to standard state for unused dates
@@ -629,6 +1009,9 @@
                 setFormAzienda("ATB");
                 document.getElementById("inputEmesse").value = 0;
                 document.getElementById("inputPagate").value = 0;
+                document.getElementById("inputPermessoOre").value = 0;
+                document.getElementById("inputPermessoMinuti").value = 0;
+                document.getElementById("inputNote").value = "";
 
                 badge.className = "text-[10px] uppercase px-2 py-0.5 rounded-full font-bold bg-slate-800 text-slate-400";
                 badge.innerText = "Nessun Turno";
@@ -670,10 +1053,16 @@
                 }
             }
 
-            // Toggle controlleria fields
+            // Toggle controlleria and absence reference fields
             const ctrlFields = document.getElementById("controlleriaFields");
-            if (type === "CONTROLLERIA") {
+            const sanzioniBlock = document.getElementById("sanzioniInputsBlock");
+            if (type === "CONTROLLERIA" || type === "PERMESSO" || type === "MALATTIA") {
                 ctrlFields.classList.remove("hidden");
+                if (type === "CONTROLLERIA") {
+                    sanzioniBlock.classList.remove("hidden");
+                } else {
+                    sanzioniBlock.classList.add("hidden");
+                }
             } else {
                 ctrlFields.classList.add("hidden");
             }
@@ -693,7 +1082,7 @@
                 btnArriva.className = "flex-1 py-1.5 text-[10px] font-medium rounded-lg border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
             } else {
                 btnArriva.className = "flex-1 py-1.5 text-[10px] font-semibold rounded-lg border bg-emerald-950/15 border-emerald-500/40 text-emerald-400 transition-all";
-                btnAtb.className = "flex-1 py-1.5 text-[10px] font-medium rounded-lg border border-slate-800 bg-slate-955/20 text-slate-400 transition-all";
+                btnAtb.className = "flex-1 py-1.5 text-[10px] font-medium rounded-lg border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
             }
 
             // Sync input display colors
@@ -718,18 +1107,33 @@
             let pagate = 0;
             let azienda = "ATB";
 
-            if (shiftType === "CONTROLLERIA") {
-                emesse = parseInt(document.getElementById("inputEmesse").value) || 0;
-                pagate = parseInt(document.getElementById("inputPagate").value) || 0;
+            if (shiftType === "CONTROLLERIA" || shiftType === "PERMESSO" || shiftType === "MALATTIA") {
                 azienda = activeAzienda;
+                if (shiftType === "CONTROLLERIA") {
+                    emesse = parseInt(document.getElementById("inputEmesse").value) || 0;
+                    pagate = parseInt(document.getElementById("inputPagate").value) || 0;
+                }
             }
+
+            const note = document.getElementById("inputNote").value;
+            const permessoOre = parseInt(document.getElementById("inputPermessoOre").value) || 0;
+            const permessoMinuti = parseInt(document.getElementById("inputPermessoMinuti").value) || 0;
+
+            const existingRecord = shiftDatabase[selectedDateStr];
+            const malattiaOre = existingRecord ? (existingRecord.malattiaOre || 0) : 0;
+            const malattiaMinuti = existingRecord ? (existingRecord.malattiaMinuti || 0) : 0;
 
             // Create record data entry
             shiftDatabase[selectedDateStr] = {
                 shiftType: shiftType,
                 sanzioniEmesse: emesse,
                 sanzioniPagateBordo: pagate,
-                azienda: azienda
+                azienda: azienda,
+                note: note,
+                permessoOre: permessoOre,
+                permessoMinuti: permessoMinuti,
+                malattiaOre: malattiaOre,
+                malattiaMinuti: malattiaMinuti
             };
 
             saveDatabase();
@@ -764,7 +1168,7 @@
             document.getElementById("statTotalCtrlDays").innerText = totalCtrlDays;
 
             // ATB details filter
-            const atbDocs = records.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda));
+            const atbDocs = records.filter(r => (r.shiftType === "CONTROLLERIA" || r.shiftType === "PERMESSO" || r.shiftType === "MALATTIA") && (r.azienda === "ATB" || !r.azienda));
             const atbDays = atbDocs.length;
             
             const totalEmAtb = atbDocs.reduce((acc, r) => acc + (r.sanzioniEmesse || 0), 0);
@@ -774,7 +1178,7 @@
             const avgPagAtb = atbDays > 0 ? totalPagAtb / atbDays : 0.0;
 
             // ARRIVA details filter
-            const arrivaDocs = records.filter(r => r.shiftType === "CONTROLLERIA" && r.azienda === "ARRIVA");
+            const arrivaDocs = records.filter(r => (r.shiftType === "CONTROLLERIA" || r.shiftType === "PERMESSO" || r.shiftType === "MALATTIA") && r.azienda === "ARRIVA");
             const arrivaDays = arrivaDocs.length;
 
             const totalEmArriva = arrivaDocs.reduce((acc, r) => acc + (r.sanzioniEmesse || 0), 0);
@@ -808,7 +1212,7 @@
             const atbLabelStatus = document.getElementById("atbLabelStatus");
             if (atbDays === 0) {
                 atbLabelStatus.innerText = "Nessun giorno registrato";
-                atbLabelStatus.className = "text-[11px] text-slate-455";
+                atbLabelStatus.className = "text-[11px] text-slate-450";
             } else {
                 const targetEm = atbDays * 11;
                 const targetPag = atbDays * 3;
@@ -836,7 +1240,7 @@
             const arrivaLabelStatus = document.getElementById("arrivaLabelStatus");
             if (arrivaDays === 0) {
                 arrivaLabelStatus.innerText = "Nessun giorno registrato";
-                arrivaLabelStatus.className = "text-[11px] text-slate-455";
+                arrivaLabelStatus.className = "text-[11px] text-slate-450";
             } else {
                 const targetEmArriva = arrivaDays * 7;
                 const targetPagArriva = arrivaDays * 1;
@@ -852,19 +1256,24 @@
 
             // --- Quarterly Statistics Calculation ---
             const currentMonthIdx = currentDate.getMonth(); // 0..11
+            let quarterIndex = 1;
             let quarterLabel = "";
             let startMonth, endMonth; 
             if (currentMonthIdx >= 0 && currentMonthIdx <= 2) {
                 quarterLabel = "Trimestre 1 (Gen-Mar)";
+                quarterIndex = 1;
                 startMonth = 1; endMonth = 3;
             } else if (currentMonthIdx >= 3 && currentMonthIdx <= 5) {
                 quarterLabel = "Trimestre 2 (Apr-Giu)";
+                quarterIndex = 2;
                 startMonth = 4; endMonth = 6;
             } else if (currentMonthIdx >= 6 && currentMonthIdx <= 8) {
                 quarterLabel = "Trimestre 3 (Lug-Set)";
+                quarterIndex = 3;
                 startMonth = 7; endMonth = 9;
             } else {
                 quarterLabel = "Trimestre 4 (Ott-Dic)";
+                quarterIndex = 4;
                 startMonth = 10; endMonth = 12;
             }
 
@@ -878,7 +1287,7 @@
             const qRecords = qKeys.map(k => shiftDatabase[k]);
 
             // ATB stats
-            const qAtbRecords = qRecords.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda));
+            const qAtbRecords = qRecords.filter(r => (r.shiftType === "CONTROLLERIA" || r.shiftType === "PERMESSO" || r.shiftType === "MALATTIA") && (r.azienda === "ATB" || !r.azienda));
             const qAtbDays = qAtbRecords.length;
             const qAtbTotalEmesse = qAtbRecords.reduce((acc, r) => acc + (r.sanzioniEmesse || 0), 0);
             const qAtbTotalPagate = qAtbRecords.reduce((acc, r) => acc + (r.sanzioniPagateBordo || 0), 0);
@@ -888,7 +1297,7 @@
             const qAtbDiffPagate = qAtbTotalPagate - qAtbTargetPagate;
 
             // ARRIVA stats
-            const qArrivaRecords = qRecords.filter(r => r.shiftType === "CONTROLLERIA" && r.azienda === "ARRIVA");
+            const qArrivaRecords = qRecords.filter(r => (r.shiftType === "CONTROLLERIA" || r.shiftType === "PERMESSO" || r.shiftType === "MALATTIA") && r.azienda === "ARRIVA");
             const qArrivaDays = qArrivaRecords.length;
             const qArrivaTotalEmesse = qArrivaRecords.reduce((acc, r) => acc + (r.sanzioniEmesse || 0), 0);
             const qArrivaTotalPagate = qArrivaRecords.reduce((acc, r) => acc + (r.sanzioniPagateBordo || 0), 0);
@@ -897,13 +1306,20 @@
             const qArrivaDiffEmesse = qArrivaTotalEmesse - qArrivaTargetEmesse;
             const qArrivaDiffPagate = qArrivaTotalPagate - qArrivaTargetPagate;
 
-            document.getElementById("qLabelText").innerText = quarterLabel;
+            const savedBonusVal = safeLocalStorage.getItem(`bonus_${currentYear}_${quarterIndex}`) || safeLocalStorage.getItem(`quarter_bonus_${currentYear}_${quarterIndex}`);
+            const evaluationBonus = savedBonusVal !== null ? parseFloat(savedBonusVal) : null;
+
+            let qBadgesHtml = `<span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">${quarterLabel}</span>`;
+            if (evaluationBonus !== null) {
+                qBadgesHtml += `<span class="text-[10px] bg-emerald-950/80 text-emerald-400 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">+${evaluationBonus.toFixed(2)} €</span>`;
+            }
+            document.getElementById("qHeaderBadges").innerHTML = qBadgesHtml;
 
             let htmlContent = "";
 
             if (qAtbDays === 0 && qArrivaDays === 0) {
                 htmlContent = `
-                    <div class="text-xs text-slate-400">
+                    <div class="text-xs text-slate-400 text-left">
                         Nessun turno di Controlleria registrato in questo trimestre.
                     </div>
                 `;
@@ -923,17 +1339,17 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <!-- Card 1: Emesse -->
                                 <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider font-semibold">EMESSE</span>
+                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">EMESSE</span>
                                     <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qAtbTotalEmesse} / ${qAtbTargetEmesse}</h4>
                                     <p class="${emDiffClass}">${emDiffText}</p>
                                 </div>
                                 <!-- Card 2: Pagate -->
                                 <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider font-semibold">PAGATE</span>
+                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">PAGATE</span>
                                     <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qAtbTotalPagate} / ${qAtbTargetPagate}</h4>
                                     <p class="${pagDiffClass}">${pagDiffText}</p>
                                 </div>
-                            </div>
+                             </div>
                         </div>
                     `;
                 }
@@ -950,20 +1366,20 @@
 
                     htmlContent += `
                         <div class="space-y-3">
-                            <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">AZIENDA: ARRIVA</h5>
+                            <h5 class="text-xs font-black text-rose-450 uppercase tracking-widest text-left">AZIENDA: ARRIVA</h5>
                             <p class="text-[11px] text-slate-400 text-left">
-                                Obiettivo trimestrale basato su una media di 7 sanzioni al giorno di cui almeno 1 pagata per turno ARRIVA (${qArrivaDays} gg lavorati nel trimestre).
+                                Obiettivo trimestrale basato su una media di 7 emesse e 1 pagata per turno ARRIVA (${qArrivaDays} gg lavorati nel trimestre).
                             </p>
                             <div class="grid grid-cols-2 gap-3">
                                 <!-- Card 1: Emesse -->
                                 <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider font-semibold">EMESSE</span>
+                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">EMESSE</span>
                                     <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qArrivaTotalEmesse} / ${qArrivaTargetEmesse}</h4>
                                     <p class="${emDiffClass}">${emDiffText}</p>
                                 </div>
                                 <!-- Card 2: Pagate -->
                                 <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider font-semibold">PAGATE</span>
+                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">PAGATE</span>
                                     <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qArrivaTotalPagate} / ${qArrivaTargetPagate}</h4>
                                     <p class="${pagDiffClass}">${pagDiffText}</p>
                                 </div>
@@ -973,7 +1389,463 @@
                 }
             }
 
+            // --- Quarterly Bonus Conditional Section ---
+            let commQuarterInfo = null;
+            const currentMonth = currentDate.getMonth(); // 0-11 (Jan=0, June=5, Sept=8, Dec=11, March=2)
+            if (currentMonth === 5) {
+                commQuarterInfo = { quarterIndex: 1, year: currentYear, label: "Trimestre 1 (Gen-Mar)" };
+            } else if (currentMonth === 8) {
+                commQuarterInfo = { quarterIndex: 2, year: currentYear, label: "Trimestre 2 (Apr-Giu)" };
+            } else if (currentMonth === 11) {
+                commQuarterInfo = { quarterIndex: 3, year: currentYear, label: "Trimestre 3 (Lug-Set)" };
+            } else if (currentMonth === 2) {
+                commQuarterInfo = { quarterIndex: 4, year: currentYear - 1, label: "Trimestre 4 (Ott-Dic)" };
+            }
+
+            let bonusHtml = "";
+            if (commQuarterInfo !== null) {
+                const qIdx = commQuarterInfo.quarterIndex;
+                const qYr = commQuarterInfo.year;
+                const qLbl = commQuarterInfo.label;
+                const savedVal = safeLocalStorage.getItem(`bonus_${qYr}_${qIdx}`) || safeLocalStorage.getItem(`quarter_bonus_${qYr}_${qIdx}`);
+                const commQuarterBonus = savedVal !== null ? parseFloat(savedVal) : null;
+
+                bonusHtml = `
+                    <hr class="border-slate-800/80 my-3">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">Inserisci Bonus Trimestrale ${qLbl}</h5>
+                                <p class="text-[10px] text-slate-450 text-left">Comunicato in questo mese dal responsabile</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-black text-emerald-450">${commQuarterBonus !== null ? commQuarterBonus.toFixed(2) + ' €' : 'Non inserito'}</span>
+                            </div>
+                        </div>
+                        
+                        <div id="qBonusEditSection" class="space-y-3">
+                            <div id="qBonusDisplayRow" class="flex space-x-2 ${!isQuarterEditMode ? '' : 'hidden'}">
+                                <button onclick="enableQBonusEdit()" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-bold rounded-lg transition">
+                                    ${commQuarterBonus !== null ? 'Modifica Importo' : 'Inserisci Importo'}
+                                </button>
+                                ${commQuarterBonus !== null ? `
+                                    <button onclick="saveQuarterlyBonus(${qYr}, ${qIdx}, null)" class="flex-1 py-1.5 bg-red-955/20 border border-red-900/30 text-red-400 text-xs font-bold rounded-lg transition">
+                                        Rimuovi
+                                    </button>
+                                ` : ''}
+                            </div>
+                            <div id="qBonusEditRow" class="space-y-2 ${isQuarterEditMode ? '' : 'hidden'}">
+                                <div class="flex items-center space-x-2">
+                                    <input type="number" id="inputQBonus" placeholder="Es: 250.00" value="${commQuarterBonus !== null ? commQuarterBonus : ''}" step="0.01" min="0" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
+                                    <button onclick="submitQBonus(${qYr}, ${qIdx})" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-xs font-black rounded-lg transition">
+                                        Salva
+                                    </button>
+                                    <button onclick="disableQBonusEdit()" class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg transition">
+                                        Annulla
+                                    </button>
+                                </div>
+                                <p id="qBonusError" class="text-[10px] text-red-500 text-left hidden"></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let explanation = "";
+                if (quarterIndex === 1) explanation = "Inseribile a Giugno nel cedolino di Giugno.";
+                else if (quarterIndex === 2) explanation = "Inseribile a Settembre nel cedolino di Settembre.";
+                else if (quarterIndex === 3) explanation = "Inseribile a Dicembre nel cedolino di Dicembre.";
+                else explanation = "Inseribile a Marzo dell'anno successivo nel cedolino di Marzo.";
+
+                bonusHtml = `
+                    <hr class="border-slate-800/80 my-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">Importo Bonus Trimestrale</h5>
+                            <p class="text-[10px] text-slate-450 text-left">${explanation}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-lg font-black text-emerald-400">${evaluationBonus !== null ? evaluationBonus.toFixed(2) + ' €' : 'Non ancora comunicato'}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            htmlContent += bonusHtml;
             document.getElementById("qBody").innerHTML = htmlContent;
+
+            // --- Presenze & Assenze Mensili ---
+            const totalMalattiaMinutiRaw = records.reduce((acc, r) => {
+                if (r.shiftType === "MALATTIA" && (r.malattiaOre || 0) === 0 && (r.malattiaMinuti || 0) === 0) {
+                    return acc + 400;
+                } else {
+                    return acc + ((r.malattiaOre || 0) * 60 + (r.malattiaMinuti || 0));
+                }
+            }, 0);
+            const tMalattiaOre = Math.floor(totalMalattiaMinutiRaw / 60);
+            const tMalattiaMinuti = totalMalattiaMinutiRaw % 60;
+
+            const totalPermessoMinutiRaw = records.reduce((acc, r) => {
+                if (r.shiftType === "PERMESSO" && (r.permessoOre || 0) === 0 && (r.permessoMinuti || 0) === 0) {
+                    return acc + 400;
+                } else {
+                    return acc + ((r.permessoOre || 0) * 60 + (r.permessoMinuti || 0));
+                }
+            }, 0);
+            const tPermessoOre = Math.floor(totalPermessoMinutiRaw / 60);
+            const tPermessoMinuti = totalPermessoMinutiRaw % 60;
+
+            const totalMalattiaGiorni = records.filter(r => r.shiftType === "MALATTIA").length;
+            const totalPermessoGiorni = records.filter(r => r.shiftType === "PERMESSO").length;
+
+            document.getElementById("pLabelText").innerText = `Lavoro: ${totalWorkDays} gg | CTRL: ${totalCtrlDays} gg`;
+            document.getElementById("pBody").innerHTML = `
+                <div class="grid grid-cols-2 gap-3 text-left">
+                    <!-- Malattia Card -->
+                    <div class="bg-red-950/15 rounded-xl p-3 border border-red-900/30 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-red-400 tracking-wider">Malattia</span>
+                            <h4 class="text-base font-extrabold text-slate-100 mt-1">${totalMalattiaGiorni} giorni full</h4>
+                        </div>
+                        <span class="text-[10px] text-slate-400 mt-2 font-medium">Totale: ${tMalattiaOre}h ${tMalattiaMinuti}m</span>
+                    </div>
+
+                    <!-- Permessi Card -->
+                    <div class="bg-yellow-950/15 rounded-xl p-3 border border-yellow-900/30 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-yellow-500 tracking-wider">Permessi</span>
+                            <h4 class="text-base font-extrabold text-slate-100 mt-1">${totalPermessoGiorni} giorni full</h4>
+                        </div>
+                        <span class="text-[10px] text-slate-400 mt-2 font-medium">Totale: ${tPermessoOre}h ${tPermessoMinuti}m</span>
+                    </div>
+                </div>
+            `;
+
+            // --- Premio Valutazione Trimestrale ---
+            const evalContainer = document.getElementById("evalBonusCardContainer");
+            let evalQuarterInfo = null;
+            if (currentMonth === 3) { // Aprile (JS index 3)
+                evalQuarterInfo = { quarterIndex: 1, year: currentYear, label: "Trimestre 1 (Gen-Mar)" };
+            } else if (currentMonth === 6) { // Luglio (JS index 6)
+                evalQuarterInfo = { quarterIndex: 2, year: currentYear, label: "Trimestre 2 (Apr-Giu)" };
+            } else if (currentMonth === 9) { // Ottobre (JS index 9)
+                evalQuarterInfo = { quarterIndex: 3, year: currentYear, label: "Trimestre 3 (Lug-Set)" };
+            } else if (currentMonth === 0) { // Gennaio (JS index 0)
+                evalQuarterInfo = { quarterIndex: 4, year: currentYear - 1, label: "Trimestre 4 (Ott-Dic)" };
+            }
+
+            if (evalQuarterInfo !== null) {
+                evalContainer.classList.remove("hidden");
+                const qIdx = evalQuarterInfo.quarterIndex;
+                const qYr = evalQuarterInfo.year;
+                const qLbl = evalQuarterInfo.label;
+
+                const savedEvalBonus = safeLocalStorage.getItem(`eval_bonus_${qYr}_${qIdx}`);
+                const savedEvalScore = safeLocalStorage.getItem(`eval_score_${qYr}_${qIdx}`);
+                
+                const evalBonus = savedEvalBonus !== null ? parseFloat(savedEvalBonus) : null;
+                const evalScore = savedEvalScore !== null ? parseFloat(savedEvalScore) : null;
+
+                let evalBadgesHtml = `<span id="evalLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">${qLbl}</span>`;
+                if (evalScore !== null) {
+                    evalBadgesHtml += `<span class="text-[10px] bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-full border border-slate-700">Voto: ${evalScore.toFixed(1)}/10</span>`;
+                }
+                if (evalBonus !== null) {
+                    evalBadgesHtml += `<span class="text-[10px] bg-emerald-950/80 text-emerald-400 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">+${evalBonus.toFixed(2)} €</span>`;
+                }
+                document.getElementById("evalHeaderBadges").innerHTML = evalBadgesHtml;
+
+                let evalBodyHtml = "";
+
+                if (!isEvalEditMode) {
+                    evalBodyHtml = `
+                        <div class="space-y-3 text-left">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest">Valutazione del Responsabile</h5>
+                                    <p class="text-[10px] text-slate-450 mt-0.5">Valutazione riferita al trimestre precedente</p>
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3">
+                                ${(evalScore !== null || evalBonus !== null) ? `
+                                    ${evalScore !== null ? `
+                                        <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 flex-1 text-center">
+                                            <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">VOTO</span>
+                                            <h4 class="text-lg font-extrabold text-indigo-300 mt-0.5">${evalScore.toFixed(1)}/10</h4>
+                                        </div>
+                                    ` : ''}
+                                    ${evalBonus !== null ? `
+                                        <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 flex-1 text-center">
+                                            <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">IMPORTO BONUS</span>
+                                            <h4 class="text-lg font-extrabold text-emerald-400 mt-0.5">${evalBonus.toFixed(2)} €</h4>
+                                        </div>
+                                    ` : ''}
+                                ` : `
+                                    <p class="text-xs italic text-slate-450">Non inserito</p>
+                                `}
+                            </div>
+
+                            <div class="flex space-x-2 pt-2">
+                                <button onclick="enableEvalEdit(${evalScore}, ${evalBonus})" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-xs font-bold rounded-lg transition">
+                                    ${(evalScore !== null || evalBonus !== null) ? 'Modifica Valutazione' : 'Inserisci Valutazione'}
+                                </button>
+                                ${(evalScore !== null || evalBonus !== null) ? `
+                                    <button onclick="deleteEvaluation(${qYr}, ${qIdx})" class="flex-1 py-1.5 bg-red-955/20 border border-red-900/30 text-red-400 text-xs font-bold rounded-lg transition">
+                                        Rimuovi
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    evalBodyHtml = `
+                        <div class="space-y-3 text-left">
+                            <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest">Inserisci Valutazione</h5>
+                            
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-1">Voto in decimi (es: 9.5)</label>
+                                    <input type="number" id="inputEvalScore" placeholder="Es: 9.5" step="0.1" min="0" max="10" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-1">Importo Premio (€)</label>
+                                    <input type="number" id="inputEvalBonus" placeholder="Es: 250.00" step="0.01" min="0" max="300" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-emerald-400 font-bold focus:outline-none focus:border-indigo-500">
+                                </div>
+
+                                <p id="evalFormError" class="text-[10px] text-red-500 hidden"></p>
+
+                                <div class="flex space-x-2 pt-1">
+                                    <button onclick="submitEvaluation(${qYr}, ${qIdx})" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-xs font-black rounded-lg transition">
+                                        Salva
+                                    </button>
+                                    <button onclick="disableEvalEdit()" class="flex-1 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg transition">
+                                        Annulla
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById("evalBody").innerHTML = evalBodyHtml;
+            } else {
+                evalContainer.classList.add("hidden");
+            }
+
+            // --- Verifica Premio Presenza Annuo ---
+            const yearPrefix = `${currentYear}-`;
+            const yearKeys = Object.keys(shiftDatabase).filter(k => k.startsWith(yearPrefix));
+            
+            const monthNamesIT = [
+                "", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+            ];
+
+            const monthlySicknessDays = Array(13).fill(0.0);
+            const monthlyPermitDays = Array(13).fill(0.0);
+
+            let totalWorkedDaysYear = 0.0;
+            let totalSicknessDaysYear = 0.0;
+            let totalPermitDaysYear = 0.0;
+
+            for (const key of yearKeys) {
+                const record = shiftDatabase[key];
+                const parts = key.split("-");
+                const m = parseInt(parts[1]) || 1;
+                if (m < 1 || m > 12) continue;
+
+                if (record.shiftType === "CONTROLLERIA" || record.shiftType === "BIGLIETTERIA_ORIO") {
+                    totalWorkedDaysYear += 1.0;
+                }
+
+                let sicknessDaysForRecord = 0.0;
+                if (record.shiftType === "MALATTIA") {
+                    if ((record.malattiaOre || 0) === 0 && (record.malattiaMinuti || 0) === 0) {
+                        sicknessDaysForRecord = 1.0;
+                    } else {
+                        sicknessDaysForRecord = ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                    }
+                } else if ((record.malattiaOre || 0) > 0 || (record.malattiaMinuti || 0) > 0) {
+                    sicknessDaysForRecord = ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                }
+                monthlySicknessDays[m] += sicknessDaysForRecord;
+                totalSicknessDaysYear += sicknessDaysForRecord;
+
+                let permitDaysForRecord = 0.0;
+                if (record.shiftType === "PERMESSO") {
+                    if ((record.permessoOre || 0) === 0 && (record.permessoMinuti || 0) === 0) {
+                        permitDaysForRecord = 1.0;
+                    } else {
+                        permitDaysForRecord = ((record.permessoOre || 0) + ((record.permessoMinuti || 0) / 60.0)) / 8.0;
+                    }
+                } else if ((record.permessoOre || 0) > 0 || (record.permessoMinuti || 0) > 0) {
+                    permitDaysForRecord = ((record.permessoOre || 0) + ((record.permessoMinuti || 0) / 60.0)) / 8.0;
+                }
+                monthlyPermitDays[m] += permitDaysForRecord;
+                totalPermitDaysYear += permitDaysForRecord;
+            }
+
+            const totalExpectedDaysYear = totalWorkedDaysYear + totalSicknessDaysYear + totalPermitDaysYear;
+            const presencePercentage = totalExpectedDaysYear > 0.0 ? (totalWorkedDaysYear / totalExpectedDaysYear) * 100.0 : 100.0;
+
+            const decurtationMonthsList = [];
+            for (let m = 1; m <= 12; m++) {
+                const sickness = monthlySicknessDays[m];
+                const permit = monthlyPermitDays[m];
+                if (sickness > 0.0 || permit > 1.5) {
+                    decurtationMonthsList.push(monthNamesIT[m]);
+                }
+            }
+
+            const decCount = decurtationMonthsList.length;
+            let calculatedBonusAmount = 300.0;
+            if (presencePercentage < 95.0) {
+                calculatedBonusAmount = 0.0;
+            } else {
+                if (decCount === 1) {
+                    calculatedBonusAmount = 200.0;
+                } else if (decCount === 2) {
+                    calculatedBonusAmount = 100.0;
+                } else if (decCount >= 3) {
+                    calculatedBonusAmount = 0.0;
+                }
+            }
+
+            const savedOverride = safeLocalStorage.getItem(`override_${currentYear}`) || safeLocalStorage.getItem(`presence_bonus_override_${currentYear}`);
+            const overriddenAmount = savedOverride !== null ? parseFloat(savedOverride) : null;
+            const finalAmount = overriddenAmount !== null ? overriddenAmount : calculatedBonusAmount;
+
+            const isDecember = currentMonth === 11;
+            document.getElementById("paLabelText").innerText = currentYear;
+
+            let paBodyHtml = `
+                <div class="space-y-3 text-left">
+                    <p class="text-[11px] text-slate-450">
+                        Parametri di Calcolo (Base €300.00):
+                    </p>
+                    
+                    <div class="space-y-2 text-xs">
+                        <!-- Row for Attendance Rate -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400">• Tasso Presenza Annuale (Soglia 95%):</span>
+                            <span class="font-bold ${presencePercentage >= 95.0 ? 'text-emerald-400' : 'text-red-500'}">
+                                ${presencePercentage.toFixed(1)} %
+                            </span>
+                        </div>
+            `;
+
+            if (presencePercentage < 95.0) {
+                paBodyHtml += `
+                    <div class="bg-red-955/20 border border-red-900/30 text-red-400 text-[10px] font-semibold rounded-lg p-2.5">
+                        Tasso di presenza inferiore al 95%. Il premio si azzera automaticamente.
+                    </div>
+                `;
+            }
+
+            paBodyHtml += `
+                        <!-- Row for Sickness days in the year -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400">• Giorni Malattia (Totale anno):</span>
+                            <span class="font-bold ${totalSicknessDaysYear > 0 ? 'text-red-400' : 'text-slate-200'}">
+                                ${totalSicknessDaysYear.toFixed(2)} gg
+                            </span>
+                        </div>
+
+                        <!-- Row for Permit days in the year -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400">• Giorni Permesso (Totale anno):</span>
+                            <span class="font-bold text-slate-200">
+                                ${totalPermitDaysYear.toFixed(2)} gg
+                            </span>
+                        </div>
+
+                        <div class="border-t border-slate-800/80 my-2"></div>
+
+                        <!-- Row for Decurtation months count -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400">• Mesi decurtati (Malattia/Permessi > 1.5 gg):</span>
+                            <span class="font-bold ${decCount > 0 ? 'text-red-400' : 'text-emerald-400'}">
+                                ${decCount} mesi
+                            </span>
+                        </div>
+            `;
+
+            if (decurtationMonthsList.length > 0) {
+                paBodyHtml += `
+                    <p class="text-[10px] italic text-slate-450 pl-2">
+                        Mesi interessati: ${decurtationMonthsList.join(", ")}
+                    </p>
+                `;
+            } else {
+                paBodyHtml += `
+                    <p class="text-[10px] font-semibold text-emerald-400 pl-2">
+                        Nessuna decurtazione applicata 🎉
+                    </p>
+                `;
+            }
+
+            paBodyHtml += `
+                    </div>
+
+                    <div class="border-t border-slate-800/80 my-3"></div>
+
+                    <!-- Box for final Presence Bonus amount -->
+                    <div class="bg-indigo-950/20 border border-indigo-900/40 rounded-xl p-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-200">
+                                ${isDecember ? 'Premio Presenza' : 'Stima Premio Presenza'}
+                            </span>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-base font-black text-emerald-400">
+                                    ${finalAmount.toFixed(2)} €
+                                </span>
+            `;
+
+            if (isDecember && !isPresenceOverrideEditMode) {
+                paBodyHtml += `
+                    <button onclick="enablePresenceOverrideEdit()" class="p-1 hover:bg-slate-800 rounded transition" title="Modifica importo">
+                        <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                    </button>
+                `;
+            }
+
+            paBodyHtml += `
+                            </div>
+                        </div>
+            `;
+
+            if (isDecember && isPresenceOverrideEditMode) {
+                paBodyHtml += `
+                    <div class="border-t border-slate-800/50 mt-2.5 pt-2.5 space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="inputPresenceOverride" placeholder="Es: 250.00" step="0.01" min="0" value="${finalAmount.toFixed(2)}" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
+                            <button onclick="submitPresenceOverride(${currentYear})" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-xs font-black rounded-lg transition">
+                                Salva
+                            </button>
+                            <button onclick="disablePresenceOverrideEdit()" class="px-2 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg transition">
+                                Annulla
+                            </button>
+                            ${overriddenAmount !== null ? `
+                                <button onclick="resetPresenceOverride(${currentYear})" class="p-1.5 bg-red-955/20 border border-red-900/30 text-red-400 rounded-lg transition" title="Ripristina automatico">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H16"></path>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                        </div>
+                        <p id="presenceOverrideError" class="text-[10px] text-red-500 text-left hidden"></p>
+                    </div>
+                `;
+            }
+
+            paBodyHtml += `
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("paBody").innerHTML = paBodyHtml;
         }
 
         let isQuarterExpanded = false;
@@ -990,9 +1862,240 @@
             }
         }
 
+        // QBonus Interaction Handlers
+        let isQuarterEditMode = false;
+
+        function enableQBonusEdit() {
+            isQuarterEditMode = true;
+            updateUI();
+        }
+
+        function disableQBonusEdit() {
+            isQuarterEditMode = false;
+            updateUI();
+        }
+
+        function submitQBonus(year, quarterIdx) {
+            const input = document.getElementById("inputQBonus");
+            const err = document.getElementById("qBonusError");
+            const val = parseFloat(input.value);
+
+            if (isNaN(val)) {
+                err.innerText = "Inserisci un importo valido.";
+                err.classList.remove("hidden");
+                return;
+            }
+            if (val < 0) {
+                err.innerText = "L'importo non può essere negativo.";
+                err.classList.remove("hidden");
+                return;
+            }
+
+            err.classList.add("hidden");
+            saveQuarterlyBonus(year, quarterIdx, val);
+        }
+
+        function saveQuarterlyBonus(year, quarterIdx, amount) {
+            if (amount === null) {
+                safeLocalStorage.removeItem(`bonus_${year}_${quarterIdx}`);
+                safeLocalStorage.removeItem(`quarter_bonus_${year}_${quarterIdx}`);
+            } else {
+                safeLocalStorage.setItem(`bonus_${year}_${quarterIdx}`, amount);
+                safeLocalStorage.setItem(`quarter_bonus_${year}_${quarterIdx}`, amount);
+            }
+            isQuarterEditMode = false;
+            updateUI();
+        }
+
+        let isPresenzeExpanded = false;
+        function togglePresenzeView() {
+            isPresenzeExpanded = !isPresenzeExpanded;
+            const body = document.getElementById("pBody");
+            const icon = document.getElementById("pToggleIcon");
+            if (isPresenzeExpanded) {
+                body.classList.remove("hidden");
+                icon.classList.add("rotate-180");
+            } else {
+                body.classList.add("hidden");
+                icon.classList.remove("rotate-180");
+            }
+        }
+
+        let isPresenzaAnnuoExpanded = false;
+        function togglePresenzaAnnuoView() {
+            isPresenzaAnnuoExpanded = !isPresenzaAnnuoExpanded;
+            const body = document.getElementById("paBody");
+            const icon = document.getElementById("paToggleIcon");
+            if (isPresenzaAnnuoExpanded) {
+                body.classList.remove("hidden");
+                icon.classList.add("rotate-180");
+            } else {
+                body.classList.add("hidden");
+                icon.classList.remove("rotate-180");
+            }
+        }
+
+        let isEvalExpanded = false;
+        function toggleEvalView() {
+            isEvalExpanded = !isEvalExpanded;
+            const body = document.getElementById("evalBody");
+            const icon = document.getElementById("evalToggleIcon");
+            if (isEvalExpanded) {
+                body.classList.remove("hidden");
+                icon.classList.add("rotate-180");
+            } else {
+                body.classList.add("hidden");
+                icon.classList.remove("rotate-180");
+            }
+        }
+
+        let isPresenceOverrideEditMode = false;
+        function enablePresenceOverrideEdit() {
+            isPresenceOverrideEditMode = true;
+            updateUI();
+        }
+        function disablePresenceOverrideEdit() {
+            isPresenceOverrideEditMode = false;
+            updateUI();
+        }
+        function submitPresenceOverride(year) {
+            const input = document.getElementById("inputPresenceOverride");
+            const err = document.getElementById("presenceOverrideError");
+            const val = parseFloat(input.value);
+            if (isNaN(val) || val < 0) {
+                err.innerText = "Inserisci un importo valido (non negativo).";
+                err.classList.remove("hidden");
+                return;
+            }
+            err.classList.add("hidden");
+            safeLocalStorage.setItem(`override_${year}`, val);
+            safeLocalStorage.setItem(`presence_bonus_override_${year}`, val);
+            isPresenceOverrideEditMode = false;
+            updateUI();
+        }
+        function resetPresenceOverride(year) {
+            safeLocalStorage.removeItem(`override_${year}`);
+            safeLocalStorage.removeItem(`presence_bonus_override_${year}`);
+            isPresenceOverrideEditMode = false;
+            updateUI();
+        }
+
+        let isEvalEditMode = false;
+        function enableEvalEdit(savedScore, savedBonus) {
+            isEvalEditMode = true;
+            updateUI();
+            setTimeout(() => {
+                const scoreInput = document.getElementById("inputEvalScore");
+                const bonusInput = document.getElementById("inputEvalBonus");
+                if (scoreInput && savedScore !== null) scoreInput.value = savedScore;
+                if (bonusInput && savedBonus !== null) bonusInput.value = savedBonus;
+            }, 50);
+        }
+        function disableEvalEdit() {
+            isEvalEditMode = false;
+            updateUI();
+        }
+        function submitEvaluation(year, quarterIdx) {
+            const scoreInput = document.getElementById("inputEvalScore");
+            const bonusInput = document.getElementById("inputEvalBonus");
+            const err = document.getElementById("evalFormError");
+
+            const score = scoreInput.value ? parseFloat(scoreInput.value) : null;
+            const bonus = bonusInput.value ? parseFloat(bonusInput.value) : null;
+
+            if (scoreInput.value && (isNaN(score) || score < 0.0 || score > 10.0)) {
+                err.innerText = "Il voto deve essere compreso tra 0 e 10.";
+                err.classList.remove("hidden");
+                return;
+            }
+            if (bonusInput.value && (isNaN(bonus) || bonus < 0.0 || bonus > 300.0)) {
+                err.innerText = "L'importo del premio deve essere compreso tra €0 e €300.";
+                err.classList.remove("hidden");
+                return;
+            }
+
+            err.classList.add("hidden");
+            if (score !== null) {
+                safeLocalStorage.setItem(`eval_score_${year}_${quarterIdx}`, score);
+            } else {
+                safeLocalStorage.removeItem(`eval_score_${year}_${quarterIdx}`);
+            }
+            if (bonus !== null) {
+                safeLocalStorage.setItem(`eval_bonus_${year}_${quarterIdx}`, bonus);
+            } else {
+                safeLocalStorage.removeItem(`eval_bonus_${year}_${quarterIdx}`);
+            }
+            isEvalEditMode = false;
+            updateUI();
+        }
+        function deleteEvaluation(year, quarterIdx) {
+            safeLocalStorage.removeItem(`eval_score_${year}_${quarterIdx}`);
+            safeLocalStorage.removeItem(`eval_bonus_${year}_${quarterIdx}`);
+            isEvalEditMode = false;
+            updateUI();
+        }
+
+        function updatePermessoInputs() {
+            const oreInput = document.getElementById("inputPermessoOre");
+            const minInput = document.getElementById("inputPermessoMinuti");
+            let ore = parseInt(oreInput.value) || 0;
+            let min = parseInt(minInput.value) || 0;
+            ore = Math.max(0, Math.min(24, ore));
+            min = Math.max(0, Math.min(59, min));
+            oreInput.value = ore;
+            minInput.value = min;
+        }
+
         // Backup Management Functions
         function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shiftDatabase));
+            // Build daily_records array
+            const recordsArray = [];
+            for (const date in shiftDatabase) {
+                const rec = shiftDatabase[date];
+                recordsArray.push({
+                    date: date,
+                    shiftType: rec.shiftType || "RIPOSO",
+                    sanzioniEmesse: rec.sanzioniEmesse || 0,
+                    sanzioniPagateBordo: rec.sanzioniPagateBordo || 0,
+                    azienda: rec.azienda || "ATB",
+                    permessoOre: rec.permessoOre || 0,
+                    permessoMinuti: rec.permessoMinuti || 0,
+                    malattiaOre: rec.malattiaOre || 0,
+                    malattiaMinuti: rec.malattiaMinuti || 0,
+                    note: rec.note || ""
+                });
+            }
+
+            // Build preference maps
+            const presenceJson = {};
+            const quarterlyJson = {};
+            const evalJson = {};
+
+            for (let i = 0; i < safeLocalStorage.length; i++) {
+                const key = safeLocalStorage.key(i);
+                if (key.startsWith("override_")) {
+                    presenceJson[key] = parseFloat(safeLocalStorage.getItem(key));
+                } else if (key.startsWith("presence_bonus_override_")) {
+                    const yr = key.replace("presence_bonus_override_", "");
+                    presenceJson[`override_${yr}`] = parseFloat(safeLocalStorage.getItem(key));
+                } else if (key.startsWith("bonus_")) {
+                    quarterlyJson[key] = parseFloat(safeLocalStorage.getItem(key));
+                } else if (key.startsWith("quarter_bonus_")) {
+                    const parts = key.replace("quarter_bonus_", "").split("_");
+                    quarterlyJson[`bonus_${parts[0]}_${parts[1]}`] = parseFloat(safeLocalStorage.getItem(key));
+                } else if (key.startsWith("eval_bonus_") || key.startsWith("eval_score_")) {
+                    evalJson[key] = parseFloat(safeLocalStorage.getItem(key));
+                }
+            }
+
+            const exportObj = {
+                "daily_records": recordsArray,
+                "presence_bonus_prefs": presenceJson,
+                "quarterly_bonus_prefs": quarterlyJson,
+                "evaluation_quarterly_bonus_prefs": evalJson
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 4));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
             downloadAnchor.setAttribute("download", `emesso_holabg_backup_${new Date().toISOString().slice(0,10)}.json`);
@@ -1008,9 +2111,69 @@
                 try {
                     const parsedData = JSON.parse(reader.result);
                     if (parsedData && typeof parsedData === 'object') {
-                        shiftDatabase = parsedData;
-                        saveDatabase();
-                        alert("I dati sono stati caricati e ripristinati correttamente!");
+                        if (parsedData.daily_records && Array.isArray(parsedData.daily_records)) {
+                            // 1. Reset current database
+                            shiftDatabase = {};
+                            
+                            // 2. Load daily records
+                            parsedData.daily_records.forEach(r => {
+                                if (r.date) {
+                                    shiftDatabase[r.date] = {
+                                        shiftType: r.shiftType || "RIPOSO",
+                                        sanzioniEmesse: r.sanzioniEmesse || 0,
+                                        sanzioniPagateBordo: r.sanzioniPagateBordo || 0,
+                                        azienda: r.azienda || "ATB",
+                                        permessoOre: r.permessoOre || 0,
+                                        permessoMinuti: r.permessoMinuti || 0,
+                                        malattiaOre: r.malattiaOre || 0,
+                                        malattiaMinuti: r.malattiaMinuti || 0,
+                                        note: r.note || ""
+                                    };
+                                }
+                            });
+                            saveDatabase();
+
+                            // 3. Load presence_bonus_prefs
+                            if (parsedData.presence_bonus_prefs) {
+                                for (const k in parsedData.presence_bonus_prefs) {
+                                    const val = parsedData.presence_bonus_prefs[k];
+                                    safeLocalStorage.setItem(k, val);
+                                    if (k.startsWith("override_")) {
+                                        const yr = k.replace("override_", "");
+                                        safeLocalStorage.setItem(`presence_bonus_override_${yr}`, val);
+                                    }
+                                }
+                            }
+
+                            // 4. Load quarterly_bonus_prefs
+                            if (parsedData.quarterly_bonus_prefs) {
+                                for (const k in parsedData.quarterly_bonus_prefs) {
+                                    const val = parsedData.quarterly_bonus_prefs[k];
+                                    safeLocalStorage.setItem(k, val);
+                                    if (k.startsWith("bonus_")) {
+                                        const parts = k.replace("bonus_", "").split("_");
+                                        safeLocalStorage.setItem(`quarter_bonus_${parts[0]}_${parts[1]}`, val);
+                                    }
+                                }
+                            }
+
+                            // 5. Load evaluation_quarterly_bonus_prefs
+                            if (parsedData.evaluation_quarterly_bonus_prefs) {
+                                for (const k in parsedData.evaluation_quarterly_bonus_prefs) {
+                                    const val = parsedData.evaluation_quarterly_bonus_prefs[k];
+                                    safeLocalStorage.setItem(k, val);
+                                }
+                            }
+
+                            alert("I dati e le preferenze del bonus sono stati caricati e ripristinati correttamente!");
+                            updateUI();
+                        } else {
+                            // Direct map backup (old webapp style)
+                            shiftDatabase = parsedData;
+                            saveDatabase();
+                            alert("I turni sono stati caricati e ripristinati correttamente!");
+                            updateUI();
+                        }
                     } else {
                         alert("Errore: Formato dati non valido.");
                     }
