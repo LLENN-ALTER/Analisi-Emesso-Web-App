@@ -136,69 +136,70 @@
             </div>
 
             <!-- Selected Day Summary Card (Riepilogo Giorno Selezionato) -->
-            <div class="bg-slate-900 rounded-2xl p-4 shadow-xl border border-slate-850">
+            <div class="bg-[#14151f] rounded-xl p-3.5 shadow-lg border border-slate-800/30">
                 <!-- Header (clickable to toggle expansion) -->
                 <div onclick="toggleSummaryCollapse()" class="flex items-center justify-between cursor-pointer select-none">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/10">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/5">
                             <!-- Calendar icon -->
-                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Riepilogo Giorno Selezionato</span>
+                            <span class="text-[9px] text-slate-450 font-bold uppercase tracking-wider">RIEPILOGO GIORNO SELEZIONATO</span>
                             <span id="summaryDisplayDate" class="text-sm font-bold text-slate-100 mt-0.5">-</span>
                         </div>
                     </div>
-                    <button class="p-1 hover:bg-slate-800 rounded-lg text-slate-400 transition-colors">
-                        <svg id="summaryToggleIcon" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="w-7 h-7 rounded-full bg-slate-800/40 flex items-center justify-center border border-slate-700/20 text-slate-400 transition-colors hover:bg-slate-700/40">
+                        <svg id="summaryToggleIcon" class="w-3.5 h-3.5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path>
                         </svg>
                     </button>
                 </div>
 
                 <!-- Sliding Content Container -->
-                <div id="summaryCollapseBody" class="mt-4 pt-3 border-t border-slate-800/60 space-y-4 transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden" style="max-height: 500px; opacity: 1;">
+                <div id="summaryCollapseBody" class="mt-2 pt-1.5 border-t border-slate-800/40 space-y-2.5 transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden" style="max-height: 500px; opacity: 1;">
                     <!-- Badges (Left) & Note (Right) Row -->
-                    <div class="flex items-center justify-between space-x-3">
+                    <div class="flex items-center justify-between space-x-2">
                         <!-- Badges Column -->
-                        <div id="summaryBadges" class="flex flex-wrap gap-1.5 shrink-0">
+                        <div id="summaryBadges" class="flex flex-wrap gap-1 shrink-0">
                             <!-- Populated programmatically -->
                         </div>
                         <!-- Notes Space -->
                         <div class="flex-1 text-right min-w-0">
-                            <p id="summaryNotes" class="text-xs text-slate-300 font-medium italic break-words max-w-full">-</p>
+                            <p id="summaryNotes" class="text-[11px] text-slate-400 font-medium italic break-words max-w-full">-</p>
                         </div>
                     </div>
 
-                    <!-- Daily Summary Grid (Sanzioni Emesse e Pagate a Bordo) -->
-                    <div id="summarySanzioniRow" class="hidden grid grid-cols-2 gap-4 bg-[#13151b] border border-slate-850/50 rounded-xl p-3 text-center">
-                        <div>
-                            <div id="summaryEmesseVal" class="text-2xl font-black mb-0.5 text-rose-500">0</div>
-                            <div class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Sanzioni Emesse</div>
+                    <!-- Row containing stats, empty state or extra status and the button on the right at the same height -->
+                    <div class="flex items-center justify-between gap-3 pt-0.5">
+                        <!-- Daily Summary (Sanzioni Emesse e Pagate a Bordo) -->
+                        <div id="summarySanzioniRow" class="hidden flex items-center space-x-2">
+                            <div class="bg-[#11121a]/80 border border-slate-800/30 rounded-lg py-1 px-2 text-center flex flex-col justify-center items-center min-w-[64px]">
+                                <span id="summaryEmesseVal" class="text-xs font-black text-rose-500">0</span>
+                                <span id="summaryEmesseLabel" class="text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5">EMESSE</span>
+                            </div>
+                            <div class="bg-[#11121a]/80 border border-slate-800/30 rounded-lg py-1 px-2 text-center flex flex-col justify-center items-center min-w-[64px]">
+                                <span id="summaryPagateVal" class="text-xs font-black text-rose-500">0</span>
+                                <span id="summaryPagateLabel" class="text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5">PAGATE</span>
+                            </div>
                         </div>
-                        <div class="border-l border-slate-800/60">
-                            <div id="summaryPagateVal" class="text-2xl font-black mb-0.5 text-rose-500">0</div>
-                            <div class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Pagate a Bordo</div>
+
+                        <!-- Yellow box for Partial Sickness / Permissions / Extra Status -->
+                        <div id="summaryExtraStatus" class="hidden bg-white border border-amber-100 text-amber-500 rounded-xl p-2 text-xs font-bold flex items-center space-x-2 shadow-sm">
+                            <svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span id="summaryExtraStatusText">Permesso: 2h 0m</span>
                         </div>
-                    </div>
 
-                    <!-- Yellow box for Partial Sickness / Permissions / Extra Status -->
-                    <div id="summaryExtraStatus" class="hidden bg-white border border-amber-100 text-amber-500 rounded-xl p-2.5 text-xs font-bold flex items-center space-x-2 shadow-sm">
-                        <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span id="summaryExtraStatusText">Permesso: 2h 0m</span>
-                    </div>
+                        <!-- Empty state -->
+                        <div id="summaryEmptyState" class="hidden text-left py-1 text-xs text-slate-450 flex-1">
+                            Nessun turno registrato
+                        </div>
 
-                    <!-- Empty state -->
-                    <div id="summaryEmptyState" class="hidden text-center py-2 text-xs text-slate-450">
-                        Nessun turno registrato per questo giorno
-                    </div>
-
-                    <!-- Footer Action Row (Registra Turno Button on the bottom right) -->
-                    <div class="flex justify-end pt-1">
-                        <button id="summaryActionButton" onclick="openRegisterModal()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-extrabold text-xs rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1.5">
-                            <svg id="summaryActionButtonIcon" class="w-3.5 h-3.5 text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Action Button aligned perfectly at the base/height of the stats -->
+                        <button id="summaryActionButton" onclick="openRegisterModal()" class="ml-auto px-2.5 py-1 bg-indigo-600 hover:bg-indigo-550 text-slate-50 font-bold text-[11px] rounded-lg transition-all shadow-md active:scale-95 flex items-center space-x-1 shrink-0 self-center">
+                            <svg id="summaryActionButtonIcon" class="w-3 h-3 text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                             </svg>
                             <span id="summaryActionButtonText">Registra Turno</span>
@@ -389,10 +390,10 @@
 
     <!-- Registra Turno Dialog Modal -->
     <div id="registerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl relative animate-fade-in">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in" style="height: 80vh; max-height: 620px; min-height: 480px;">
             
             <!-- Modal Header -->
-            <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+            <div class="py-3 px-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
                 <div class="flex items-center space-x-2">
                     <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -424,127 +425,127 @@
             </div>
 
             <!-- Scrollable Modal Body -->
-            <div class="p-5 overflow-y-auto space-y-5 flex-1 select-none">
+            <div class="py-3.5 px-4 overflow-y-auto space-y-4 flex-1 min-h-0 select-none">
                 
                 <!-- Shift Type Radio Grid -->
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Seleziona Tipo di Turno</label>
-                    <div class="grid grid-cols-2 gap-2.5">
+                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Seleziona Tipo di Turno</label>
+                    <div class="grid grid-cols-2 gap-2">
                         <!-- Controlleria Button -->
-                        <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
-                            <span id="dotShiftControlleria" class="w-2.5 h-2.5 rounded-full bg-violet-500 shrink-0 hidden"></span>
+                        <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftControlleria" class="w-2 h-2 rounded-full bg-violet-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Controlleria</span>
                         </button>
                         
                         <!-- Aeroporto/Corso Button -->
-                        <button onclick="openSubTypeModal()" id="btnShiftOrio" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
-                            <span id="dotShiftOrio" class="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0 hidden"></span>
+                        <button onclick="openSubTypeModal()" id="btnShiftOrio" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftOrio" class="w-2 h-2 rounded-full bg-sky-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Aeroporto/Corso</span>
                         </button>
                         
                         <!-- Ferie Button -->
-                        <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
-                            <span id="dotShiftFerie" class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0 hidden"></span>
+                        <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftFerie" class="w-2 h-2 rounded-full bg-orange-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Ferie</span>
                         </button>
                         
                         <!-- Riposo Button -->
-                        <button onclick="setFormShiftType('RIPOSO')" id="btnShiftRiposo" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
-                            <span id="dotShiftRiposo" class="w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0 hidden"></span>
+                        <button onclick="setFormShiftType('RIPOSO')" id="btnShiftRiposo" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftRiposo" class="w-2 h-2 rounded-full bg-slate-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Riposo</span>
                         </button>
                         
                         <!-- Malattia Button -->
-                        <button onclick="setFormShiftType('MALATTIA')" id="btnShiftMalattia" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
-                            <span id="dotShiftMalattia" class="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0 hidden"></span>
+                        <button onclick="setFormShiftType('MALATTIA')" id="btnShiftMalattia" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftMalattia" class="w-2 h-2 rounded-full bg-rose-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Malattia</span>
                         </button>
                         
                         <!-- Permesso Button -->
-                        <button onclick="setFormShiftType('PERMESSO')" id="btnShiftPermesso" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
-                            <span id="dotShiftPermesso" class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 hidden"></span>
+                        <button onclick="setFormShiftType('PERMESSO')" id="btnShiftPermesso" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftPermesso" class="w-2 h-2 rounded-full bg-amber-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Permesso</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Controlleria Specific Fields -->
-                <div id="controlleriaFields" class="space-y-4 pt-4 border-t border-slate-800/60 hidden">
+                <div id="controlleriaFields" class="space-y-3 pt-3 border-t border-slate-800/60 hidden">
                     <!-- Company Switcher -->
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Azienda di Riferimento</label>
+                        <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Azienda di Riferimento</label>
                         <div class="flex space-x-3">
-                            <button onclick="setFormAzienda('ATB')" id="btnAziendaAtb" class="flex-1 py-2 text-[11px] font-black rounded-xl border transition-all">
+                            <button onclick="setFormAzienda('ATB')" id="btnAziendaAtb" class="flex-1 py-1.5 text-[11px] font-black rounded-xl border transition-all">
                                 ATB (Target: 11 / 3)
                             </button>
-                            <button onclick="setFormAzienda('ARRIVA')" id="btnAziendaArriva" class="flex-1 py-2 text-[11px] font-black rounded-xl border transition-all">
+                            <button onclick="setFormAzienda('ARRIVA')" id="btnAziendaArriva" class="flex-1 py-1.5 text-[11px] font-black rounded-xl border transition-all">
                                 Arriva (Target: 7 / 1)
                             </button>
                         </div>
                     </div>
 
                     <!-- Sanzioni Input Rows -->
-                    <div id="sanzioniInputsBlock" class="grid grid-cols-2 gap-4">
+                    <div id="sanzioniInputsBlock" class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Sanzioni Emesse</label>
-                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-1">
-                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">-</button>
-                                <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-12 text-center bg-transparent border-none text-base font-black text-indigo-300 focus:outline-none p-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">+</button>
+                            <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Sanzioni Emesse</label>
+                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-0.5">
+                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
+                                <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-10 text-center bg-transparent border-none text-sm font-black text-indigo-300 focus:outline-none p-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Pagate a Bordo</label>
-                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-1">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">-</button>
-                                <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-12 text-center bg-transparent border-none text-base font-black text-indigo-300 focus:outline-none p-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">+</button>
+                            <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Pagate a Bordo</label>
+                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-0.5">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
+                                <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-10 text-center bg-transparent border-none text-sm font-black text-indigo-300 focus:outline-none p-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Ore di Permesso Parziale -->
-                <div class="pt-4 border-t border-slate-800/60">
-                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Ore di Permesso Parziale</label>
-                    <div class="flex items-center justify-between bg-slate-950/30 border border-slate-850 p-3 rounded-xl">
+                <div class="pt-3 border-t border-slate-800/60">
+                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Ore di Permesso Parziale</label>
+                    <div class="flex items-center justify-between bg-slate-950/30 border border-slate-850 p-2.5 rounded-xl">
                         <div class="space-y-0.5 text-left">
                             <span class="text-xs font-bold text-slate-200">Permesso</span>
-                            <p class="text-[10px] text-slate-450">Inserisci ore e minuti</p>
+                            <p class="text-[9px] text-slate-450">Inserisci ore e minuti</p>
                         </div>
-                        <div class="flex space-x-3 items-center">
+                        <div class="flex space-x-2 items-center">
                             <!-- Ore -->
-                            <div class="flex items-center space-x-1 bg-slate-950/40 p-1 border border-slate-800 rounded-lg">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', -1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
-                                <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-7 text-center bg-transparent border-none text-xs font-bold text-indigo-300 focus:outline-none py-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', 1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
-                                <span class="text-[10px] text-slate-400 font-bold px-0.5">h</span>
+                            <div class="flex items-center space-x-1 bg-slate-950/40 p-0.5 border border-slate-800 rounded-lg">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', -1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">-</button>
+                                <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-6 text-center bg-transparent border-none text-[11px] font-bold text-indigo-300 focus:outline-none py-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', 1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">+</button>
+                                <span class="text-[9px] text-slate-400 font-bold px-0.5">h</span>
                             </div>
                             <!-- Minuti -->
-                            <div class="flex items-center space-x-1 bg-slate-950/40 p-1 border border-slate-800 rounded-lg">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', -5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
-                                <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-7 text-center bg-transparent border-none text-xs font-bold text-indigo-300 focus:outline-none py-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', 5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
-                                <span class="text-[10px] text-slate-400 font-bold px-0.5">m</span>
+                            <div class="flex items-center space-x-1 bg-slate-950/40 p-0.5 border border-slate-800 rounded-lg">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', -5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">-</button>
+                                <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-6 text-center bg-transparent border-none text-[11px] font-bold text-indigo-300 focus:outline-none py-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', 5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">+</button>
+                                <span class="text-[9px] text-slate-400 font-bold px-0.5">m</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Daily Note Field -->
-                <div class="pt-4 border-t border-slate-800/60">
-                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Note di oggi</label>
-                    <input type="text" id="inputNote" placeholder="Es: pioggia, sciopero, Corso..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                <div class="pt-3 border-t border-slate-800/60">
+                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Note di oggi</label>
+                    <input type="text" id="inputNote" placeholder="Es: pioggia, sciopero, Corso..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
                 </div>
 
             </div>
 
             <!-- Footer Buttons -->
-            <div class="p-4 border-t border-slate-800/80 bg-slate-900/50 flex space-x-3">
-                <button onclick="closeRegisterModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold text-xs rounded-xl transition-all active:scale-95">
+            <div class="py-3 px-4 border-t border-slate-800/80 bg-slate-900/50 flex space-x-3 shrink-0">
+                <button onclick="closeRegisterModal()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold text-xs rounded-xl transition-all active:scale-95">
                     Annulla
                 </button>
-                <button onclick="saveRecord(); closeRegisterModal();" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-bold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95">
+                <button onclick="saveRecord(); closeRegisterModal();" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-bold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95">
                     Salva Giorno
                 </button>
             </div>
@@ -891,10 +892,12 @@
                 // Sanzioni Row
                 if (record.shiftType === "CONTROLLERIA") {
                     sanzioniRow.classList.remove("hidden");
-                    sanzioniRow.classList.add("grid");
+                    sanzioniRow.classList.add("flex");
                     
                     const emesseValEl = document.getElementById("summaryEmesseVal");
                     const pagateValEl = document.getElementById("summaryPagateVal");
+                    const emesseLabelEl = document.getElementById("summaryEmesseLabel");
+                    const pagateLabelEl = document.getElementById("summaryPagateLabel");
                     
                     const emesse = record.sanzioniEmesse || 0;
                     const pagate = record.sanzioniPagateBordo || 0;
@@ -906,19 +909,27 @@
                     const targetPagate = record.azienda === "ARRIVA" ? 1 : 3;
                     
                     if (emesse >= targetEmesse) {
-                        emesseValEl.className = "text-2xl font-black mb-0.5 text-emerald-500";
+                        emesseValEl.className = "text-xs font-black text-emerald-500";
                     } else {
-                        emesseValEl.className = "text-2xl font-black mb-0.5 text-rose-500";
+                        emesseValEl.className = "text-xs font-black text-rose-500";
+                    }
+                    if (emesseLabelEl) {
+                        emesseLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                        emesseLabelEl.innerText = "EMESSE";
                     }
                     
                     if (pagate >= targetPagate) {
-                        pagateValEl.className = "text-2xl font-black mb-0.5 text-emerald-500";
+                        pagateValEl.className = "text-xs font-black text-emerald-500";
                     } else {
-                        pagateValEl.className = "text-2xl font-black mb-0.5 text-rose-500";
+                        pagateValEl.className = "text-xs font-black text-rose-500";
+                    }
+                    if (pagateLabelEl) {
+                        pagateLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                        pagateLabelEl.innerText = "PAGATE";
                     }
                 } else {
                     sanzioniRow.classList.add("hidden");
-                    sanzioniRow.classList.remove("grid");
+                    sanzioniRow.classList.remove("flex");
                 }
                 
                 // Extra Status (Permesso / Malattia)
@@ -931,7 +942,7 @@
                 }
                 
                 if (extraTexts.length > 0) {
-                    extraStatusEl.className = "bg-white border border-amber-100 text-amber-500 rounded-xl p-2.5 text-xs font-bold flex items-center space-x-2 shadow-sm";
+                    extraStatusEl.className = "bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg py-1 px-2 text-[10px] font-bold flex items-center space-x-1.5 shadow-sm";
                     extraStatusTextEl.innerText = extraTexts.join(" | ");
                 } else {
                     extraStatusEl.className = "hidden";
@@ -949,8 +960,19 @@
                 badgesContainer.innerHTML = "";
                 notesEl.innerText = "";
                 sanzioniRow.classList.add("hidden");
-                sanzioniRow.classList.remove("grid");
+                sanzioniRow.classList.remove("flex");
                 extraStatusEl.className = "hidden";
+                
+                const emesseLabelEl = document.getElementById("summaryEmesseLabel");
+                const pagateLabelEl = document.getElementById("summaryPagateLabel");
+                if (emesseLabelEl) {
+                    emesseLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                    emesseLabelEl.innerText = "EMESSE";
+                }
+                if (pagateLabelEl) {
+                    pagateLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                    pagateLabelEl.innerText = "PAGATE";
+                }
                 
                 // Action Button updates
                 if (actionButtonText) {
