@@ -53,15 +53,15 @@
         </h1>
         <div class="flex items-center space-x-3">
             <!-- Backup Button -->
-            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700">
+            <button onclick="exportData()" class="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-lg text-xs flex items-center space-x-1 border border-slate-700 active:scale-95 transition-transform">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 <span>Backup</span>
             </button>
-            <label class="p-1.5 bg-indigo-900/40 hover:bg-indigo-900/60 text-indigo-300 rounded-lg text-xs flex items-center space-x-1 border border-indigo-800 cursor-pointer">
+            <button onclick="document.getElementById('importFile').click()" class="p-1.5 bg-indigo-900/40 hover:bg-indigo-900/60 text-indigo-300 rounded-lg text-xs flex items-center space-x-1 border border-indigo-800 active:scale-95 transition-transform">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                 <span>Carica</span>
-                <input type="file" id="importFile" onchange="importData(event)" class="hidden">
-            </label>
+            </button>
+            <input type="file" id="importFile" onchange="importData(event)" class="hidden" accept=".json">
         </div>
     </header>
 
@@ -134,136 +134,82 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Side: Edit Form and Stats -->
-        <div class="space-y-6">
-
-            <!-- Active Edit Form Card -->
+            <!-- Selected Day Summary Card (Riepilogo Giorno Selezionato) -->
             <div class="bg-slate-900 rounded-2xl p-4 shadow-xl border border-slate-850">
-                <!-- Clickable Header to toggle collapse -->
-                <div onclick="toggleFormCollapse()" class="flex items-center justify-between cursor-pointer select-none pb-2 border-b border-slate-800">
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <h3 class="text-xs font-bold text-slate-350 flex items-center space-x-1.5 matches-heading">
-                            <span>Registra Turno:</span>
-                            <span id="selectedDateLabel" class="text-indigo-400 font-bold text-xs">2026-05-25</span>
-                        </h3>
-                        <svg id="formToggleIcon" class="w-3.5 h-3.5 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                        </svg>
+                <!-- Header (clickable to toggle expansion) -->
+                <div onclick="toggleSummaryCollapse()" class="flex items-center justify-between cursor-pointer select-none">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/10">
+                            <!-- Calendar icon -->
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Riepilogo Giorno Selezionato</span>
+                            <span id="summaryDisplayDate" class="text-sm font-bold text-slate-100 mt-0.5">-</span>
+                        </div>
                     </div>
-                    <!-- Badge (minimal and elegant style) -->
-                    <span id="activeBadge" class="text-[9px] uppercase px-2 py-0.5 rounded-md font-bold bg-slate-800 text-slate-400 tracking-wide border border-slate-755">Nessun Turno</span>
+                    <button class="p-1 hover:bg-slate-800 rounded-lg text-slate-400 transition-colors">
+                        <svg id="summaryToggleIcon" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path>
+                        </svg>
+                    </button>
                 </div>
 
-                <!-- Collapsible Form Content -->
-                <div id="formCollapseBody" class="hidden mt-4 space-y-4">
-                    <!-- Shift Type Grid Selection -->
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-2">Seleziona Tipo di Turno</label>
-                        <div class="grid grid-cols-3 gap-1.5">
-                            <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
-                                Controlleria
-                            </button>
-                            <button onclick="openSubTypeModal()" id="btnShiftOrio" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
-                                Aeroporto/Corso
-                            </button>
-                            <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
-                                Ferie
-                            </button>
-                            <button onclick="setFormShiftType('RIPOSO')" id="btnShiftRiposo" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
-                                Riposo
-                            </button>
-                            <button onclick="setFormShiftType('MALATTIA')" id="btnShiftMalattia" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
-                                Malattia
-                            </button>
-                            <button onclick="setFormShiftType('PERMESSO')" id="btnShiftPermesso" class="px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center">
-                                Permesso
-                            </button>
+                <!-- Sliding Content Container -->
+                <div id="summaryCollapseBody" class="mt-4 pt-3 border-t border-slate-800/60 space-y-4 transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden" style="max-height: 500px; opacity: 1;">
+                    <!-- Badges (Left) & Note (Right) Row -->
+                    <div class="flex items-center justify-between space-x-3">
+                        <!-- Badges Column -->
+                        <div id="summaryBadges" class="flex flex-wrap gap-1.5 shrink-0">
+                            <!-- Populated programmatically -->
+                        </div>
+                        <!-- Notes Space -->
+                        <div class="flex-1 text-right min-w-0">
+                            <p id="summaryNotes" class="text-xs text-slate-300 font-medium italic break-words max-w-full">-</p>
                         </div>
                     </div>
 
-                    <!-- Controlleria Specific Fields -->
-                    <div id="controlleriaFields" class="space-y-4 pt-2 border-t border-slate-800/60 hidden">
-                        <!-- Company Switcher -->
+                    <!-- Daily Summary Grid (Sanzioni Emesse e Pagate a Bordo) -->
+                    <div id="summarySanzioniRow" class="hidden grid grid-cols-2 gap-4 bg-[#13151b] border border-slate-850/50 rounded-xl p-3 text-center">
                         <div>
-                            <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-1.5">Azienda di Riferimento</label>
-                            <div class="flex space-x-3">
-                                <button onclick="setFormAzienda('ATB')" id="btnAziendaAtb" class="flex-1 py-1.5 text-[10px] font-semibold rounded-lg border transition-all">
-                                    ATB (Target: 11 / 3)
-                                </button>
-                                <button onclick="setFormAzienda('ARRIVA')" id="btnAziendaArriva" class="flex-1 py-1.5 text-[10px] font-semibold rounded-lg border transition-all">
-                                    Arriva (Target: 7 / 1)
-                                </button>
-                            </div>
+                            <div id="summaryEmesseVal" class="text-2xl font-black mb-0.5 text-rose-500">0</div>
+                            <div class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Sanzioni Emesse</div>
                         </div>
-
-                        <!-- Sanzioni Input Rows -->
-                        <div id="sanzioniInputsBlock" class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-450 mb-1">Sanzioni Emesse</label>
-                                <div class="flex items-center space-x-2">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputEmesse', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">-</button>
-                                    <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputEmesse', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">+</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-450 mb-1">Pagate a Bordo</label>
-                                <div class="flex items-center space-x-2">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputPagate', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">-</button>
-                                    <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-full text-center bg-slate-950 border border-slate-800 rounded-lg py-1 font-bold text-indigo-300 focus:outline-none focus:border-indigo-500">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputPagate', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded-lg active:scale-90 font-bold text-slate-300 select-none">+</button>
-                                </div>
-                            </div>
+                        <div class="border-l border-slate-800/60">
+                            <div id="summaryPagateVal" class="text-2xl font-black mb-0.5 text-rose-500">0</div>
+                            <div class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Pagate a Bordo</div>
                         </div>
                     </div>
 
-                    <!-- Ore di Permesso Parziale -->
-                    <div class="pt-2 border-t border-slate-800/60">
-                        <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-2">Ore di Permesso Parziale</label>
-                        <div class="flex items-center justify-between bg-slate-950/30 border border-slate-850 p-3 rounded-xl">
-                            <div class="space-y-0.5 text-left">
-                                <span class="text-xs font-bold text-slate-200">Permesso</span>
-                                <p class="text-[10px] text-slate-450">Ore e minuti di permesso</p>
-                            </div>
-                            <div class="flex space-x-3 items-center">
-                                <div class="flex items-center space-x-1">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', -1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
-                                    <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-8 text-center bg-slate-950 border border-slate-850 rounded text-xs font-bold text-indigo-300 focus:outline-none focus:border-indigo-500 py-0.5">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', 1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
-                                    <span class="text-[10px] text-slate-400 font-bold ml-1">h</span>
-                                </div>
-                                <div class="flex items-center space-x-1">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', -5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
-                                    <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-8 text-center bg-slate-950 border border-slate-850 rounded text-xs font-bold text-indigo-300 focus:outline-none focus:border-indigo-500 py-0.5">
-                                    <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', 5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-755 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
-                                    <span class="text-[10px] text-slate-400 font-bold ml-1">m</span>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Yellow box for Partial Sickness / Permissions / Extra Status -->
+                    <div id="summaryExtraStatus" class="hidden bg-white border border-amber-100 text-amber-500 rounded-xl p-2.5 text-xs font-bold flex items-center space-x-2 shadow-sm">
+                        <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span id="summaryExtraStatusText">Permesso: 2h 0m</span>
                     </div>
 
-                    <!-- Daily Note Field -->
-                    <div class="pt-2 border-t border-slate-800/60">
-                        <label class="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-1">Note di oggi</label>
-                        <input type="text" id="inputNote" placeholder="Es: pioggia, sciopero, Corso..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <!-- Empty state -->
+                    <div id="summaryEmptyState" class="hidden text-center py-2 text-xs text-slate-450">
+                        Nessun turno registrato per questo giorno
                     </div>
 
-                    <!-- Form Buttons -->
-                    <div class="flex space-x-3 pt-2">
-                        <button id="btnDelete" onclick="deleteRecord()" class="flex-1 py-2.5 bg-red-955/20 hover:bg-red-955/35 border border-red-900/30 text-red-400 font-extrabold text-xs rounded-xl transition-all active:scale-95">
-                            Elimina Giorno
-                        </button>
-                        <button onclick="saveRecord()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-extrabold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95">
-                            Salva Giorno
+                    <!-- Footer Action Row (Registra Turno Button on the bottom right) -->
+                    <div class="flex justify-end pt-1">
+                        <button id="summaryActionButton" onclick="openRegisterModal()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-extrabold text-xs rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1.5">
+                            <svg id="summaryActionButtonIcon" class="w-3.5 h-3.5 text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span id="summaryActionButtonText">Registra Turno</span>
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Right Side: Stats and Monthly KPI -->
+        <div class="space-y-6">
 
             <!-- Monthly KPI Badges and Stats -->
             <div class="space-y-4">
@@ -441,6 +387,171 @@
 
     </main>
 
+    <!-- Registra Turno Dialog Modal -->
+    <div id="registerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl relative animate-fade-in">
+            
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <h3 class="text-sm font-bold text-slate-100 flex items-center space-x-1.5">
+                        <span>Registra Turno</span>
+                        <span id="modalTitleDate" class="text-indigo-400 font-extrabold text-sm"></span>
+                        <!-- Hidden selectedDateLabel for JS compatibility -->
+                        <span id="selectedDateLabel" class="hidden"></span>
+                        <span id="activeBadge" class="hidden"></span>
+                    </h3>
+                </div>
+                
+                <!-- Close and Trash actions -->
+                <div class="flex items-center space-x-2.5">
+                    <!-- Trash can icon (delete) -->
+                    <button id="btnDelete" onclick="deleteRecord(); closeRegisterModal();" class="p-1.5 text-red-400 hover:bg-red-950/20 hover:text-red-300 rounded-lg transition-colors" title="Elimina giorno">
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                    <!-- Close button -->
+                    <button onclick="closeRegisterModal()" class="p-1.5 text-slate-400 hover:bg-slate-800 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Modal Body -->
+            <div class="p-5 overflow-y-auto space-y-5 flex-1 select-none">
+                
+                <!-- Shift Type Radio Grid -->
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Seleziona Tipo di Turno</label>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Controlleria Button -->
+                        <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftControlleria" class="w-2.5 h-2.5 rounded-full bg-violet-500 shrink-0 hidden"></span>
+                            <span class="text-xs font-bold">Controlleria</span>
+                        </button>
+                        
+                        <!-- Aeroporto/Corso Button -->
+                        <button onclick="openSubTypeModal()" id="btnShiftOrio" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftOrio" class="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0 hidden"></span>
+                            <span class="text-xs font-bold">Aeroporto/Corso</span>
+                        </button>
+                        
+                        <!-- Ferie Button -->
+                        <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftFerie" class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0 hidden"></span>
+                            <span class="text-xs font-bold">Ferie</span>
+                        </button>
+                        
+                        <!-- Riposo Button -->
+                        <button onclick="setFormShiftType('RIPOSO')" id="btnShiftRiposo" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftRiposo" class="w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0 hidden"></span>
+                            <span class="text-xs font-bold">Riposo</span>
+                        </button>
+                        
+                        <!-- Malattia Button -->
+                        <button onclick="setFormShiftType('MALATTIA')" id="btnShiftMalattia" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftMalattia" class="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0 hidden"></span>
+                            <span class="text-xs font-bold">Malattia</span>
+                        </button>
+                        
+                        <!-- Permesso Button -->
+                        <button onclick="setFormShiftType('PERMESSO')" id="btnShiftPermesso" class="flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                            <span id="dotShiftPermesso" class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 hidden"></span>
+                            <span class="text-xs font-bold">Permesso</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controlleria Specific Fields -->
+                <div id="controlleriaFields" class="space-y-4 pt-4 border-t border-slate-800/60 hidden">
+                    <!-- Company Switcher -->
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Azienda di Riferimento</label>
+                        <div class="flex space-x-3">
+                            <button onclick="setFormAzienda('ATB')" id="btnAziendaAtb" class="flex-1 py-2 text-[11px] font-black rounded-xl border transition-all">
+                                ATB (Target: 11 / 3)
+                            </button>
+                            <button onclick="setFormAzienda('ARRIVA')" id="btnAziendaArriva" class="flex-1 py-2 text-[11px] font-black rounded-xl border transition-all">
+                                Arriva (Target: 7 / 1)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sanzioni Input Rows -->
+                    <div id="sanzioniInputsBlock" class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Sanzioni Emesse</label>
+                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-1">
+                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">-</button>
+                                <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-12 text-center bg-transparent border-none text-base font-black text-indigo-300 focus:outline-none p-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">+</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Pagate a Bordo</label>
+                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-1">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">-</button>
+                                <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-12 text-center bg-transparent border-none text-base font-black text-indigo-300 focus:outline-none p-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-sm select-none">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ore di Permesso Parziale -->
+                <div class="pt-4 border-t border-slate-800/60">
+                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Ore di Permesso Parziale</label>
+                    <div class="flex items-center justify-between bg-slate-950/30 border border-slate-850 p-3 rounded-xl">
+                        <div class="space-y-0.5 text-left">
+                            <span class="text-xs font-bold text-slate-200">Permesso</span>
+                            <p class="text-[10px] text-slate-450">Inserisci ore e minuti</p>
+                        </div>
+                        <div class="flex space-x-3 items-center">
+                            <!-- Ore -->
+                            <div class="flex items-center space-x-1 bg-slate-950/40 p-1 border border-slate-800 rounded-lg">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', -1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
+                                <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-7 text-center bg-transparent border-none text-xs font-bold text-indigo-300 focus:outline-none py-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', 1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
+                                <span class="text-[10px] text-slate-400 font-bold px-0.5">h</span>
+                            </div>
+                            <!-- Minuti -->
+                            <div class="flex items-center space-x-1 bg-slate-950/40 p-1 border border-slate-800 rounded-lg">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', -5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
+                                <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-7 text-center bg-transparent border-none text-xs font-bold text-indigo-300 focus:outline-none py-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', 5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-6 h-6 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
+                                <span class="text-[10px] text-slate-400 font-bold px-0.5">m</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Note Field -->
+                <div class="pt-4 border-t border-slate-800/60">
+                    <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Note di oggi</label>
+                    <input type="text" id="inputNote" placeholder="Es: pioggia, sciopero, Corso..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="p-4 border-t border-slate-800/80 bg-slate-900/50 flex space-x-3">
+                <button onclick="closeRegisterModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold text-xs rounded-xl transition-all active:scale-95">
+                    Annulla
+                </button>
+                <button onclick="saveRecord(); closeRegisterModal();" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-bold text-xs rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95">
+                    Salva Giorno
+                </button>
+            </div>
+            
+        </div>
+    </div>
+
     <!-- Sub-Selection Dialog Modal -->
     <div id="subTypeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl">
@@ -605,6 +716,7 @@
         let activeShiftType = "CONTROLLERIA";
         let activeAzienda = "ATB";
         let isFormExpanded = false;
+        let isSummaryExpanded = true;
 
         // Local Storage Sync
         function loadDatabase() {
@@ -630,22 +742,227 @@
             return `${year}-${mm}-${dd}`;
         }
 
-        // Form Collapse Management
-        function toggleFormCollapse() {
-            isFormExpanded = !isFormExpanded;
-            updateFormCollapseUI();
+        // Modal Management
+        function openRegisterModal() {
+            const modal = document.getElementById("registerModal");
+            if (modal) {
+                modal.classList.remove("hidden");
+                const formatted = formatHeaderDateShort(selectedDateStr);
+                const titleDate = document.getElementById("modalTitleDate");
+                if (titleDate) {
+                    titleDate.innerText = `(${formatted})`;
+                }
+            }
         }
 
-        function updateFormCollapseUI() {
-            const body = document.getElementById("formCollapseBody");
-            const icon = document.getElementById("formToggleIcon");
-            if (isFormExpanded) {
-                body.classList.remove("hidden");
-                icon.classList.add("rotate-180");
-            } else {
-                body.classList.add("hidden");
-                icon.classList.remove("rotate-180");
+        function closeRegisterModal() {
+            const modal = document.getElementById("registerModal");
+            if (modal) {
+                modal.classList.add("hidden");
             }
+        }
+
+        function formatHeaderDateShort(dateStr) {
+            if (!dateStr) return "";
+            const parts = dateStr.split("-");
+            if (parts.length !== 3) return dateStr;
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]) - 1;
+            const day = parseInt(parts[2]);
+            const d = new Date(year, month, day);
+            const monthNames = [
+                "gen", "feb", "mar", "apr", "mag", "giu",
+                "lug", "ago", "set", "ott", "nov", "dic"
+            ];
+            return `${day} ${monthNames[month]}`;
+        }
+
+        function toggleFormCollapse() {}
+        function updateFormCollapseUI() {}
+
+        // Summary Card Collapse Management
+        function toggleSummaryCollapse() {
+            isSummaryExpanded = !isSummaryExpanded;
+            updateSummaryCollapseUI();
+        }
+
+        function updateSummaryCollapseUI() {
+            const body = document.getElementById("summaryCollapseBody");
+            const icon = document.getElementById("summaryToggleIcon");
+            if (!body || !icon) return;
+            if (isSummaryExpanded) {
+                body.style.maxHeight = body.scrollHeight + "px";
+                body.style.opacity = "1";
+                icon.classList.remove("rotate-180");
+            } else {
+                body.style.maxHeight = "0px";
+                body.style.opacity = "0";
+                icon.classList.add("rotate-180");
+            }
+        }
+
+        function formatDisplayDate(dateStr) {
+            if (!dateStr) return "";
+            const parts = dateStr.split("-");
+            if (parts.length !== 3) return dateStr;
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]) - 1;
+            const day = parseInt(parts[2]);
+            const d = new Date(year, month, day);
+            
+            const dayNames = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+            const monthNames = [
+                "gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno",
+                "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"
+            ];
+            return `${dayNames[d.getDay()]} ${day} ${monthNames[month]} ${year}`;
+        }
+
+        function updateSummaryCard(dateString) {
+            const displayDate = formatDisplayDate(dateString);
+            const dateLabel = document.getElementById("summaryDisplayDate");
+            if (dateLabel) {
+                dateLabel.innerText = displayDate;
+            }
+            
+            const record = shiftDatabase[dateString];
+            const badgesContainer = document.getElementById("summaryBadges");
+            const notesEl = document.getElementById("summaryNotes");
+            const sanzioniRow = document.getElementById("summarySanzioniRow");
+            const extraStatusEl = document.getElementById("summaryExtraStatus");
+            const extraStatusTextEl = document.getElementById("summaryExtraStatusText");
+            const emptyStateEl = document.getElementById("summaryEmptyState");
+            const actionButtonText = document.getElementById("summaryActionButtonText");
+            const actionButtonIcon = document.getElementById("summaryActionButtonIcon");
+            
+            if (!badgesContainer || !notesEl || !sanzioniRow || !extraStatusEl || !extraStatusTextEl || !emptyStateEl) return;
+            
+            if (record) {
+                emptyStateEl.classList.add("hidden");
+                
+                // Badges Column
+                badgesContainer.innerHTML = "";
+                let shiftClass = "";
+                let shiftLabel = "";
+                const isCorso = record.shiftType === "BIGLIETTERIA_ORIO" && record.note && record.note.toLowerCase() === "corso";
+                
+                if (record.shiftType === "CONTROLLERIA") {
+                    shiftClass = "bg-white text-violet-600 border-violet-500 shadow-sm";
+                    shiftLabel = "CONTROLLERIA";
+                } else if (record.shiftType === "BIGLIETTERIA_ORIO") {
+                    shiftClass = isCorso ? "bg-white text-purple-600 border-purple-500 shadow-sm" : "bg-white text-sky-600 border-sky-500 shadow-sm";
+                    shiftLabel = isCorso ? "CORSO" : "AEROPORTO";
+                } else if (record.shiftType === "FERIE") {
+                    shiftClass = "bg-white text-orange-600 border-orange-500 shadow-sm";
+                    shiftLabel = "FERIE";
+                } else if (record.shiftType === "RIPOSO") {
+                    shiftClass = "bg-white text-slate-500 border-slate-400 shadow-sm";
+                    shiftLabel = "RIPOSO";
+                } else if (record.shiftType === "MALATTIA") {
+                    shiftClass = "bg-white text-rose-600 border-rose-500 shadow-sm";
+                    shiftLabel = "MALATTIA";
+                } else if (record.shiftType === "PERMESSO") {
+                    shiftClass = "bg-white text-amber-600 border-amber-500 shadow-sm";
+                    shiftLabel = "PERMESSO";
+                }
+                
+                const mainBadge = document.createElement("span");
+                mainBadge.className = `text-[10px] font-black uppercase px-2.5 py-1 rounded-lg border ${shiftClass} tracking-wide`;
+                mainBadge.innerText = shiftLabel;
+                badgesContainer.appendChild(mainBadge);
+                
+                if (record.shiftType === "CONTROLLERIA" && record.azienda) {
+                    const compBadge = document.createElement("span");
+                    const compClass = record.azienda === "ARRIVA" ? "bg-white text-teal-600 border-teal-500 shadow-sm" : "bg-white text-indigo-600 border-indigo-500 shadow-sm";
+                    compBadge.className = `text-[10px] font-black uppercase px-2.5 py-1 rounded-lg border ${compClass} tracking-wide`;
+                    compBadge.innerText = record.azienda;
+                    badgesContainer.appendChild(compBadge);
+                }
+                
+                // Notes Space
+                if (record.note && record.note.trim()) {
+                    notesEl.innerText = record.note.trim();
+                    notesEl.classList.remove("text-slate-500", "italic");
+                    notesEl.classList.add("text-slate-300");
+                } else {
+                    notesEl.innerText = "";
+                }
+                
+                // Sanzioni Row
+                if (record.shiftType === "CONTROLLERIA") {
+                    sanzioniRow.classList.remove("hidden");
+                    sanzioniRow.classList.add("grid");
+                    
+                    const emesseValEl = document.getElementById("summaryEmesseVal");
+                    const pagateValEl = document.getElementById("summaryPagateVal");
+                    
+                    const emesse = record.sanzioniEmesse || 0;
+                    const pagate = record.sanzioniPagateBordo || 0;
+                    
+                    emesseValEl.innerText = emesse;
+                    pagateValEl.innerText = pagate;
+                    
+                    const targetEmesse = record.azienda === "ARRIVA" ? 7 : 11;
+                    const targetPagate = record.azienda === "ARRIVA" ? 1 : 3;
+                    
+                    if (emesse >= targetEmesse) {
+                        emesseValEl.className = "text-2xl font-black mb-0.5 text-emerald-500";
+                    } else {
+                        emesseValEl.className = "text-2xl font-black mb-0.5 text-rose-500";
+                    }
+                    
+                    if (pagate >= targetPagate) {
+                        pagateValEl.className = "text-2xl font-black mb-0.5 text-emerald-500";
+                    } else {
+                        pagateValEl.className = "text-2xl font-black mb-0.5 text-rose-500";
+                    }
+                } else {
+                    sanzioniRow.classList.add("hidden");
+                    sanzioniRow.classList.remove("grid");
+                }
+                
+                // Extra Status (Permesso / Malattia)
+                let extraTexts = [];
+                if (record.permessoOre > 0 || record.permessoMinuti > 0) {
+                    extraTexts.push(`Permesso: ${record.permessoOre}h ${record.permessoMinuti}m`);
+                }
+                if (record.malattiaOre > 0 || record.malattiaMinuti > 0) {
+                    extraTexts.push(`Malattia: ${record.malattiaOre}h ${record.malattiaMinuti}m`);
+                }
+                
+                if (extraTexts.length > 0) {
+                    extraStatusEl.className = "bg-white border border-amber-100 text-amber-500 rounded-xl p-2.5 text-xs font-bold flex items-center space-x-2 shadow-sm";
+                    extraStatusTextEl.innerText = extraTexts.join(" | ");
+                } else {
+                    extraStatusEl.className = "hidden";
+                }
+                
+                // Action Button updates
+                if (actionButtonText) {
+                    actionButtonText.innerText = "Modifica Turno";
+                }
+                if (actionButtonIcon) {
+                    actionButtonIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>`;
+                }
+            } else {
+                emptyStateEl.classList.remove("hidden");
+                badgesContainer.innerHTML = "";
+                notesEl.innerText = "";
+                sanzioniRow.classList.add("hidden");
+                sanzioniRow.classList.remove("grid");
+                extraStatusEl.className = "hidden";
+                
+                // Action Button updates
+                if (actionButtonText) {
+                    actionButtonText.innerText = "Registra Turno";
+                }
+                if (actionButtonIcon) {
+                    actionButtonIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>`;
+                }
+            }
+            
+            // Recalculate and update collapse animation height smoothly after render
+            setTimeout(updateSummaryCollapseUI, 0);
         }
 
         // Dynamically style input colors based on objectives to align with "Obiettivi & Medie Giornaliere"
@@ -749,6 +1066,7 @@
                 }
             }
             saveRecord();
+            closeRegisterModal();
         }
 
         // Initialize App
@@ -761,6 +1079,7 @@
             
             // Set fields to appropriate states
             updateFormCollapseUI();
+            updateSummaryCollapseUI();
             setFormShiftType("CONTROLLERIA");
             setFormAzienda("ATB");
             
@@ -1028,43 +1347,75 @@
             }
             
             updateUI();
+            updateSummaryCard(dateString);
         }
 
         // Set actively chosen form shift type
         function setFormShiftType(type) {
             activeShiftType = type;
             
-            // Update buttons visually
-            const map = {
-                'CONTROLLERIA': { btn: 'btnShiftControlleria', color: ClassControlleria },
-                'BIGLIETTERIA_ORIO': { btn: 'btnShiftOrio', color: ClassOrio },
-                'FERIE': { btn: 'btnShiftFerie', color: ClassFerie },
-                'RIPOSO': { btn: 'btnShiftRiposo', color: ClassRiposo },
-                'MALATTIA': { btn: 'btnShiftMalattia', color: ClassMalattia },
-                'PERMESSO': { btn: 'btnShiftPermesso', color: ClassPermesso }
+            const configs = {
+                'CONTROLLERIA': {
+                    btn: 'btnShiftControlleria',
+                    dot: 'dotShiftControlleria',
+                    activeClass: 'border-violet-500 bg-violet-950/20 text-violet-400',
+                    inactiveClass: 'border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700'
+                },
+                'BIGLIETTERIA_ORIO': {
+                    btn: 'btnShiftOrio',
+                    dot: 'dotShiftOrio',
+                    activeClass: 'border-sky-500 bg-sky-950/20 text-sky-400',
+                    inactiveClass: 'border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700'
+                },
+                'FERIE': {
+                    btn: 'btnShiftFerie',
+                    dot: 'dotShiftFerie',
+                    activeClass: 'border-orange-500 bg-orange-950/20 text-orange-400',
+                    inactiveClass: 'border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700'
+                },
+                'RIPOSO': {
+                    btn: 'btnShiftRiposo',
+                    dot: 'dotShiftRiposo',
+                    activeClass: 'border-slate-500 bg-slate-950/20 text-slate-300',
+                    inactiveClass: 'border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700'
+                },
+                'MALATTIA': {
+                    btn: 'btnShiftMalattia',
+                    dot: 'dotShiftMalattia',
+                    activeClass: 'border-rose-500 bg-rose-950/20 text-rose-400',
+                    inactiveClass: 'border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700'
+                },
+                'PERMESSO': {
+                    btn: 'btnShiftPermesso',
+                    dot: 'dotShiftPermesso',
+                    activeClass: 'border-amber-500 bg-amber-950/20 text-amber-400',
+                    inactiveClass: 'border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700'
+                }
             };
 
-            for (const key in map) {
-                const btn = document.getElementById(map[key].btn);
+            for (const key in configs) {
+                const conf = configs[key];
+                const btn = document.getElementById(conf.btn);
+                const dot = document.getElementById(conf.dot);
+                if (!btn) continue;
+                
                 if (key === type) {
-                    btn.className = `px-1.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-all text-center ${map[key].color}`;
+                    btn.className = `flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left ${conf.activeClass}`;
+                    if (dot) dot.classList.remove("hidden");
                 } else {
-                    btn.className = `px-1.5 py-1.5 text-[11px] font-medium rounded-lg border border-slate-800 bg-slate-950/20 text-slate-400 hover:text-slate-200 text-center`;
+                    btn.className = `flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left ${conf.inactiveClass}`;
+                    if (dot) dot.classList.add("hidden");
                 }
             }
 
-            // Toggle controlleria and absence reference fields
+            // Toggle controlleria specific fields
             const ctrlFields = document.getElementById("controlleriaFields");
-            const sanzioniBlock = document.getElementById("sanzioniInputsBlock");
-            if (type === "CONTROLLERIA" || type === "PERMESSO" || type === "MALATTIA") {
-                ctrlFields.classList.remove("hidden");
+            if (ctrlFields) {
                 if (type === "CONTROLLERIA") {
-                    sanzioniBlock.classList.remove("hidden");
+                    ctrlFields.classList.remove("hidden");
                 } else {
-                    sanzioniBlock.classList.add("hidden");
+                    ctrlFields.classList.add("hidden");
                 }
-            } else {
-                ctrlFields.classList.add("hidden");
             }
 
             // Sync input display colors
@@ -1077,12 +1428,14 @@
             const btnAtb = document.getElementById("btnAziendaAtb");
             const btnArriva = document.getElementById("btnAziendaArriva");
 
+            if (!btnAtb || !btnArriva) return;
+
             if (azienda === "ATB") {
-                btnAtb.className = "flex-1 py-1.5 text-[10px] font-semibold rounded-lg border bg-emerald-950/15 border-emerald-500/40 text-emerald-400 transition-all";
-                btnArriva.className = "flex-1 py-1.5 text-[10px] font-medium rounded-lg border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
+                btnAtb.className = "flex-1 py-2 text-[11px] font-black rounded-xl border bg-emerald-950/15 border-emerald-500/40 text-emerald-400 transition-all";
+                btnArriva.className = "flex-1 py-2 text-[11px] font-medium rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
             } else {
-                btnArriva.className = "flex-1 py-1.5 text-[10px] font-semibold rounded-lg border bg-emerald-950/15 border-emerald-500/40 text-emerald-400 transition-all";
-                btnAtb.className = "flex-1 py-1.5 text-[10px] font-medium rounded-lg border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
+                btnArriva.className = "flex-1 py-2 text-[11px] font-black rounded-xl border bg-emerald-950/15 border-emerald-500/40 text-emerald-400 transition-all";
+                btnAtb.className = "flex-1 py-2 text-[11px] font-medium rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
             }
 
             // Sync input display colors
