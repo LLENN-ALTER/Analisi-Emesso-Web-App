@@ -31,6 +31,15 @@
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        /* Disable number input spinner arrows */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
@@ -159,51 +168,62 @@
                 </div>
 
                 <!-- Sliding Content Container -->
-                <div id="summaryCollapseBody" class="mt-2 pt-1.5 border-t border-slate-800/40 space-y-2.5 transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden" style="max-height: 500px; opacity: 1;">
-                    <!-- Badges (Left) & Note (Right) Row -->
-                    <div class="flex items-center justify-between space-x-2">
-                        <!-- Badges Column -->
-                        <div id="summaryBadges" class="flex flex-wrap gap-1 shrink-0">
-                            <!-- Populated programmatically -->
-                        </div>
-                        <!-- Notes Space -->
-                        <div class="flex-1 text-right min-w-0">
-                            <p id="summaryNotes" class="text-[11px] text-slate-400 font-medium italic break-words max-w-full">-</p>
-                        </div>
-                    </div>
-
-                    <!-- Row containing stats, empty state or extra status and the button on the right at the same height -->
-                    <div class="flex items-center justify-between gap-3 pt-0.5">
-                        <!-- Daily Summary (Sanzioni Emesse e Pagate a Bordo) -->
-                        <div id="summarySanzioniRow" class="hidden flex items-center space-x-2">
-                            <div class="bg-[#11121a]/80 border border-slate-800/30 rounded-lg py-1 px-2 text-center flex flex-col justify-center items-center min-w-[64px]">
-                                <span id="summaryEmesseVal" class="text-xs font-black text-rose-500">0</span>
-                                <span id="summaryEmesseLabel" class="text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5">EMESSE</span>
+                <div id="summaryCollapseBody" class="mt-2 pt-2 border-t border-slate-800/40 transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden" style="max-height: 500px; opacity: 1;">
+                    <div class="flex flex-col gap-3">
+                        <!-- Top Row: Badges (Left) & Notes (Right) -->
+                        <div class="flex items-center justify-between gap-3 min-h-[28px]">
+                            <!-- Badges -->
+                            <div id="summaryBadges" class="flex flex-wrap gap-1 items-center">
+                                <!-- Populated programmatically -->
                             </div>
-                            <div class="bg-[#11121a]/80 border border-slate-800/30 rounded-lg py-1 px-2 text-center flex flex-col justify-center items-center min-w-[64px]">
-                                <span id="summaryPagateVal" class="text-xs font-black text-rose-500">0</span>
-                                <span id="summaryPagateLabel" class="text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5">PAGATE</span>
+                            
+                            <!-- Notes Space (Plain text with notepad icon) -->
+                            <div class="flex items-center space-x-1.5 text-right min-w-0 max-w-[65%] justify-end shrink">
+                                <svg class="w-3.5 h-3.5 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                <span id="summaryNotes" class="text-[11px] text-slate-450 font-medium leading-tight truncate italic">Nessuna nota</span>
                             </div>
                         </div>
 
-                        <!-- Yellow box for Partial Sickness / Permissions / Extra Status -->
-                        <div id="summaryExtraStatus" class="hidden bg-white border border-amber-100 text-amber-500 rounded-xl p-2 text-xs font-bold flex items-center space-x-2 shadow-sm">
-                            <svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span id="summaryExtraStatusText">Permesso: 2h 0m</span>
+                        <!-- Middle Row: Sanzioni (Left) & Empty state (If no shift) -->
+                        <div class="flex items-center justify-between">
+                            <!-- Left: Sanzioni boxes -->
+                            <div id="summarySanzioniRow" class="hidden items-center space-x-2 shrink-0">
+                                <div class="bg-[#11121a]/85 border border-slate-800/40 rounded-lg py-1 px-3 text-center flex flex-col justify-center items-center min-w-[72px]">
+                                    <span id="summaryEmesseVal" class="text-[17px] font-black text-rose-500 leading-tight">0</span>
+                                    <span id="summaryEmesseLabel" class="text-[8px] uppercase tracking-wider font-extrabold text-slate-400 leading-none mt-0.5">EMESSE</span>
+                                </div>
+                                <div class="bg-[#11121a]/85 border border-slate-800/40 rounded-lg py-1 px-3 text-center flex flex-col justify-center items-center min-w-[72px]">
+                                    <span id="summaryPagateVal" class="text-[14px] font-black text-rose-500 leading-tight">0</span>
+                                    <span id="summaryPagateLabel" class="text-[8px] uppercase tracking-wider font-extrabold text-slate-400 leading-none mt-0.5">PAGATE</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Empty state (if no shift) -->
+                            <div id="summaryEmptyState" class="hidden text-left py-1 text-xs text-slate-450 flex-1">
+                                Nessun turno registrato
+                            </div>
                         </div>
 
-                        <!-- Empty state -->
-                        <div id="summaryEmptyState" class="hidden text-left py-1 text-xs text-slate-450 flex-1">
-                            Nessun turno registrato
-                        </div>
+                        <!-- Bottom Row: Extra Status (Permesso / Malattia) & Action Button -->
+                        <div class="flex items-center justify-between gap-2.5 mt-0.5">
+                            <!-- Yellow box for Partial Sickness / Permissions / Extra Status -->
+                            <div id="summaryExtraStatus" class="hidden bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-md py-0.5 px-2 text-[9px] font-bold flex items-center space-x-1 shadow-sm whitespace-nowrap">
+                                <svg class="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span id="summaryExtraStatusText">Permesso: 2h 0m</span>
+                            </div>
 
-                        <!-- Action Button aligned perfectly at the base/height of the stats -->
-                        <button id="summaryActionButton" onclick="openRegisterModal()" class="ml-auto px-2.5 py-1 bg-indigo-600 hover:bg-indigo-550 text-slate-50 font-bold text-[11px] rounded-lg transition-all shadow-md active:scale-95 flex items-center space-x-1 shrink-0 self-center">
-                            <svg id="summaryActionButtonIcon" class="w-3 h-3 text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            <span id="summaryActionButtonText">Registra Turno</span>
-                        </button>
+                            <!-- Action Button aligned perfectly at the base/height of the stats -->
+                            <button id="summaryActionButton" onclick="openRegisterModal()" class="ml-auto px-3 py-1.5 bg-indigo-600 hover:bg-indigo-550 text-slate-50 font-bold text-[11.5px] rounded-lg transition-all shadow-md active:scale-95 flex items-center space-x-1.5 shrink-0">
+                                <svg id="summaryActionButtonIcon" class="w-3.5 h-3.5 text-slate-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <span id="summaryActionButtonText">Registra Turno</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -394,16 +414,16 @@
             
             <!-- Modal Header -->
             <div class="py-3 px-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
-                <div class="flex items-center space-x-2">
-                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center space-x-1.5 min-w-0">
+                    <svg class="w-4 h-4 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    <h3 class="text-sm font-bold text-slate-100 flex items-center space-x-1.5">
-                        <span>Registra Turno</span>
-                        <span id="modalTitleDate" class="text-indigo-400 font-extrabold text-sm"></span>
+                    <h3 class="text-xs md:text-sm font-bold text-slate-100 flex items-center gap-1.5 min-w-0">
+                        <span class="whitespace-nowrap shrink-0">Registra Turno</span>
+                        <span id="modalTitleDate" class="text-indigo-400 font-extrabold whitespace-nowrap shrink-0"></span>
                         <!-- Hidden selectedDateLabel for JS compatibility -->
                         <span id="selectedDateLabel" class="hidden"></span>
-                        <span id="activeBadge" class="hidden"></span>
+                        <span id="activeBadge" class="text-[9px] uppercase px-1.5 py-0.5 rounded-full font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 truncate max-w-[80px] md:max-w-none hidden"></span>
                     </h3>
                 </div>
                 
@@ -488,18 +508,22 @@
                     <div id="sanzioniInputsBlock" class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Sanzioni Emesse</label>
-                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-0.5">
-                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
-                                <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-10 text-center bg-transparent border-none text-sm font-black text-indigo-300 focus:outline-none p-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
+                            <div class="flex items-center justify-center space-x-2 py-1">
+                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 text-slate-200 rounded-lg active:scale-90 font-bold text-base select-none">-</button>
+                                <div class="bg-slate-950/40 border border-slate-800 rounded-lg w-10 h-8 flex items-center justify-center shrink-0">
+                                    <input type="number" id="inputEmesse" value="0" oninput="updateInputColors()" class="w-full text-center bg-transparent border-none text-base font-black text-indigo-300 focus:outline-none p-0 shrink-0">
+                                </div>
+                                <button onpointerdown="handleStartLongPress(event, 'inputEmesse', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 text-slate-200 rounded-lg active:scale-90 font-bold text-base select-none">+</button>
                             </div>
                         </div>
                         <div>
                             <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Pagate a Bordo</label>
-                            <div class="flex items-center justify-between bg-slate-950/40 border border-slate-800 rounded-xl p-0.5">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">-</button>
-                                <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-10 text-center bg-transparent border-none text-sm font-black text-indigo-300 focus:outline-none p-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-7 h-7 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg active:scale-90 font-bold text-slate-300 text-xs select-none">+</button>
+                            <div class="flex items-center justify-center space-x-2 py-1">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', -1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 text-slate-200 rounded-lg active:scale-90 font-bold text-base select-none">-</button>
+                                <div class="bg-slate-950/40 border border-slate-800 rounded-lg w-10 h-8 flex items-center justify-center shrink-0">
+                                    <input type="number" id="inputPagate" value="0" oninput="updateInputColors()" class="w-full text-center bg-transparent border-none text-base font-black text-indigo-300 focus:outline-none p-0 shrink-0">
+                                </div>
+                                <button onpointerdown="handleStartLongPress(event, 'inputPagate', 1)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-8 h-8 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 text-slate-200 rounded-lg active:scale-90 font-bold text-base select-none">+</button>
                             </div>
                         </div>
                     </div>
@@ -509,24 +533,28 @@
                 <div class="pt-3 border-t border-slate-800/60">
                     <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Ore di Permesso Parziale</label>
                     <div class="flex items-center justify-between bg-slate-950/30 border border-slate-850 p-2.5 rounded-xl">
-                        <div class="space-y-0.5 text-left">
+                        <div class="space-y-0.5 text-left shrink-0">
                             <span class="text-xs font-bold text-slate-200">Permesso</span>
-                            <p class="text-[9px] text-slate-450">Inserisci ore e minuti</p>
+                            <p class="text-[9px] text-slate-450 whitespace-nowrap">Inserisci ore e minuti</p>
                         </div>
-                        <div class="flex space-x-2 items-center">
+                        <div class="flex space-x-2 items-center shrink-0">
                             <!-- Ore -->
-                            <div class="flex items-center space-x-1 bg-slate-950/40 p-0.5 border border-slate-800 rounded-lg">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', -1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">-</button>
-                                <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-6 text-center bg-transparent border-none text-[11px] font-bold text-indigo-300 focus:outline-none py-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', 1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">+</button>
-                                <span class="text-[9px] text-slate-400 font-bold px-0.5">h</span>
+                            <div class="flex items-center space-x-1 shrink-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', -1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5 h-5 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 rounded active:scale-90 font-bold text-slate-200 text-xs select-none">-</button>
+                                <div class="bg-slate-950/40 border border-slate-800 rounded w-7 h-5 flex items-center justify-center shrink-0">
+                                    <input type="number" id="inputPermessoOre" value="0" min="0" max="24" oninput="updatePermessoInputs()" class="w-full text-center bg-transparent border-none text-xs font-black text-indigo-300 focus:outline-none p-0 shrink-0">
+                                </div>
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoOre', 1, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5 h-5 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 rounded active:scale-90 font-bold text-slate-200 text-xs select-none">+</button>
+                                <span class="text-[10px] text-slate-400 font-bold select-none shrink-0">h</span>
                             </div>
                             <!-- Minuti -->
-                            <div class="flex items-center space-x-1 bg-slate-950/40 p-0.5 border border-slate-800 rounded-lg">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', -5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">-</button>
-                                <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-6 text-center bg-transparent border-none text-[11px] font-bold text-indigo-300 focus:outline-none py-0">
-                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', 5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5.5 h-5.5 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded active:scale-90 font-bold text-slate-300 text-[10px] select-none">+</button>
-                                <span class="text-[9px] text-slate-400 font-bold px-0.5">m</span>
+                            <div class="flex items-center space-x-1 shrink-0">
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', -5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5 h-5 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 rounded active:scale-90 font-bold text-slate-200 text-xs select-none">-</button>
+                                <div class="bg-slate-950/40 border border-slate-800 rounded w-7 h-5 flex items-center justify-center shrink-0">
+                                    <input type="number" id="inputPermessoMinuti" value="0" min="0" max="59" oninput="updatePermessoInputs()" class="w-full text-center bg-transparent border-none text-xs font-black text-indigo-300 focus:outline-none p-0 shrink-0">
+                                </div>
+                                <button onpointerdown="handleStartLongPress(event, 'inputPermessoMinuti', 5, true)" onpointerup="handleEndLongPress()" onpointerleave="handleEndLongPress()" onpointercancel="handleEndLongPress()" oncontextmenu="event.preventDefault()" class="w-5 h-5 shrink-0 flex items-center justify-center bg-slate-800 hover:bg-slate-750 rounded active:scale-90 font-bold text-slate-200 text-xs select-none">+</button>
+                                <span class="text-[10px] text-slate-400 font-bold select-none shrink-0">m</span>
                             </div>
                         </div>
                     </div>
@@ -883,10 +911,12 @@
                 // Notes Space
                 if (record.note && record.note.trim()) {
                     notesEl.innerText = record.note.trim();
-                    notesEl.classList.remove("text-slate-500", "italic");
-                    notesEl.classList.add("text-slate-300");
+                    notesEl.classList.remove("text-slate-400", "italic");
+                    notesEl.classList.add("text-slate-200");
                 } else {
-                    notesEl.innerText = "";
+                    notesEl.innerText = "Nessuna nota";
+                    notesEl.classList.add("text-slate-400", "italic");
+                    notesEl.classList.remove("text-slate-200");
                 }
                 
                 // Sanzioni Row
@@ -909,22 +939,22 @@
                     const targetPagate = record.azienda === "ARRIVA" ? 1 : 3;
                     
                     if (emesse >= targetEmesse) {
-                        emesseValEl.className = "text-xs font-black text-emerald-500";
+                        emesseValEl.className = "text-[17px] font-black text-emerald-500 leading-tight";
                     } else {
-                        emesseValEl.className = "text-xs font-black text-rose-500";
+                        emesseValEl.className = "text-[17px] font-black text-rose-500 leading-tight";
                     }
                     if (emesseLabelEl) {
-                        emesseLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                        emesseLabelEl.className = "text-[8px] uppercase tracking-wider font-extrabold text-slate-400 leading-none mt-0.5";
                         emesseLabelEl.innerText = "EMESSE";
                     }
                     
                     if (pagate >= targetPagate) {
-                        pagateValEl.className = "text-xs font-black text-emerald-500";
+                        pagateValEl.className = "text-[14px] font-black text-emerald-500 leading-tight";
                     } else {
-                        pagateValEl.className = "text-xs font-black text-rose-500";
+                        pagateValEl.className = "text-[14px] font-black text-rose-500 leading-tight";
                     }
                     if (pagateLabelEl) {
-                        pagateLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                        pagateLabelEl.className = "text-[8px] uppercase tracking-wider font-extrabold text-slate-400 leading-none mt-0.5";
                         pagateLabelEl.innerText = "PAGATE";
                     }
                 } else {
@@ -935,14 +965,20 @@
                 // Extra Status (Permesso / Malattia)
                 let extraTexts = [];
                 if (record.permessoOre > 0 || record.permessoMinuti > 0) {
-                    extraTexts.push(`Permesso: ${record.permessoOre}h ${record.permessoMinuti}m`);
+                    let pStr = "";
+                    if (record.permessoOre > 0) pStr += `${record.permessoOre}h`;
+                    if (record.permessoMinuti > 0) pStr += ` ${record.permessoMinuti}m`;
+                    extraTexts.push(`Permesso: ${pStr.trim()}`);
                 }
                 if (record.malattiaOre > 0 || record.malattiaMinuti > 0) {
-                    extraTexts.push(`Malattia: ${record.malattiaOre}h ${record.malattiaMinuti}m`);
+                    let mStr = "";
+                    if (record.malattiaOre > 0) mStr += `${record.malattiaOre}h`;
+                    if (record.malattiaMinuti > 0) mStr += ` ${record.malattiaMinuti}m`;
+                    extraTexts.push(`Malattia: ${mStr.trim()}`);
                 }
                 
                 if (extraTexts.length > 0) {
-                    extraStatusEl.className = "bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-lg py-1 px-2 text-[10px] font-bold flex items-center space-x-1.5 shadow-sm";
+                    extraStatusEl.className = "bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-md py-0.5 px-2 text-[9px] font-bold flex items-center space-x-1 shadow-sm whitespace-nowrap";
                     extraStatusTextEl.innerText = extraTexts.join(" | ");
                 } else {
                     extraStatusEl.className = "hidden";
@@ -958,7 +994,9 @@
             } else {
                 emptyStateEl.classList.remove("hidden");
                 badgesContainer.innerHTML = "";
-                notesEl.innerText = "";
+                notesEl.innerText = "Nessuna nota";
+                notesEl.classList.add("text-slate-400", "italic");
+                notesEl.classList.remove("text-slate-200");
                 sanzioniRow.classList.add("hidden");
                 sanzioniRow.classList.remove("flex");
                 extraStatusEl.className = "hidden";
@@ -966,11 +1004,11 @@
                 const emesseLabelEl = document.getElementById("summaryEmesseLabel");
                 const pagateLabelEl = document.getElementById("summaryPagateLabel");
                 if (emesseLabelEl) {
-                    emesseLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                    emesseLabelEl.className = "text-[8px] uppercase tracking-wider font-extrabold text-slate-400 leading-none mt-0.5";
                     emesseLabelEl.innerText = "EMESSE";
                 }
                 if (pagateLabelEl) {
-                    pagateLabelEl.className = "text-[7px] uppercase tracking-wider font-semibold text-slate-450 leading-none mt-0.5";
+                    pagateLabelEl.className = "text-[8px] uppercase tracking-wider font-extrabold text-slate-400 leading-none mt-0.5";
                     pagateLabelEl.innerText = "PAGATE";
                 }
                 
@@ -1340,7 +1378,7 @@
                 document.getElementById("inputPermessoMinuti").value = record.permessoMinuti || 0;
                 document.getElementById("inputNote").value = record.note || "";
                 
-                badge.className = "text-[10px] uppercase px-2.5 py-0.5 rounded-full font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/25";
+                badge.className = "text-[9px] uppercase px-2 py-0.5 rounded-full font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/25 whitespace-nowrap shrink-0";
                 const isCorso = record.shiftType === "BIGLIETTERIA_ORIO" && record.note && record.note.toLowerCase() === "corso";
                 badge.innerText = isCorso ? "CORSO" : (record.shiftType === "BIGLIETTERIA_ORIO" ? "AEROPORTO" : record.shiftType.replace("_", " "));
                 document.getElementById("btnDelete").style.display = "block";
@@ -1354,7 +1392,7 @@
                 document.getElementById("inputPermessoMinuti").value = 0;
                 document.getElementById("inputNote").value = "";
 
-                badge.className = "text-[10px] uppercase px-2 py-0.5 rounded-full font-bold bg-slate-800 text-slate-400";
+                badge.className = "text-[9px] uppercase px-2 py-0.5 rounded-full font-bold bg-slate-800 text-slate-400 whitespace-nowrap shrink-0";
                 badge.innerText = "Nessun Turno";
                 document.getElementById("btnDelete").style.display = "none";
             }
