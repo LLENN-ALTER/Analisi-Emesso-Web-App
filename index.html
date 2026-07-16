@@ -53,10 +53,10 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-12 transition-all duration-200">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-6 md:pb-12 transition-all duration-200">
 
     <!-- Top Navbar -->
-    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 pt-10 pb-4 flex items-center justify-between">
+    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 pt-7 pb-3 md:pt-10 md:pb-4 flex items-center justify-between">
         <h1 class="text-xl font-extrabold text-indigo-400 tracking-wide select-none">
             Emesso HolaBG
         </h1>
@@ -75,12 +75,12 @@
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-md md:max-w-4xl lg:max-w-5xl mx-auto px-4 mt-4 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:grid-flow-row md:gap-6">
+    <main class="max-w-md md:max-w-4xl lg:max-w-5xl mx-auto px-4 mt-3 md:mt-4 space-y-3.5 md:space-y-0 md:grid md:grid-cols-2 md:grid-flow-row md:gap-6">
 
         <!-- Left Side: Month navigation & Calendar -->
-        <div class="space-y-6 md:sticky md:top-[100px] self-start">
+        <div class="space-y-3 md:space-y-6 md:sticky md:top-[100px] self-start">
             <!-- Month Navigation Selector -->
-            <div class="bg-slate-900 rounded-2xl p-4 flex items-center justify-between shadow-xl border border-slate-850">
+            <div class="bg-slate-900 rounded-2xl p-3 md:p-4 flex items-center justify-between shadow-xl border border-slate-850">
                 <button onclick="prevMonth()" class="p-2.5 hover:bg-slate-800 active:scale-95 transition-all text-indigo-400 rounded-xl">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
@@ -97,9 +97,9 @@
             </div>
 
             <!-- Calendar Component -->
-            <div class="bg-slate-900 rounded-2xl p-4 shadow-xl border border-slate-850">
+            <div class="bg-slate-900 rounded-2xl p-3 md:p-4 shadow-xl border border-slate-850">
                 <!-- Days header -->
-                <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400 mb-2 border-b border-slate-800 pb-2">
+                <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400 mb-1.5 border-b border-slate-800 pb-1.5">
                     <div>Lun</div>
                     <div>Mar</div>
                     <div>Mer</div>
@@ -109,34 +109,34 @@
                     <div>Dom</div>
                 </div>
                 <!-- Calendar Grid -->
-                <div id="calendarGrid" class="grid grid-cols-7 gap-1.5 text-center">
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1 md:gap-1.5 text-center">
                     <!-- Programmatically populated -->
                 </div>
 
                 <!-- Legend Indicators -->
-                <div class="mt-4 pt-3 border-t border-slate-800/60 max-w-[280px] mx-auto">
-                    <div class="grid grid-cols-3 gap-x-2 gap-y-2 justify-items-center">
-                        <div id="legendCtrl" class="flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
+                <div class="mt-3 pt-2 border-t border-slate-800/60 max-w-[280px] mx-auto">
+                    <div class="grid grid-cols-3 gap-x-2 gap-y-1.5 justify-items-center">
+                        <div id="legendCtrl" class="flex items-center justify-center space-x-1 px-1.5 py-0.5 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0"></span>
                             <span>CTRL</span>
                         </div>
-                        <div id="legendAero" class="flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
+                        <div id="legendAero" class="flex items-center justify-center space-x-1 px-1.5 py-0.5 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0"></span>
                             <span>AERO</span>
                         </div>
-                        <div id="legendRip" class="flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
+                        <div id="legendRip" class="flex items-center justify-center space-x-1 px-1.5 py-0.5 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-500 shrink-0"></span>
                             <span>RIP</span>
                         </div>
-                        <div id="legendFerie" class="flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
+                        <div id="legendFerie" class="flex items-center justify-center space-x-1 px-1.5 py-0.5 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
                             <span>FERIE</span>
                         </div>
-                        <div id="legendMal" class="flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
+                        <div id="legendMal" class="flex items-center justify-center space-x-1 px-1.5 py-0.5 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
                             <span>MAL</span>
                         </div>
-                        <div id="legendPerm" class="flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
+                        <div id="legendPerm" class="flex items-center justify-center space-x-1 px-1.5 py-0.5 rounded-lg border text-[10px] transition-all duration-150 border-transparent text-slate-400 font-medium w-full">
                             <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0"></span>
                             <span>PERM</span>
                         </div>
@@ -145,7 +145,7 @@
             </div>
 
             <!-- Selected Day Summary Card (Riepilogo Giorno Selezionato) -->
-            <div class="bg-[#14151f] rounded-xl p-3.5 shadow-lg border border-slate-800/30">
+            <div id="summaryDayCard" class="bg-[#14151f] rounded-xl p-3 md:p-3.5 shadow-lg border border-slate-800/30">
                 <!-- Header (clickable to toggle expansion) -->
                 <div onclick="toggleSummaryCollapse()" class="flex items-center justify-between cursor-pointer select-none">
                     <div class="flex items-center space-x-2.5">
@@ -169,7 +169,7 @@
 
                 <!-- Sliding Content Container -->
                 <div id="summaryCollapseBody" class="mt-2 pt-2 border-t border-slate-800/40 transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden" style="max-height: 500px; opacity: 1;">
-                    <div class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-2.5 md:gap-3">
                         <!-- Top Row: Badges (Left) & Notes (Right) -->
                         <div class="flex items-center justify-between gap-3 min-h-[28px]">
                             <!-- Badges -->
@@ -210,7 +210,7 @@
                         <div class="flex items-center justify-between gap-2.5 mt-0.5">
                             <!-- Yellow box for Partial Sickness / Permissions / Extra Status -->
                             <div id="summaryExtraStatus" class="hidden bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-md py-0.5 px-2 text-[9px] font-bold flex items-center space-x-1 shadow-sm whitespace-nowrap">
-                                <svg class="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 <span id="summaryExtraStatusText">Permesso: 2h 0m</span>
@@ -427,18 +427,11 @@
                     </h3>
                 </div>
                 
-                <!-- Close and Trash actions -->
-                <div class="flex items-center space-x-2.5">
-                    <!-- Trash can icon (delete) -->
-                    <button id="btnDelete" onclick="deleteRecord(); closeRegisterModal();" class="p-1.5 text-red-400 hover:bg-red-950/20 hover:text-red-300 rounded-lg transition-colors" title="Elimina giorno">
-                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
-                    <!-- Close button -->
-                    <button onclick="closeRegisterModal()" class="p-1.5 text-slate-400 hover:bg-slate-800 rounded-lg transition-colors">
+                <!-- Top Right action: Trash can (delete) replacing the redundant X button -->
+                <div>
+                    <button id="btnDelete" onclick="if(confirm('Vuoi eliminare il turno registrato per questo giorno?')) { deleteRecord(); closeRegisterModal(); }" class="p-1.5 text-red-400 hover:bg-red-950/20 hover:text-red-300 rounded-lg transition-colors active:scale-95" title="Elimina turno">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
                     </button>
                 </div>
@@ -911,12 +904,12 @@
                 // Notes Space
                 if (record.note && record.note.trim()) {
                     notesEl.innerText = record.note.trim();
-                    notesEl.classList.remove("text-slate-400", "italic");
-                    notesEl.classList.add("text-slate-200");
+                    notesEl.classList.remove("text-slate-450", "italic");
+                    notesEl.classList.add("text-slate-300");
                 } else {
                     notesEl.innerText = "Nessuna nota";
-                    notesEl.classList.add("text-slate-400", "italic");
-                    notesEl.classList.remove("text-slate-200");
+                    notesEl.classList.add("text-slate-450", "italic");
+                    notesEl.classList.remove("text-slate-300");
                 }
                 
                 // Sanzioni Row
@@ -995,8 +988,8 @@
                 emptyStateEl.classList.remove("hidden");
                 badgesContainer.innerHTML = "";
                 notesEl.innerText = "Nessuna nota";
-                notesEl.classList.add("text-slate-400", "italic");
-                notesEl.classList.remove("text-slate-200");
+                notesEl.classList.add("text-slate-450", "italic");
+                notesEl.classList.remove("text-slate-300");
                 sanzioniRow.classList.add("hidden");
                 sanzioniRow.classList.remove("flex");
                 extraStatusEl.className = "hidden";
@@ -1297,7 +1290,7 @@
                 cell.onclick = () => selectDay(dateKey);
                 
                 // Styling day base cells
-                let baseStyle = "aspect-square flex flex-col items-center justify-between py-1.5 rounded-xl text-xs font-semibold transition-all relative border ";
+                let baseStyle = "aspect-square flex flex-col items-center justify-between py-1 md:py-1.5 rounded-lg md:rounded-xl text-xs font-semibold transition-all relative border ";
                 
                 if (isSelected) {
                     baseStyle += "border-indigo-500 bg-indigo-950/40 text-indigo-300 ring-2 ring-indigo-500/30 shadow-lg ";
