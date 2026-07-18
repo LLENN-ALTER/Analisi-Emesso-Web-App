@@ -1834,10 +1834,102 @@
                 rowsHtml.push(`
                     <div class="flex items-center justify-between text-[11px] py-1">
                         <div class="flex items-center space-x-1.5 min-w-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0"></span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-700 shrink-0"></span>
                             <span class="text-slate-300 font-medium truncate">Corso</span>
                         </div>
-                        <span class="text-purple-300 font-bold shrink-0">${corsoDays} gg</span>
+                        <span class="text-blue-400 font-bold shrink-0">${corsoDays} gg</span>
+                    </div>
+                `);
+            }
+
+            // 6. Ferie
+            const ferieDays = records.filter(r => r.shiftType === "FERIE").length;
+            if (ferieDays > 0) {
+                rowsHtml.push(`
+                    <div class="flex items-center justify-between text-[11px] py-1">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+                            <span class="text-slate-300 font-medium truncate">Ferie</span>
+                        </div>
+                        <span class="text-orange-300 font-bold shrink-0">${ferieDays} gg</span>
+                    </div>
+                `);
+            }
+
+            // 7. Malattia
+            let sicknessDays = 0.0;
+            records.forEach(record => {
+                if (record.shiftType === "MALATTIA") {
+                    if ((record.malattiaOre || 0) === 0 && (record.malattiaMinuti || 0) === 0) {
+                        sicknessDays += 1.0;
+                    } else {
+                        sicknessDays += ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                    }
+                } else if ((record.malattiaOre || 0) > 0 || (record.malattiaMinuti || 0) > 0) {
+                    sicknessDays += ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                }
+            });
+            if (sicknessDays > 0) {
+                const formattedSickness = sicknessDays % 1 === 0 ? sicknessDays.toFixed(0) : sicknessDays.toFixed(2);
+                rowsHtml.push(`
+                    <div class="flex items-center justify-between text-[11px] py-1">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
+                            <span class="text-slate-300 font-medium truncate">Malattia</span>
+                        </div>
+                        <span class="text-rose-300 font-bold shrink-0">${formattedSickness} gg</span>
+                    </div>
+                `);
+            }
+
+            // 8. Permesso
+            let totalPermMinutesSum = records.reduce((acc, r) => acc + (r.permessoMinuti || 0), 0);
+            let totalPermHoursSum = records.reduce((acc, r) => acc + (r.permessoOre || 0), 0);
+            totalPermHoursSum += Math.floor(totalPermMinutesSum / 60);
+            totalPermMinutesSum = totalPermMinutesSum % 60;
+            const totalPermMinutesTotal = totalPermHoursSum * 60 + totalPermMinutesSum;
+            if (totalPermMinutesTotal > 0) {
+                const eqDays = (totalPermMinutesTotal / 400).toFixed(2);
+                rowsHtml.push(`
+                    <div class="flex items-center justify-between text-[11px] py-1">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                            <span class="text-slate-300 font-medium truncate">Permesso</span>
+                        </div>
+                        <span class="text-amber-300 font-bold shrink-0">${totalPermHoursSum}h ${totalPermMinutesSum}m (${eqDays} gg)</span>
+                    </div>
+                `);
+            }
+
+            if (rowsHtml.length > 0) {
+                const totalAbsencesForBonus = sicknessDays + (totalPermMinutesTotal / 400.0);
+                const eligibleForBonus = totalAbsencesForBonus <= 1.5;
+                const formattedTotalAbsences = totalAbsencesForBonus % 1 === 0 ? totalAbsencesForBonus.toFixed(0) : totalAbsencesForBonus.toFixed(2);
+
+                rowsHtml.push(`
+                    <div class="col-span-2 mt-2 pt-2 border-t border-slate-800/30 flex items-center justify-between text-[11px]">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
+                            <span class="text-slate-300 font-bold">Totale Assenze (Soglia 1.5 gg)</span>
+                        </div>
+                        <div class="flex items-center space-x-1.5 shrink-0">
+                            <span class="text-slate-200 font-black">${formattedTotalAbsences} gg</span>
+                            ${eligibleForBonus ? `
+                                <span class="inline-flex items-center space-x-1 text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider">
+                                    <svg class="w-2.5 h-2.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span>Bonus Mensile</span>
+                                </span>
+                            ` : `
+                                <span class="inline-flex items-center space-x-1 text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20 text-[9px] font-bold uppercase tracking-wider">
+                                    <svg class="w-2.5 h-2.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    <span>Bonus Mensile</span>
+                                </span>
+                            `}
+                        </div>
                     </div>
                 `);
             }
