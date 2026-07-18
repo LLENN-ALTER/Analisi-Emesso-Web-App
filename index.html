@@ -764,8 +764,11 @@
             return `${year}-${mm}-${dd}`;
         }
 
+        let modalOpenViewportHeight = window.innerHeight;
+
         // Modal Management
         function openRegisterModal() {
+            modalOpenViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
             const modal = document.getElementById("registerModal");
             if (modal) {
                 modal.classList.remove("hidden");
@@ -1306,16 +1309,44 @@
             // Smoothly slide the modal card upwards when notes input is focused to keep it fully visible above the keyboard
             const noteInput = document.getElementById("inputNote");
             const modalCard = document.getElementById("registerModalCard");
+
             if (noteInput && modalCard) {
                 noteInput.addEventListener('focus', () => {
-                    // Check for touchscreens or mobile device widths to slide up smoothly
                     if (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024) {
-                        modalCard.style.transform = 'translateY(-165px)';
+                        modalCard.style.transform = 'translateY(-30px)';
                     }
                 });
+
                 noteInput.addEventListener('blur', () => {
                     modalCard.style.transform = 'none';
                 });
+
+                // Listen to visualViewport or window resize events to detect keyboard open/close state transitions smoothly
+                const handleViewportResize = () => {
+                    if (!window.matchMedia("(pointer: coarse)").matches && window.innerWidth >= 1024) return;
+                    
+                    const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                    
+                    // 1. Keyboard is opened/opening (height is significantly less than baseline modal-opened height)
+                    if (currentHeight < modalOpenViewportHeight - 80) {
+                        if (document.activeElement === noteInput) {
+                            modalCard.style.transform = 'translateY(-30px)';
+                        }
+                    }
+                    // 2. Keyboard is closed/closing (height returned close to baseline modal-opened height)
+                    else if (currentHeight >= modalOpenViewportHeight - 35) {
+                        modalCard.style.transform = 'none';
+                        if (document.activeElement === noteInput) {
+                            noteInput.blur();
+                        }
+                    }
+                };
+
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', handleViewportResize);
+                } else {
+                    window.addEventListener('resize', handleViewportResize);
+                }
             }
         });
 
