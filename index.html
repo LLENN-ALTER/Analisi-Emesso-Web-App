@@ -1441,6 +1441,18 @@
                 cell.className = baseStyle;
                 cell.innerHTML = `<span>${day}</span>`;
 
+                // If record has a note, append a small note icon in top right
+                if (record && record.note && record.note.trim() !== "") {
+                    const noteIcon = document.createElement("div");
+                    noteIcon.className = "absolute -top-1 -right-1 bg-slate-950 border border-slate-700/60 rounded-full p-0.5 text-indigo-400 shadow-md flex items-center justify-center z-10";
+                    noteIcon.innerHTML = `
+                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                    `;
+                    cell.appendChild(noteIcon);
+                }
+
                 // Add indicator inside the day
                 if (record) {
                     const indicatorContainer = document.createElement("div");
