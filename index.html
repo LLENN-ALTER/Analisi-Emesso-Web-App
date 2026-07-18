@@ -236,24 +236,8 @@
             <div class="space-y-4">
                 <h3 class="text-xs font-bold text-indigo-400 tracking-wider">RIEPILOGO MENSILE</h3>
 
-                <!-- Grid 2 columns for quick KPIs -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400">Giorni Lavorati</span>
-                            <h4 id="statTotalWorkDays" class="text-2xl font-extrabold text-slate-100 mt-1">0</h4>
-                        </div>
-                        <span class="text-[9px] text-indigo-400 font-medium">Aeroporto & CTRL</span>
-                    </div>
-
-                    <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400">Giorni CTRL</span>
-                            <h4 id="statTotalCtrlDays" class="text-2xl font-extrabold text-indigo-400 mt-1">0</h4>
-                        </div>
-                        <span class="text-[9px] text-indigo-400 font-medium">Totale giorni CTRL</span>
-                    </div>
-                </div>
+                <!-- Dynamic Minimalist Card for all active shift/day types -->
+                <div id="monthlyStatsGrid" class="bg-slate-900 rounded-2xl p-4 border border-slate-850 shadow-xl space-y-2"></div>
 
                 <!-- Objectives & Daily Averages Separated for ATB & Arriva -->
                 <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 space-y-4 shadow-xl">
@@ -328,23 +312,6 @@
                             <p class="text-[9px] text-slate-400 font-semibold">€1.50 cad.</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Presenze & Assenze Mensili Card -->
-                <div class="bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
-                    <!-- Clickable Header -->
-                    <button onclick="togglePresenzeView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
-                        <div class="flex items-center space-x-2 text-slate-100">
-                            <svg id="pToggleIcon" class="w-5 h-5 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                            <span class="text-sm font-bold text-indigo-400">Presenze & Assenze Mensili</span>
-                        </div>
-                        <span id="pLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">Riepilogo</span>
-                    </button>
-
-                    <!-- Expandable Body -->
-                    <div id="pBody" class="hidden border-t border-slate-850/80 p-4 space-y-3"></div>
                 </div>
 
                 <!-- Verifica Bonus Trimestrale Expanded/Collapsed Card -->
@@ -445,39 +412,39 @@
                     <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Seleziona Tipo di Turno</label>
                     <div class="grid grid-cols-2 gap-2">
                         <!-- Controlleria Button -->
-                        <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                        <button onclick="setFormShiftType('CONTROLLERIA')" id="btnShiftControlleria" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700 focus:outline-none">
                             <span id="dotShiftControlleria" class="w-2 h-2 rounded-full bg-violet-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Controlleria</span>
                         </button>
                         
                         <!-- Aeroporto/Corso Button -->
-                        <button onclick="openSubTypeModal()" id="btnShiftOrio" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                        <button onclick="openSubTypeModal()" id="btnShiftOrio" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700 focus:outline-none">
                             <span id="dotShiftOrio" class="w-2 h-2 rounded-full bg-sky-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Aeroporto/Corso</span>
                         </button>
                         
                         <!-- Ferie Button -->
-                        <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                        <button onclick="setFormShiftType('FERIE')" id="btnShiftFerie" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700 focus:outline-none">
                             <span id="dotShiftFerie" class="w-2 h-2 rounded-full bg-orange-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Ferie</span>
                         </button>
                         
                         <!-- Riposo Button -->
-                        <button onclick="setFormShiftType('RIPOSO')" id="btnShiftRiposo" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                        <button onclick="setFormShiftType('RIPOSO')" id="btnShiftRiposo" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700 focus:outline-none">
                             <span id="dotShiftRiposo" class="w-2 h-2 rounded-full bg-slate-500 shrink-0 hidden"></span>
                             <span class="text-xs font-bold">Riposo</span>
                         </button>
                         
                         <!-- Malattia Button -->
-                        <button onclick="setFormShiftType('MALATTIA')" id="btnShiftMalattia" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                        <button onclick="openAbsenceTypeModal('MALATTIA')" id="btnShiftMalattia" class="flex items-center space-x-1.5 px-1.5 py-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700 focus:outline-none">
                             <span id="dotShiftMalattia" class="w-2 h-2 rounded-full bg-rose-500 shrink-0 hidden"></span>
-                            <span class="text-xs font-bold">Malattia</span>
+                            <span class="text-xs font-bold whitespace-nowrap flex items-center">Malattia<span id="subLabelShiftMalattia" class="text-xs text-rose-400 font-bold ml-1 hidden"></span></span>
                         </button>
                         
                         <!-- Permesso Button -->
-                        <button onclick="setFormShiftType('PERMESSO')" id="btnShiftPermesso" class="flex items-center space-x-2 p-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700">
+                        <button onclick="openAbsenceTypeModal('PERMESSO')" id="btnShiftPermesso" class="flex items-center space-x-1.5 px-1.5 py-2 rounded-xl border transition-all text-left border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700 focus:outline-none">
                             <span id="dotShiftPermesso" class="w-2 h-2 rounded-full bg-amber-500 shrink-0 hidden"></span>
-                            <span class="text-xs font-bold">Permesso</span>
+                            <span class="text-xs font-bold whitespace-nowrap flex items-center">Permesso<span id="subLabelShiftPermesso" class="text-xs text-amber-400 font-bold ml-1 hidden"></span></span>
                         </button>
                     </div>
                 </div>
@@ -575,7 +542,7 @@
     </div>
 
     <!-- Sub-Selection Dialog Modal -->
-    <div id="subTypeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
+    <div id="subTypeModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl">
             <h3 class="text-base font-bold text-slate-100">Seleziona Sottotipo Turno</h3>
             <p class="text-xs text-slate-400">Scegli se registrare la giornata come servizio in aeroporto o corso di formazione:</p>
@@ -585,14 +552,47 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0"></span>
                     <span class="text-xs font-bold text-slate-200">Aeroporto (Biglietteria)</span>
                 </button>
-                <button onclick="selectSubType('CORSO')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-indigo-500/20 hover:border-indigo-500/40 rounded-xl transition text-left">
-                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-550 shrink-0" style="background-color: #6366f1;"></span>
+                <button onclick="selectSubType('CORSO')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-blue-700/20 hover:border-blue-700/40 rounded-xl transition text-left">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-700 shrink-0"></span>
                     <span class="text-xs font-bold text-slate-200">Corso di formazione</span>
                 </button>
             </div>
             
             <div class="flex justify-end pt-2">
                 <button onclick="closeSubTypeModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs hover:bg-slate-750 transition font-semibold">
+                    Annulla
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Absence Type Reference Modal -->
+    <div id="absenceTypeModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-sm w-full space-y-4 shadow-2xl">
+            <h3 class="text-base font-bold text-slate-100" id="absenceTypeModalTitle">Riferimento Turno</h3>
+            <p class="text-xs text-slate-400" id="absenceTypeModalDesc">Specifica per quale turno stai registrando l'assenza:</p>
+            
+            <div class="space-y-2">
+                <button onclick="selectAbsenceSubType('ATB')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-violet-500/20 hover:border-violet-500/40 rounded-xl transition text-left">
+                    <span class="w-2.5 h-2.5 rounded-full bg-violet-500 shrink-0"></span>
+                    <span class="text-xs font-bold text-slate-200">ATB</span>
+                </button>
+                <button onclick="selectAbsenceSubType('ARRIVA')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-teal-500/20 hover:border-teal-500/40 rounded-xl transition text-left">
+                    <span class="w-2.5 h-2.5 rounded-full bg-teal-500 shrink-0"></span>
+                    <span class="text-xs font-bold text-slate-200">Arriva</span>
+                </button>
+                <button onclick="selectAbsenceSubType('AEROPORTO')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-sky-500/20 hover:border-sky-500/40 rounded-xl transition text-left">
+                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0"></span>
+                    <span class="text-xs font-bold text-slate-200">Aeroporto</span>
+                </button>
+                <button onclick="selectAbsenceSubType('CORSO')" class="w-full flex items-center space-x-3 p-3 bg-slate-950/50 hover:bg-slate-800 border border-blue-700/20 hover:border-blue-700/40 rounded-xl transition text-left">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-700 shrink-0"></span>
+                    <span class="text-xs font-bold text-slate-200">Corso</span>
+                </button>
+            </div>
+            
+            <div class="flex justify-end pt-2">
+                <button onclick="closeAbsenceTypeModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-xs hover:bg-slate-750 transition font-semibold">
                     Annulla
                 </button>
             </div>
@@ -864,28 +864,37 @@
                 
                 // Badges Column
                 badgesContainer.innerHTML = "";
+                
+                let displayShiftType = record.shiftType;
+                let isFullDayAbsence = false;
+                let fullDayAbsenceType = "";
+                
+                if (record.shiftType === "PERMESSO" || record.shiftType === "MALATTIA") {
+                    isFullDayAbsence = true;
+                    fullDayAbsenceType = record.shiftType;
+                    if (record.azienda === "AEROPORTO") {
+                        displayShiftType = "BIGLIETTERIA_ORIO";
+                    } else {
+                        displayShiftType = "CONTROLLERIA";
+                    }
+                }
+
                 let shiftClass = "";
                 let shiftLabel = "";
-                const isCorso = record.shiftType === "BIGLIETTERIA_ORIO" && record.note && record.note.toLowerCase() === "corso";
+                const isCorso = displayShiftType === "BIGLIETTERIA_ORIO" && record.note && record.note.toLowerCase() === "corso";
                 
-                if (record.shiftType === "CONTROLLERIA") {
+                if (displayShiftType === "CONTROLLERIA") {
                     shiftClass = "bg-white text-violet-600 border-violet-500 shadow-sm";
                     shiftLabel = "CONTROLLERIA";
-                } else if (record.shiftType === "BIGLIETTERIA_ORIO") {
-                    shiftClass = isCorso ? "bg-white text-purple-600 border-purple-500 shadow-sm" : "bg-white text-sky-600 border-sky-500 shadow-sm";
+                } else if (displayShiftType === "BIGLIETTERIA_ORIO") {
+                    shiftClass = isCorso ? "bg-white text-blue-700 border-blue-600 shadow-sm" : "bg-white text-sky-600 border-sky-500 shadow-sm";
                     shiftLabel = isCorso ? "CORSO" : "AEROPORTO";
-                } else if (record.shiftType === "FERIE") {
+                } else if (displayShiftType === "FERIE") {
                     shiftClass = "bg-white text-orange-600 border-orange-500 shadow-sm";
                     shiftLabel = "FERIE";
-                } else if (record.shiftType === "RIPOSO") {
+                } else if (displayShiftType === "RIPOSO") {
                     shiftClass = "bg-white text-slate-500 border-slate-400 shadow-sm";
                     shiftLabel = "RIPOSO";
-                } else if (record.shiftType === "MALATTIA") {
-                    shiftClass = "bg-white text-rose-600 border-rose-500 shadow-sm";
-                    shiftLabel = "MALATTIA";
-                } else if (record.shiftType === "PERMESSO") {
-                    shiftClass = "bg-white text-amber-600 border-amber-500 shadow-sm";
-                    shiftLabel = "PERMESSO";
                 }
                 
                 const mainBadge = document.createElement("span");
@@ -893,7 +902,7 @@
                 mainBadge.innerText = shiftLabel;
                 badgesContainer.appendChild(mainBadge);
                 
-                if (record.shiftType === "CONTROLLERIA" && record.azienda) {
+                if (displayShiftType === "CONTROLLERIA" && record.azienda) {
                     const compBadge = document.createElement("span");
                     const compClass = record.azienda === "ARRIVA" ? "bg-white text-teal-600 border-teal-500 shadow-sm" : "bg-white text-indigo-600 border-indigo-500 shadow-sm";
                     compBadge.className = `text-[10px] font-black uppercase px-2.5 py-1 rounded-lg border ${compClass} tracking-wide`;
@@ -957,21 +966,51 @@
                 
                 // Extra Status (Permesso / Malattia)
                 let extraTexts = [];
-                if (record.permessoOre > 0 || record.permessoMinuti > 0) {
+                let isPermessoActive = (record.permessoOre > 0 || record.permessoMinuti > 0);
+                let isMalattiaActive = (record.malattiaOre > 0 || record.malattiaMinuti > 0);
+                
+                let pOre = record.permessoOre;
+                let pMin = record.permessoMinuti;
+                let mOre = record.malattiaOre;
+                let mMin = record.malattiaMinuti;
+                
+                if (isFullDayAbsence) {
+                    if (fullDayAbsenceType === "PERMESSO") {
+                        isPermessoActive = true;
+                        pOre = 6;
+                        pMin = 40;
+                    } else if (fullDayAbsenceType === "MALATTIA") {
+                        isMalattiaActive = true;
+                        mOre = 6;
+                        mMin = 40;
+                    }
+                }
+                
+                if (isPermessoActive) {
                     let pStr = "";
-                    if (record.permessoOre > 0) pStr += `${record.permessoOre}h`;
-                    if (record.permessoMinuti > 0) pStr += ` ${record.permessoMinuti}m`;
+                    if (pOre > 0) pStr += `${pOre}h`;
+                    if (pMin > 0) pStr += ` ${pMin}m`;
+                    if (pStr === "") pStr = "0m";
                     extraTexts.push(`Permesso: ${pStr.trim()}`);
                 }
-                if (record.malattiaOre > 0 || record.malattiaMinuti > 0) {
-                    let mStr = "";
-                    if (record.malattiaOre > 0) mStr += `${record.malattiaOre}h`;
-                    if (record.malattiaMinuti > 0) mStr += ` ${record.malattiaMinuti}m`;
-                    extraTexts.push(`Malattia: ${mStr.trim()}`);
+                if (isMalattiaActive) {
+                    extraTexts.push(`Malattia`);
                 }
                 
                 if (extraTexts.length > 0) {
-                    extraStatusEl.className = "bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-md py-0.5 px-2 text-[9px] font-bold flex items-center space-x-1 shadow-sm whitespace-nowrap";
+                    const hasMalattiaOnly = isMalattiaActive && !isPermessoActive;
+                    const svgIcon = extraStatusEl.querySelector('svg');
+                    if (hasMalattiaOnly) {
+                        extraStatusEl.className = "bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-md py-0.5 px-2 text-[9px] font-bold flex items-center space-x-1 shadow-sm whitespace-nowrap";
+                        if (svgIcon) {
+                            svgIcon.setAttribute("class", "w-3.5 h-3.5 text-rose-500 shrink-0");
+                        }
+                    } else {
+                        extraStatusEl.className = "bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-md py-0.5 px-2 text-[9px] font-bold flex items-center space-x-1 shadow-sm whitespace-nowrap";
+                        if (svgIcon) {
+                            svgIcon.setAttribute("class", "w-3.5 h-3.5 text-amber-500 shrink-0");
+                        }
+                    }
                     extraStatusTextEl.innerText = extraTexts.join(" | ");
                 } else {
                     extraStatusEl.className = "hidden";
@@ -1052,7 +1091,7 @@
         // Sync legend highlights dynamically based on selected date's type
         function updateLegendHighlight(selectedShiftType) {
             const selectedRecord = shiftDatabase[selectedDateStr];
-            const isCorso = selectedRecord && selectedRecord.shiftType === 'BIGLIETTERIA_ORIO' && selectedRecord.note && selectedRecord.note.toLowerCase() === 'corso';
+            const isCorso = selectedRecord && selectedRecord.note && selectedRecord.note.toLowerCase() === 'corso' && (selectedRecord.shiftType === 'BIGLIETTERIA_ORIO' || selectedRecord.azienda === 'AEROPORTO');
 
             // Dynamically update legendAero text and dot color based on if selected is Corso
             const legendAeroEl = document.getElementById('legendAero');
@@ -1061,7 +1100,7 @@
                 const text = legendAeroEl.querySelector('span:last-child');
                 if (isCorso) {
                     if (dot) {
-                        dot.className = "w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0";
+                        dot.className = "w-1.5 h-1.5 rounded-full bg-blue-700 shrink-0";
                     }
                     if (text) {
                         text.innerText = "CORSO";
@@ -1078,22 +1117,50 @@
 
             const types = {
                 'CONTROLLERIA': { id: 'legendCtrl', colorClass: 'border-violet-500/40 bg-violet-950/15 text-violet-400' },
-                'BIGLIETTERIA_ORIO': { id: 'legendAero', colorClass: isCorso ? 'border-indigo-500/40 bg-indigo-950/15 text-indigo-400' : 'border-sky-500/40 bg-sky-950/15 text-sky-400' },
+                'BIGLIETTERIA_ORIO': { id: 'legendAero', colorClass: isCorso ? 'border-blue-700/40 bg-blue-950/15 text-blue-400' : 'border-sky-500/40 bg-sky-950/15 text-sky-400' },
                 'RIPOSO': { id: 'legendRip', colorClass: 'border-slate-500/40 bg-slate-900/40 text-slate-300' },
                 'FERIE': { id: 'legendFerie', colorClass: 'border-orange-500/40 bg-orange-950/15 text-orange-400' },
                 'MALATTIA': { id: 'legendMal', colorClass: 'border-red-500/40 bg-red-950/15 text-red-400' },
                 'PERMESSO': { id: 'legendPerm', colorClass: 'border-yellow-500/40 bg-yellow-950/15 text-yellow-500' }
             };
 
+            // Determine all active legend keys based on the selected day
+            const activeKeys = new Set();
+            if (selectedShiftType) {
+                activeKeys.add(selectedShiftType);
+            }
+            if (selectedRecord) {
+                const shiftType = selectedRecord.shiftType;
+                const azienda = selectedRecord.azienda;
+                
+                if (shiftType === "MALATTIA" || shiftType === "PERMESSO") {
+                    activeKeys.add(shiftType);
+                    if (azienda === "AEROPORTO") {
+                        activeKeys.add("BIGLIETTERIA_ORIO");
+                    } else if (azienda === "ATB" || azienda === "ARRIVA") {
+                        activeKeys.add("CONTROLLERIA");
+                    }
+                } else {
+                    activeKeys.add(shiftType);
+                    if (selectedRecord.permessoOre > 0 || selectedRecord.permessoMinuti > 0) {
+                        activeKeys.add("PERMESSO");
+                    }
+                    if (selectedRecord.malattiaOre > 0 || selectedRecord.malattiaMinuti > 0) {
+                        activeKeys.add("MALATTIA");
+                    }
+                }
+            }
+
+            const hasAnyActive = activeKeys.size > 0;
             for (const key in types) {
                 const el = document.getElementById(types[key].id);
                 if (!el) continue;
-                if (key === selectedShiftType) {
+                if (activeKeys.has(key)) {
                     el.className = `flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border text-[10px] transition-all duration-150 font-bold w-full ${types[key].colorClass}`;
                     el.style.opacity = '1';
                 } else {
                     el.className = `flex items-center justify-center space-x-1 px-1.5 py-1 rounded-lg border border-transparent text-[10px] transition-all duration-150 text-slate-400 font-medium w-full`;
-                    el.style.opacity = selectedShiftType ? '0.45' : '1.0';
+                    el.style.opacity = hasAnyActive ? '0.45' : '1.0';
                 }
             }
         }
@@ -1118,8 +1185,81 @@
                     noteInput.value = "";
                 }
             }
-            saveRecord();
-            closeRegisterModal();
+        }
+
+        // Absence SubType Modal Dialog Interactions
+        let pendingAbsenceType = "";
+
+        function openAbsenceTypeModal(type) {
+            pendingAbsenceType = type;
+            const titleEl = document.getElementById("absenceTypeModalTitle");
+            const descEl = document.getElementById("absenceTypeModalDesc");
+            
+            if (type === "MALATTIA") {
+                titleEl.innerText = "Seleziona Riferimento Malattia";
+                descEl.innerText = "Specifica per quale turno stai registrando la malattia:";
+            } else {
+                titleEl.innerText = "Seleziona Riferimento Permesso";
+                descEl.innerText = "Specifica per quale turno stai registrando il permesso:";
+            }
+            
+            document.getElementById("absenceTypeModal").classList.remove("hidden");
+        }
+
+        function closeAbsenceTypeModal() {
+            document.getElementById("absenceTypeModal").classList.add("hidden");
+            pendingAbsenceType = "";
+        }
+
+        function selectAbsenceSubType(ref) {
+            const type = pendingAbsenceType;
+            closeAbsenceTypeModal();
+            if (type) {
+                if (ref === 'CORSO') {
+                    setFormAzienda('AEROPORTO');
+                    document.getElementById("inputNote").value = "Corso";
+                } else {
+                    setFormAzienda(ref);
+                    const noteInput = document.getElementById("inputNote");
+                    if (noteInput && noteInput.value.toLowerCase() === 'corso') {
+                        noteInput.value = "";
+                    }
+                }
+                setFormShiftType(type);
+            }
+        }
+
+        function updateAbsenceSubLabels() {
+            const subMalattia = document.getElementById("subLabelShiftMalattia");
+            const subPermesso = document.getElementById("subLabelShiftPermesso");
+            
+            let label = activeAzienda;
+            if (label === "ARRIVA") label = "Arriva";
+            if (label === "AEROPORTO") {
+                const noteVal = document.getElementById("inputNote") ? document.getElementById("inputNote").value : "";
+                if (noteVal.toLowerCase() === "corso") {
+                    label = "Corso";
+                } else {
+                    label = "Aeroporto";
+                }
+            }
+            
+            if (subMalattia) {
+                if (activeShiftType === "MALATTIA") {
+                    subMalattia.innerText = ` - ${label}`;
+                    subMalattia.classList.remove("hidden");
+                } else {
+                    subMalattia.classList.add("hidden");
+                }
+            }
+            if (subPermesso) {
+                if (activeShiftType === "PERMESSO") {
+                    subPermesso.innerText = ` - ${label}`;
+                    subPermesso.classList.remove("hidden");
+                } else {
+                    subPermesso.classList.add("hidden");
+                }
+            }
         }
 
         // Initialize App
@@ -1304,31 +1444,58 @@
                 // Add indicator inside the day
                 if (record) {
                     const indicatorContainer = document.createElement("div");
-                    indicatorContainer.className = "flex items-center justify-center -mt-1 min-h-[14px]";
+                    indicatorContainer.className = "flex items-center justify-center space-x-1 -mt-1 min-h-[14px]";
 
-                    if (record.shiftType === "CONTROLLERIA") {
-                        // Success threshold evaluations
-                        const isPositive = record.azienda === "ARRIVA" ? record.sanzioniEmesse >= 7 : record.sanzioniEmesse >= 11;
-                        
-                        // Render Check or Cross
-                        if (isPositive) {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black leading-none" style="color: #10b981;">✔</span>`;
-                        } else {
-                            indicatorContainer.innerHTML = `<span class="text-[12px] font-black leading-none" style="color: #ef4444;">❌</span>`;
+                    const indicators = [];
+                    const shiftType = record.shiftType;
+                    const azienda = record.azienda;
+
+                    // 1. Determine reference shift indicator to display first
+                    let refShift = null;
+                    if (shiftType === "MALATTIA" || shiftType === "PERMESSO") {
+                        if (azienda === "AEROPORTO") {
+                            refShift = "BIGLIETTERIA_ORIO";
+                        } else if (azienda === "ATB" || azienda === "ARRIVA") {
+                            refShift = "CONTROLLERIA";
                         }
                     } else {
-                        // Standard Dot indicators
-                        let dotColor = "bg-slate-400";
-                        if (record.shiftType === "BIGLIETTERIA_ORIO") {
-                            dotColor = (record.note && record.note.toLowerCase() === 'corso') ? "bg-indigo-500" : "bg-sky-500";
-                        }
-                        if (record.shiftType === "FERIE") dotColor = "bg-orange-500";
-                        if (record.shiftType === "RIPOSO") dotColor = "bg-slate-500";
-                        if (record.shiftType === "MALATTIA") dotColor = "bg-red-500";
-                        if (record.shiftType === "PERMESSO") dotColor = "bg-yellow-500";
-
-                        indicatorContainer.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotColor}"></span>`;
+                        refShift = shiftType;
                     }
+
+                    // 2. Next, check for absence indicators (sickness or permission)
+                    const hasPermesso = (shiftType === "PERMESSO" || record.permessoOre > 0 || record.permessoMinuti > 0);
+                    const hasMalattia = (shiftType === "MALATTIA" || record.malattiaOre > 0 || record.malattiaMinuti > 0);
+
+                    // Render reference shift indicator
+                    if (refShift === "CONTROLLERIA") {
+                        if (hasPermesso || hasMalattia) {
+                            indicators.push(`<span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>`);
+                        } else {
+                            const isPositive = record.azienda === "ARRIVA" ? (record.sanzioniEmesse >= 7) : (record.sanzioniEmesse >= 11);
+                            if (isPositive) {
+                                indicators.push(`<span class="text-[12px] font-black leading-none" style="color: #10b981;">✔</span>`);
+                            } else {
+                                indicators.push(`<span class="text-[12px] font-black leading-none" style="color: #ef4444;">❌</span>`);
+                            }
+                        }
+                    } else if (refShift === "BIGLIETTERIA_ORIO") {
+                        const isCorso = record.note && record.note.toLowerCase() === 'corso';
+                        const dotBg = isCorso ? "bg-blue-700" : "bg-sky-500";
+                        indicators.push(`<span class="w-1.5 h-1.5 rounded-full ${dotBg}"></span>`);
+                    } else if (refShift === "FERIE") {
+                        indicators.push(`<span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>`);
+                    } else if (refShift === "RIPOSO") {
+                        indicators.push(`<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>`);
+                    }
+
+                    if (hasMalattia) {
+                        indicators.push(`<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>`);
+                    }
+                    if (hasPermesso) {
+                        indicators.push(`<span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>`);
+                    }
+
+                    indicatorContainer.innerHTML = indicators.join("");
                     cell.appendChild(indicatorContainer);
                 } else {
                     // Empty bottom space for grid alignment
@@ -1452,11 +1619,15 @@
                 const dot = document.getElementById(conf.dot);
                 if (!btn) continue;
                 
+                const isAbsence = (key === 'MALATTIA' || key === 'PERMESSO');
+                const paddingClass = isAbsence ? 'px-1.5 py-2' : 'p-2';
+                const spaceClass = isAbsence ? 'space-x-1.5' : 'space-x-2';
+                
                 if (key === type) {
-                    btn.className = `flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left ${conf.activeClass}`;
+                    btn.className = `flex items-center ${spaceClass} ${paddingClass} rounded-xl border transition-all text-left focus:outline-none ${conf.activeClass}`;
                     if (dot) dot.classList.remove("hidden");
                 } else {
-                    btn.className = `flex items-center space-x-2.5 p-2.5 rounded-xl border transition-all text-left ${conf.inactiveClass}`;
+                    btn.className = `flex items-center ${spaceClass} ${paddingClass} rounded-xl border transition-all text-left focus:outline-none ${conf.inactiveClass}`;
                     if (dot) dot.classList.add("hidden");
                 }
             }
@@ -1471,8 +1642,14 @@
                 }
             }
 
+            // If selecting Controlleria, ensure activeAzienda is ATB or ARRIVA
+            if (type === "CONTROLLERIA" && activeAzienda !== "ATB" && activeAzienda !== "ARRIVA") {
+                setFormAzienda("ATB");
+            }
+
             // Sync input display colors
             updateInputColors();
+            updateAbsenceSubLabels();
         }
 
         // Set actively chosen Company (ATB, ARRIVA)
@@ -1486,13 +1663,17 @@
             if (azienda === "ATB") {
                 btnAtb.className = "flex-1 py-2 text-[11px] font-black rounded-xl border bg-emerald-950/15 border-emerald-500/40 text-emerald-400 transition-all";
                 btnArriva.className = "flex-1 py-2 text-[11px] font-medium rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
-            } else {
+            } else if (azienda === "ARRIVA") {
                 btnArriva.className = "flex-1 py-2 text-[11px] font-black rounded-xl border bg-emerald-950/15 border-emerald-500/40 text-emerald-400 transition-all";
                 btnAtb.className = "flex-1 py-2 text-[11px] font-medium rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
+            } else {
+                btnAtb.className = "flex-1 py-2 text-[11px] font-medium rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
+                btnArriva.className = "flex-1 py-2 text-[11px] font-medium rounded-xl border border-slate-800 bg-slate-950/20 text-slate-400 transition-all";
             }
 
             // Sync input display colors
             updateInputColors();
+            updateAbsenceSubLabels();
         }
 
         // Long-press handler to replace single tap behavior
@@ -1600,11 +1781,89 @@
 
             // Workday Calculation logic
             const totalWorkDays = records.filter(r => r.shiftType === "CONTROLLERIA" || r.shiftType === "BIGLIETTERIA_ORIO").length;
-            document.getElementById("statTotalWorkDays").innerText = totalWorkDays;
-
-            // Tot Controlleria
             const totalCtrlDays = records.filter(r => r.shiftType === "CONTROLLERIA").length;
-            document.getElementById("statTotalCtrlDays").innerText = totalCtrlDays;
+
+            // Dynamic Rows generation for single Riepilogo Mensile card
+            const rowsHtml = [];
+
+            // 2. Controlleria (ATB)
+            const atbCtrlDays = records.filter(r => r.shiftType === "CONTROLLERIA" && (r.azienda === "ATB" || !r.azienda)).length;
+            if (atbCtrlDays > 0) {
+                rowsHtml.push(`
+                    <div class="flex items-center justify-between text-[11px] py-1">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0"></span>
+                            <span class="text-slate-300 font-medium truncate">ATB</span>
+                        </div>
+                        <span class="text-violet-300 font-bold shrink-0">${atbCtrlDays} gg</span>
+                    </div>
+                `);
+            }
+
+            // 3. Controlleria (Arriva)
+            const arrivaCtrlDays = records.filter(r => r.shiftType === "CONTROLLERIA" && r.azienda === "ARRIVA").length;
+            if (arrivaCtrlDays > 0) {
+                rowsHtml.push(`
+                    <div class="flex items-center justify-between text-[11px] py-1">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0"></span>
+                            <span class="text-slate-300 font-medium truncate">Arriva</span>
+                        </div>
+                        <span class="text-teal-300 font-bold shrink-0">${arrivaCtrlDays} gg</span>
+                    </div>
+                `);
+            }
+
+            // 4. Aeroporto
+            const aeroportoDays = records.filter(r => r.shiftType === "BIGLIETTERIA_ORIO" && !(r.note && r.note.toLowerCase() === "corso")).length;
+            if (aeroportoDays > 0) {
+                rowsHtml.push(`
+                    <div class="flex items-center justify-between text-[11px] py-1">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0"></span>
+                            <span class="text-slate-300 font-medium truncate">Aeroporto</span>
+                        </div>
+                        <span class="text-sky-300 font-bold shrink-0">${aeroportoDays} gg</span>
+                    </div>
+                `);
+            }
+
+            // 5. Corso
+            const corsoDays = records.filter(r => r.shiftType === "BIGLIETTERIA_ORIO" && r.note && r.note.toLowerCase() === "corso").length;
+            if (corsoDays > 0) {
+                rowsHtml.push(`
+                    <div class="flex items-center justify-between text-[11px] py-1">
+                        <div class="flex items-center space-x-1.5 min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0"></span>
+                            <span class="text-slate-300 font-medium truncate">Corso</span>
+                        </div>
+                        <span class="text-purple-300 font-bold shrink-0">${corsoDays} gg</span>
+                    </div>
+                `);
+            }
+
+            if (rowsHtml.length === 0) {
+                document.getElementById("monthlyStatsGrid").innerHTML = `
+                    <div class="text-center text-slate-400 text-xs py-4">
+                        Nessun turno registrato in questo mese.
+                    </div>
+                `;
+            } else {
+                document.getElementById("monthlyStatsGrid").innerHTML = `
+                    <button onclick="toggleMonthlySintesiView()" class="w-full flex items-center justify-between text-left focus:outline-none">
+                        <div class="flex items-center space-x-2 text-slate-100">
+                            <svg id="msToggleIcon" class="w-4 h-4 text-indigo-400 transform transition-transform ${isMonthlySintesiExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            <span class="text-xs font-bold text-slate-200 tracking-wide">Presenze & Assenze Mensili</span>
+                        </div>
+                        <span id="msPreviewBadge" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-semibold px-2.5 py-1 rounded-full border border-indigo-900/50">Lavoro: ${totalWorkDays} gg</span>
+                    </button>
+                    <div id="msBody" class="${isMonthlySintesiExpanded ? '' : 'hidden'} mt-3 pt-3 border-t border-slate-800/20 grid grid-cols-2 gap-x-4 gap-y-1">
+                        ${rowsHtml.join("")}
+                    </div>
+                `;
+            }
 
             // ATB details filter
             const atbDocs = records.filter(r => (r.shiftType === "CONTROLLERIA" || r.shiftType === "PERMESSO" || r.shiftType === "MALATTIA") && (r.azienda === "ATB" || !r.azienda));
@@ -1911,53 +2170,6 @@
 
             htmlContent += bonusHtml;
             document.getElementById("qBody").innerHTML = htmlContent;
-
-            // --- Presenze & Assenze Mensili ---
-            const totalMalattiaMinutiRaw = records.reduce((acc, r) => {
-                if (r.shiftType === "MALATTIA" && (r.malattiaOre || 0) === 0 && (r.malattiaMinuti || 0) === 0) {
-                    return acc + 400;
-                } else {
-                    return acc + ((r.malattiaOre || 0) * 60 + (r.malattiaMinuti || 0));
-                }
-            }, 0);
-            const tMalattiaOre = Math.floor(totalMalattiaMinutiRaw / 60);
-            const tMalattiaMinuti = totalMalattiaMinutiRaw % 60;
-
-            const totalPermessoMinutiRaw = records.reduce((acc, r) => {
-                if (r.shiftType === "PERMESSO" && (r.permessoOre || 0) === 0 && (r.permessoMinuti || 0) === 0) {
-                    return acc + 400;
-                } else {
-                    return acc + ((r.permessoOre || 0) * 60 + (r.permessoMinuti || 0));
-                }
-            }, 0);
-            const tPermessoOre = Math.floor(totalPermessoMinutiRaw / 60);
-            const tPermessoMinuti = totalPermessoMinutiRaw % 60;
-
-            const totalMalattiaGiorni = records.filter(r => r.shiftType === "MALATTIA").length;
-            const totalPermessoGiorni = records.filter(r => r.shiftType === "PERMESSO").length;
-
-            document.getElementById("pLabelText").innerText = `Lavoro: ${totalWorkDays} gg | CTRL: ${totalCtrlDays} gg`;
-            document.getElementById("pBody").innerHTML = `
-                <div class="grid grid-cols-2 gap-3 text-left">
-                    <!-- Malattia Card -->
-                    <div class="bg-red-950/15 rounded-xl p-3 border border-red-900/30 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-red-400 tracking-wider">Malattia</span>
-                            <h4 class="text-base font-extrabold text-slate-100 mt-1">${totalMalattiaGiorni} giorni full</h4>
-                        </div>
-                        <span class="text-[10px] text-slate-400 mt-2 font-medium">Totale: ${tMalattiaOre}h ${tMalattiaMinuti}m</span>
-                    </div>
-
-                    <!-- Permessi Card -->
-                    <div class="bg-yellow-950/15 rounded-xl p-3 border border-yellow-900/30 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-yellow-500 tracking-wider">Permessi</span>
-                            <h4 class="text-base font-extrabold text-slate-100 mt-1">${totalPermessoGiorni} giorni full</h4>
-                        </div>
-                        <span class="text-[10px] text-slate-400 mt-2 font-medium">Totale: ${tPermessoOre}h ${tPermessoMinuti}m</span>
-                    </div>
-                </div>
-            `;
 
             // --- Premio Valutazione Trimestrale ---
             const evalContainer = document.getElementById("evalBonusCardContainer");
@@ -2346,17 +2558,19 @@
             updateUI();
         }
 
-        let isPresenzeExpanded = false;
-        function togglePresenzeView() {
-            isPresenzeExpanded = !isPresenzeExpanded;
-            const body = document.getElementById("pBody");
-            const icon = document.getElementById("pToggleIcon");
-            if (isPresenzeExpanded) {
-                body.classList.remove("hidden");
-                icon.classList.add("rotate-180");
-            } else {
-                body.classList.add("hidden");
-                icon.classList.remove("rotate-180");
+        let isMonthlySintesiExpanded = false;
+        function toggleMonthlySintesiView() {
+            isMonthlySintesiExpanded = !isMonthlySintesiExpanded;
+            const body = document.getElementById("msBody");
+            const icon = document.getElementById("msToggleIcon");
+            if (body && icon) {
+                if (isMonthlySintesiExpanded) {
+                    body.classList.remove("hidden");
+                    icon.classList.add("rotate-180");
+                } else {
+                    body.classList.add("hidden");
+                    icon.classList.remove("rotate-180");
+                }
             }
         }
 
