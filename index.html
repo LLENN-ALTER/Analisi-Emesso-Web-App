@@ -362,7 +362,7 @@
                             </svg>
                             <span class="text-sm font-bold text-indigo-400">Verifica Premio Presenza Annuo</span>
                         </div>
-                        <span id="paLabelText" class="text-[10px] bg-emerald-950/80 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">Anno</span>
+                        <span id="paLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">Anno</span>
                     </button>
 
                     <!-- Expandable Body -->
@@ -377,7 +377,7 @@
 
     <!-- Registra Turno Dialog Modal -->
     <div id="registerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in" style="height: 80vh; max-height: 620px; min-height: 480px;">
+        <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform" style="height: 80vh; max-height: 620px; min-height: 480px; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);">
             
             <!-- Modal Header -->
             <div class="py-3 px-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
@@ -405,7 +405,7 @@
             </div>
 
             <!-- Scrollable Modal Body -->
-            <div class="py-3.5 px-4 overflow-y-auto space-y-4 flex-1 min-h-0 select-none">
+            <div id="modalBody" class="py-3.5 px-4 overflow-y-auto space-y-4 flex-1 min-h-0 select-none">
                 
                 <!-- Shift Type Radio Grid -->
                 <div>
@@ -781,6 +781,10 @@
             const modal = document.getElementById("registerModal");
             if (modal) {
                 modal.classList.add("hidden");
+            }
+            const modalCard = document.getElementById("registerModalCard");
+            if (modalCard) {
+                modalCard.style.transform = 'none';
             }
         }
 
@@ -1278,6 +1282,41 @@
             
             updateUI();
             selectDay(selectedDateStr);
+
+            // Auto scroll focused inputs/textareas into view to prevent keyboard overlapping
+            document.addEventListener('focusin', (e) => {
+                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                    const scrollTarget = e.target;
+                    const modalBody = document.getElementById("modalBody");
+                    
+                    const scrollFn = () => {
+                        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        if (scrollTarget.id === 'inputNote' && modalBody) {
+                            modalBody.scrollTop = modalBody.scrollHeight;
+                        }
+                    };
+                    
+                    // Trigger scroll multiple times to sync with keyboard animation states
+                    setTimeout(scrollFn, 100);
+                    setTimeout(scrollFn, 350);
+                    setTimeout(scrollFn, 600);
+                }
+            });
+
+            // Smoothly slide the modal card upwards when notes input is focused to keep it fully visible above the keyboard
+            const noteInput = document.getElementById("inputNote");
+            const modalCard = document.getElementById("registerModalCard");
+            if (noteInput && modalCard) {
+                noteInput.addEventListener('focus', () => {
+                    // Check for touchscreens or mobile device widths to slide up smoothly
+                    if (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024) {
+                        modalCard.style.transform = 'translateY(-165px)';
+                    }
+                });
+                noteInput.addEventListener('blur', () => {
+                    modalCard.style.transform = 'none';
+                });
+            }
         });
 
         function updateUI() {
