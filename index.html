@@ -1345,8 +1345,8 @@
                 const activeEl = document.activeElement;
                 const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
 
-                // Keyboard is open if we have input focused and we are on mobile layouts (<768px)
-                const isKeyboardOpen = isInputFocused && (window.innerWidth < 768);
+                // Keyboard is open if we have input focused and we are on mobile/tablet layouts (<1024px)
+                const isKeyboardOpen = isInputFocused && (window.innerWidth < 1024);
 
                 const modalCard = document.getElementById("registerModalCard");
                 const modal = document.getElementById("registerModal");
