@@ -59,8 +59,7 @@
         #registerModalCard {
             height: auto;
             max-height: min(650px, calc(var(--visual-viewport-height, 100vh) - 16px));
-            min-height: min(480px, calc(var(--visual-viewport-height, 100vh) * 0.92));
-            transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            min-height: min(280px, calc(var(--visual-viewport-height, 100vh) * 0.92));
         }
     </style>
 </head>
@@ -1362,8 +1361,8 @@
                             // Scroll the focused input smoothly into view within modalBody
                             scrollTarget.scrollIntoView({ behavior: behavior, block: 'center', inline: 'nearest' });
                             
-                            // If it's a bottom-aligned field or the daily notes input, scroll both modalBody and the outer registerModal container to the very bottom to ensure full visibility
-                            if (scrollTarget.id === 'inputNote' || scrollTarget.id === 'inputPermessoOre' || scrollTarget.id === 'inputPermessoMinuti') {
+                            // If it's the daily notes input at the very bottom, scroll both modalBody and the outer registerModal container to the very bottom to ensure full visibility
+                            if (scrollTarget.id === 'inputNote') {
                                 modalBody.scrollTo({ top: modalBody.scrollHeight, behavior: behavior });
                                 if (registerModal) {
                                     registerModal.scrollTo({ top: registerModal.scrollHeight, behavior: behavior });
