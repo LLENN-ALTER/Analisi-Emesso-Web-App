@@ -54,7 +54,10 @@
 
         /* Dynamic slide-up when keyboard is active to prevent overlapping */
         #registerModalCard.keyboard-active {
-            transform: translateY(-40px) !important;
+            transform: translateY(0) !important;
+            min-height: unset !important;
+            height: auto !important;
+            max-height: 96% !important;
         }
     </style>
 </head>
