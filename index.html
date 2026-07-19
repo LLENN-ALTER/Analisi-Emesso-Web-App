@@ -53,7 +53,7 @@
         }
 
         #registerModal {
-            height: var(--visual-viewport-height, 100vh);
+            /* Sizing is handled natively and perfectly by Tailwind's fixed inset-0 */
         }
 
         #registerModalCard {
@@ -1299,17 +1299,10 @@
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
-            // Track visual viewport changes (especially keyboard open/close on mobile devices)
+            // Track visual viewport changes (keep track of any dynamic scroll constraints)
             const updateViewportHeight = () => {
-                let height = window.innerHeight;
-                if (window.visualViewport) {
-                    height = Math.min(height, window.visualViewport.height);
-                }
-                document.documentElement.style.setProperty('--visual-viewport-height', `${height}px`);
-                
                 const registerModal = document.getElementById("registerModal");
                 if (registerModal) {
-                    registerModal.style.height = `${height}px`;
                     // Lock outer page scroll whenever modal is open
                     if (!registerModal.classList.contains('hidden')) {
                         window.scrollTo(0, 0);
@@ -1317,21 +1310,8 @@
                         document.documentElement.scrollTop = 0;
                     }
                 }
-                const registerModalCard = document.getElementById("registerModalCard");
-                if (registerModalCard) {
-                    const maxH = Math.min(650, height - 16);
-                    registerModalCard.style.maxHeight = `${maxH}px`;
-                }
-
-                // Self-healing check: if visual viewport is back to full size (keyboard closed),
-                // automatically reset the bottom padding in case the user closed keyboard with back button
-                if (modalOpenViewportHeight && height >= modalOpenViewportHeight - 15) {
-                    const modalBody = document.getElementById("modalBody");
-                    if (modalBody && modalBody.style.paddingBottom !== "") {
-                        modalBody.style.paddingBottom = "";
-                    }
-                }
             };
+            
             if (window.visualViewport) {
                 window.visualViewport.addEventListener('resize', updateViewportHeight);
                 window.visualViewport.addEventListener('scroll', updateViewportHeight);
@@ -1346,23 +1326,6 @@
                 }
             });
             updateViewportHeight();
-
-            // Periodic updater for viewport height during active input sessions to ensure perfect resizing on ROMs/WebViews that don't trigger resize events properly
-            let viewportInterval = null;
-            const startViewportUpdates = () => {
-                if (viewportInterval) clearInterval(viewportInterval);
-                updateViewportHeight();
-                viewportInterval = setInterval(updateViewportHeight, 80);
-            };
-            const stopViewportUpdates = () => {
-                if (viewportInterval) {
-                    clearInterval(viewportInterval);
-                    viewportInterval = null;
-                }
-                // Run a couple final updates during transition back
-                setTimeout(updateViewportHeight, 100);
-                setTimeout(updateViewportHeight, 300);
-            };
 
             loadDatabase();
             // Set current day as selected initially
@@ -1385,76 +1348,59 @@
                     const scrollTarget = e.target;
                     const modalBody = document.getElementById("modalBody");
                     
-                    if (modalBody) {
-                        // Add generous bottom padding to let inputs scroll up comfortably above the keyboard
-                        modalBody.style.paddingBottom = "120px";
+                    const flex = document.getElementById("registerModalFlex");
+                    const card = document.getElementById("registerModalCard");
+                    if (flex && card) {
+                        // Align card to top of the screen with a small margin so it fits above keyboard perfectly
+                        flex.classList.add('items-start');
+                        flex.classList.remove('items-center');
+                        card.classList.remove('my-auto');
+                        card.classList.add('my-1');
                     }
                     
-                    // Start periodic height polling to perfectly track the keyboard's animated slide-up
-                    startViewportUpdates();
+                    if (modalBody) {
+                        // Add generous bottom padding to let inputs scroll up comfortably above the keyboard
+                        modalBody.style.paddingBottom = "140px";
+                    }
                     
-                    const scrollFn = (isSmooth = true) => {
+                    // Allow CSS transitions to complete before scrolling
+                    setTimeout(() => {
                         if (modalBody && modalBody.contains(scrollTarget)) {
-                            const behavior = isSmooth ? 'smooth' : 'auto';
-                            
-                            // Manual offset top calculation relative to modalBody to prevent parent/window scrolling
-                            let offsetTop = 0;
-                            let el = scrollTarget;
-                            while (el && el !== modalBody) {
-                                offsetTop += el.offsetTop || 0;
-                                el = el.offsetParent;
-                            }
-                            
-                            // Center the element inside the modalBody
-                            const targetScrollTop = offsetTop - (modalBody.clientHeight / 2) + (scrollTarget.clientHeight / 2);
-                            modalBody.scrollTo({
-                                top: Math.max(0, targetScrollTop),
-                                behavior: behavior
-                            });
+                            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
-                    };
-                    
-                    // Trigger scroll multiple times to synchronize with different keyboard slide-up speeds/animations
-                    scrollFn(true);
-                    setTimeout(() => scrollFn(true), 50);
-                    setTimeout(() => scrollFn(true), 150);
-                    setTimeout(() => scrollFn(false), 300); // Use instant snapping for later stages to prevent lag and ensure it's up
-                    setTimeout(() => scrollFn(false), 450);
-                    setTimeout(() => scrollFn(false), 600);
-                    setTimeout(() => scrollFn(false), 800);
+                    }, 120);
                 }
             });
 
             // Ensure complete scroll reset on input blur (keyboard hide) across iOS, Android, and emulator WebViews
             document.addEventListener('focusout', (e) => {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-                    // Stop the periodic height updates
-                    stopViewportUpdates();
-                    
+                    const flex = document.getElementById("registerModalFlex");
+                    const card = document.getElementById("registerModalCard");
+                    if (flex && card) {
+                        // Restore original centered modal styles
+                        flex.classList.remove('items-start');
+                        flex.classList.add('items-center');
+                        card.classList.remove('my-1');
+                        card.classList.add('my-auto');
+                    }
+
                     const modalBody = document.getElementById("modalBody");
                     if (modalBody) {
                         // Reset bottom padding
                         modalBody.style.paddingBottom = "";
                     }
 
-                    // Temporarily restore overflow to ensure standard browser scroll-back works correctly
-                    const prevOverflow = document.body.style.overflow;
-                    document.body.style.overflow = "";
-
+                    // Reset document window scroll
                     window.scrollTo({ top: 0 });
                     document.body.scrollTop = 0;
                     document.documentElement.scrollTop = 0;
                     
-                    // Reset the modal scroll overlay to 0 in case the system tried to shift it
+                    // Reset the modal scroll overlay to 0
                     const modal = document.getElementById("registerModal");
                     if (modal) {
                         modal.scrollTop = 0;
                     }
-
-                    // Restore original overflow once scroll reset has been processed
-                    setTimeout(() => {
-                        document.body.style.overflow = prevOverflow;
-                    }, 50);
                 }
             });
         });
