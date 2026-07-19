@@ -1342,6 +1342,7 @@
 
             // Track keyboard state using focus and input states for maximum reliability on mobile WebViews
             let maxViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            let wasKeyboardOpen = false;
 
             const adjustKeyboardState = () => {
                 const activeEl = document.activeElement;
@@ -1363,14 +1364,19 @@
                     const heightDeficit = maxViewportHeight - currentHeight;
                     if (heightDeficit > 120) {
                         isKeyboardOpen = true;
-                    } else {
-                        // The keyboard has been closed (height is back to normal) but the input is still technically focused.
-                        // Force a blur to unfocus the element, which will trigger the focusout and restore the normal non-raised modal position.
-                        if (activeEl && typeof activeEl.blur === 'function') {
-                            activeEl.blur();
-                        }
                     }
                 }
+
+                // Handle transition: if the keyboard was open, but is now closed, blur the active element
+                // to completely reset focus and dismiss the raised card layout immediately.
+                if (wasKeyboardOpen && !isKeyboardOpen) {
+                    if (activeEl && typeof activeEl.blur === 'function') {
+                        activeEl.blur();
+                    }
+                }
+
+                // Update the tracked state
+                wasKeyboardOpen = isKeyboardOpen;
 
                 const modalCard = document.getElementById("registerModalCard");
                 const modal = document.getElementById("registerModal");
