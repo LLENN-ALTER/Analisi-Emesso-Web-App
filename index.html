@@ -59,6 +59,18 @@
         #registerModalCard {
             height: auto;
             max-height: min(650px, calc(100% - 16px));
+            transition: max-height 0.15s ease-out;
+        }
+
+        /* Pure CSS fix: shrink modal body when keyboard is open (input focused) to force the footer buttons above the keyboard */
+        #registerModal:focus-within #modalBody {
+            max-height: 180px !important;
+        }
+
+        @media (max-height: 600px) {
+            #registerModal:focus-within #modalBody {
+                max-height: 140px !important;
+            }
         }
     </style>
 </head>
@@ -385,7 +397,7 @@
     </main>
 
     <!-- Registra Turno Dialog Modal -->
-    <div id="registerModal" class="fixed top-0 left-0 right-0 z-50 overflow-hidden bg-slate-950/85 backdrop-blur-sm hidden">
+    <div id="registerModal" class="fixed inset-0 z-50 overflow-hidden bg-slate-950/85 backdrop-blur-sm hidden">
         <div id="registerModalFlex" class="flex w-full h-full justify-center p-2 sm:p-4">
             <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto">
             
@@ -1374,8 +1386,8 @@
                     }
                     
                     if (modalBody) {
-                        // Add generous bottom padding to give plenty of scrolling runway above the keyboard
-                        modalBody.style.paddingBottom = "120px";
+                        // Add some bottom padding to make sure the last input can scroll comfortably without consuming too much space
+                        modalBody.style.paddingBottom = "40px";
                     }
                     
                     // Start periodic height polling to perfectly track the keyboard's animated slide-up
