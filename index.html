@@ -388,7 +388,7 @@
 
     <!-- Registra Turno Dialog Modal -->
     <div id="registerModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-sm hidden">
-        <div class="flex min-h-full items-center justify-center p-2 sm:p-4">
+        <div class="flex min-h-full justify-center p-2 sm:p-4">
             <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto">
             
             <!-- Modal Header -->
@@ -1313,6 +1313,23 @@
             }
             updateViewportHeight();
 
+            // Periodic updater for viewport height during active input sessions to ensure perfect resizing on ROMs/WebViews that don't trigger resize events properly
+            let viewportInterval = null;
+            const startViewportUpdates = () => {
+                if (viewportInterval) clearInterval(viewportInterval);
+                updateViewportHeight();
+                viewportInterval = setInterval(updateViewportHeight, 80);
+            };
+            const stopViewportUpdates = () => {
+                if (viewportInterval) {
+                    clearInterval(viewportInterval);
+                    viewportInterval = null;
+                }
+                // Run a couple final updates during transition back
+                setTimeout(updateViewportHeight, 100);
+                setTimeout(updateViewportHeight, 300);
+            };
+
             loadDatabase();
             // Set current day as selected initially
             const today = new Date();
@@ -1335,6 +1352,9 @@
                     const modalBody = document.getElementById("modalBody");
                     const registerModal = document.getElementById("registerModal");
                     
+                    // Start periodic height polling to perfectly track the keyboard's animated slide-up
+                    startViewportUpdates();
+                    
                     const scrollFn = (isSmooth = true) => {
                         if (modalBody && modalBody.contains(scrollTarget)) {
                             const behavior = isSmooth ? 'smooth' : 'auto';
@@ -1342,8 +1362,8 @@
                             // Scroll the focused input smoothly into view within modalBody
                             scrollTarget.scrollIntoView({ behavior: behavior, block: 'center', inline: 'nearest' });
                             
-                            // If it's the daily notes input, scroll both modalBody and the outer registerModal container to the very bottom to ensure full visibility
-                            if (scrollTarget.id === 'inputNote') {
+                            // If it's a bottom-aligned field or the daily notes input, scroll both modalBody and the outer registerModal container to the very bottom to ensure full visibility
+                            if (scrollTarget.id === 'inputNote' || scrollTarget.id === 'inputPermessoOre' || scrollTarget.id === 'inputPermessoMinuti') {
                                 modalBody.scrollTo({ top: modalBody.scrollHeight, behavior: behavior });
                                 if (registerModal) {
                                     registerModal.scrollTo({ top: registerModal.scrollHeight, behavior: behavior });
@@ -1366,6 +1386,9 @@
             // Ensure complete scroll reset on input blur (keyboard hide) across iOS, Android, and emulator WebViews
             document.addEventListener('focusout', (e) => {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                    // Stop the periodic height updates
+                    stopViewportUpdates();
+                    
                     // Temporarily restore overflow to ensure standard browser scroll-back works correctly
                     const prevOverflow = document.body.style.overflow;
                     document.body.style.overflow = "";
