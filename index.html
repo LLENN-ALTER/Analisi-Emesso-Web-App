@@ -52,12 +52,9 @@
             border-radius: 3px;
         }
 
-        /* Dynamic slide-up when keyboard is active to prevent overlapping */
+        /* Dynamic slide-up when keyboard is active is governed elegantly by JS */
         #registerModalCard.keyboard-active {
-            transform: translateY(0) !important;
-            min-height: 0 !important;
-            height: 86vh !important;
-            max-height: 86vh !important;
+            /* Handled dynamically by JS to sit perfectly above the keyboard */
         }
     </style>
 </head>
@@ -1313,30 +1310,40 @@
             selectDay(selectedDateStr);
 
             // Track keyboard state using focus and input states for maximum reliability on mobile WebViews
+            let baselineHeight = window.innerHeight;
             const adjustKeyboardState = () => {
                 const activeEl = document.activeElement;
                 const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
 
-                const currentWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
                 const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
 
-                // On mobile, if an input is focused, the keyboard is open.
-                // We also check if viewport height actually shrunk as additional verification.
-                let isKeyboardOpen = isInputFocused;
-                if (window.visualViewport) {
-                    const initialHeight = window.screen.height || window.innerHeight;
-                    const heightDiff = initialHeight - currentHeight;
-                    if (heightDiff > 120 && isInputFocused) {
-                        isKeyboardOpen = true;
-                    }
+                // Update baselineHeight if keyboard is confirmed closed (no input has focus)
+                if (!isInputFocused) {
+                    baselineHeight = currentHeight;
                 }
+
+                // Keyboard is open if we have input focused and the height has shrunk significantly
+                const heightDiff = baselineHeight - currentHeight;
+                const isKeyboardOpen = isInputFocused && heightDiff > 80;
 
                 const modalCard = document.getElementById("registerModalCard");
                 if (modalCard) {
                     if (isKeyboardOpen) {
                         modalCard.classList.add("keyboard-active");
+                        
+                        // Calculate precise card height and its center position in the shrunken viewport
+                        const cardHeight = modalCard.offsetHeight;
+                        const currentBottom = (currentHeight + cardHeight) / 2;
+                        
+                        // Target exactly 12px above the viewport bottom (the keyboard top)
+                        const targetBottom = currentHeight - 12;
+                        
+                        // Only translate upwards if the card would overlap with the keyboard area
+                        const translation = Math.max(0, currentBottom - targetBottom);
+                        modalCard.style.transform = `translateY(-${translation}px)`;
                     } else {
                         modalCard.classList.remove("keyboard-active");
+                        modalCard.style.transform = '';
                     }
                 }
             };
