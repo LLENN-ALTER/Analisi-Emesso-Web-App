@@ -58,6 +58,7 @@
 
         #registerModalCard {
             height: auto;
+            max-height: min(650px, calc(100% - 16px));
         }
     </style>
 </head>
@@ -384,7 +385,7 @@
     </main>
 
     <!-- Registra Turno Dialog Modal -->
-    <div id="registerModal" class="fixed inset-0 z-50 overflow-hidden bg-slate-950/85 backdrop-blur-sm hidden">
+    <div id="registerModal" class="fixed top-0 left-0 right-0 z-50 overflow-hidden bg-slate-950/85 backdrop-blur-sm hidden">
         <div id="registerModalFlex" class="flex w-full h-full justify-center p-2 sm:p-4">
             <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto">
             
