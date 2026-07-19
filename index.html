@@ -1341,12 +1341,36 @@
             selectDay(selectedDateStr);
 
             // Track keyboard state using focus and input states for maximum reliability on mobile WebViews
+            let maxViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
             const adjustKeyboardState = () => {
                 const activeEl = document.activeElement;
                 const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
 
+                const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+                // Keep track of maximum viewport height observed when no input is focused to establish standard screen size
+                if (!isInputFocused) {
+                    if (currentHeight > maxViewportHeight) {
+                        maxViewportHeight = currentHeight;
+                    }
+                }
+
                 // Keyboard is open if we have input focused and we are on mobile/tablet layouts (<1024px)
-                const isKeyboardOpen = isInputFocused && (window.innerWidth < 1024);
+                // AND the current height indicates a significant layout compression from the keyboard (at least 120px)
+                let isKeyboardOpen = false;
+                if (isInputFocused && (window.innerWidth < 1024)) {
+                    const heightDeficit = maxViewportHeight - currentHeight;
+                    if (heightDeficit > 120) {
+                        isKeyboardOpen = true;
+                    } else {
+                        // The keyboard has been closed (height is back to normal) but the input is still technically focused.
+                        // Force a blur to unfocus the element, which will trigger the focusout and restore the normal non-raised modal position.
+                        if (activeEl && typeof activeEl.blur === 'function') {
+                            activeEl.blur();
+                        }
+                    }
+                }
 
                 const modalCard = document.getElementById("registerModalCard");
                 const modal = document.getElementById("registerModal");
