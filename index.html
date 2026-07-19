@@ -61,17 +61,6 @@
             max-height: min(650px, calc(100% - 16px));
             transition: max-height 0.15s ease-out;
         }
-
-        /* Pure CSS fix: shrink modal body when keyboard is open (input focused) to force the footer buttons above the keyboard */
-        #registerModal:focus-within #modalBody {
-            max-height: 180px !important;
-        }
-
-        @media (max-height: 600px) {
-            #registerModal:focus-within #modalBody {
-                max-height: 140px !important;
-            }
-        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-6 md:pb-12 transition-all duration-200">
@@ -1321,11 +1310,26 @@
                 const registerModal = document.getElementById("registerModal");
                 if (registerModal) {
                     registerModal.style.height = `${height}px`;
+                    // Lock outer page scroll whenever modal is open
+                    if (!registerModal.classList.contains('hidden')) {
+                        window.scrollTo(0, 0);
+                        document.body.scrollTop = 0;
+                        document.documentElement.scrollTop = 0;
+                    }
                 }
                 const registerModalCard = document.getElementById("registerModalCard");
                 if (registerModalCard) {
                     const maxH = Math.min(650, height - 16);
                     registerModalCard.style.maxHeight = `${maxH}px`;
+                }
+
+                // Self-healing check: if visual viewport is back to full size (keyboard closed),
+                // automatically reset the bottom padding in case the user closed keyboard with back button
+                if (modalOpenViewportHeight && height >= modalOpenViewportHeight - 15) {
+                    const modalBody = document.getElementById("modalBody");
+                    if (modalBody && modalBody.style.paddingBottom !== "") {
+                        modalBody.style.paddingBottom = "";
+                    }
                 }
             };
             if (window.visualViewport) {
@@ -1334,6 +1338,13 @@
             } else {
                 window.addEventListener('resize', updateViewportHeight);
             }
+            // Block any document scroll when register modal is open to prevent layout offsets
+            window.addEventListener('scroll', () => {
+                const registerModal = document.getElementById("registerModal");
+                if (registerModal && !registerModal.classList.contains('hidden')) {
+                    window.scrollTo(0, 0);
+                }
+            });
             updateViewportHeight();
 
             // Periodic updater for viewport height during active input sessions to ensure perfect resizing on ROMs/WebViews that don't trigger resize events properly
@@ -1373,21 +1384,10 @@
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
                     const scrollTarget = e.target;
                     const modalBody = document.getElementById("modalBody");
-                    const registerModal = document.getElementById("registerModal");
-                    const registerModalFlex = document.getElementById("registerModalFlex");
-                    const registerModalCard = document.getElementById("registerModalCard");
-                    
-                    if (registerModalFlex && registerModalCard) {
-                        // Align card to top of screen so it's not cut off by flex centering and remains fully scrollable
-                        registerModalFlex.classList.add('items-start');
-                        registerModalFlex.classList.remove('items-center');
-                        registerModalCard.classList.remove('my-auto');
-                        registerModalCard.classList.add('my-2');
-                    }
                     
                     if (modalBody) {
-                        // Add some bottom padding to make sure the last input can scroll comfortably without consuming too much space
-                        modalBody.style.paddingBottom = "40px";
+                        // Add generous bottom padding to let inputs scroll up comfortably above the keyboard
+                        modalBody.style.paddingBottom = "120px";
                     }
                     
                     // Start periodic height polling to perfectly track the keyboard's animated slide-up
@@ -1397,16 +1397,20 @@
                         if (modalBody && modalBody.contains(scrollTarget)) {
                             const behavior = isSmooth ? 'smooth' : 'auto';
                             
-                            // Scroll the focused input smoothly into view within modalBody
-                            scrollTarget.scrollIntoView({ behavior: behavior, block: 'center', inline: 'nearest' });
-                            
-                            // If it's the daily notes input at the very bottom, scroll both modalBody and the outer registerModal container to the very bottom to ensure full visibility
-                            if (scrollTarget.id === 'inputNote') {
-                                modalBody.scrollTo({ top: modalBody.scrollHeight, behavior: behavior });
-                                if (registerModal) {
-                                    registerModal.scrollTo({ top: registerModal.scrollHeight, behavior: behavior });
-                                }
+                            // Manual offset top calculation relative to modalBody to prevent parent/window scrolling
+                            let offsetTop = 0;
+                            let el = scrollTarget;
+                            while (el && el !== modalBody) {
+                                offsetTop += el.offsetTop || 0;
+                                el = el.offsetParent;
                             }
+                            
+                            // Center the element inside the modalBody
+                            const targetScrollTop = offsetTop - (modalBody.clientHeight / 2) + (scrollTarget.clientHeight / 2);
+                            modalBody.scrollTo({
+                                top: Math.max(0, targetScrollTop),
+                                behavior: behavior
+                            });
                         }
                     };
                     
@@ -1427,15 +1431,6 @@
                     // Stop the periodic height updates
                     stopViewportUpdates();
                     
-                    const registerModalFlex = document.getElementById("registerModalFlex");
-                    const registerModalCard = document.getElementById("registerModalCard");
-                    if (registerModalFlex && registerModalCard) {
-                        // Restore original centered modal styles
-                        registerModalFlex.classList.remove('items-start');
-                        registerModalCard.classList.remove('my-2');
-                        registerModalCard.classList.add('my-auto');
-                    }
-
                     const modalBody = document.getElementById("modalBody");
                     if (modalBody) {
                         // Reset bottom padding
