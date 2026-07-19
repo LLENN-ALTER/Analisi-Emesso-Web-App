@@ -52,16 +52,12 @@
             border-radius: 3px;
         }
 
-        /* Dynamic slide-up when keyboard is active on mobile to prevent overlapping */
-        @media (max-height: 840px) {
-            #registerModalCard.keyboard-active {
-                transform: translateY(-100px) !important;
-            }
-        }
-        @media (max-height: 680px) {
-            #registerModalCard.keyboard-active {
-                transform: translateY(-130px) !important;
-            }
+        /* Dynamic slide-up/re-centering when keyboard is active to prevent overlapping */
+        #registerModalCard.keyboard-active {
+            transform: translateY(0) !important;
+            min-height: unset !important;
+            height: auto !important;
+            max-height: 95% !important;
         }
     </style>
 </head>
@@ -1316,11 +1312,34 @@
             updateUI();
             selectDay(selectedDateStr);
 
-            // Simple & Bulletproof input/textarea focus events to trigger/close modal shift
-            const setKeyboardActive = (active) => {
+            // Track keyboard state using visualViewport and window height
+            let baseViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            let lastViewportWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+
+            const adjustKeyboardState = () => {
+                const currentWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+                const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+                // Reset baseViewportHeight on orientation or width change
+                if (Math.abs(currentWidth - lastViewportWidth) > 30) {
+                    baseViewportHeight = currentHeight;
+                    lastViewportWidth = currentWidth;
+                }
+
+                // If no input is focused, currentHeight should be considered the base viewport height
+                const activeEl = document.activeElement;
+                const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+                if (!isInputFocused && currentHeight > baseViewportHeight) {
+                    baseViewportHeight = currentHeight;
+                }
+
+                // Keyboard is open if height difference is significant
+                const heightDiff = baseViewportHeight - currentHeight;
+                const isKeyboardOpen = heightDiff > 80;
+
                 const modalCard = document.getElementById("registerModalCard");
                 if (modalCard) {
-                    if (active) {
+                    if (isKeyboardOpen && isInputFocused) {
                         modalCard.classList.add("keyboard-active");
                     } else {
                         modalCard.classList.remove("keyboard-active");
@@ -1328,13 +1347,23 @@
                 }
             };
 
+            window.addEventListener('resize', adjustKeyboardState);
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', adjustKeyboardState);
+                window.visualViewport.addEventListener('scroll', adjustKeyboardState);
+            }
+
             // Auto scroll focused inputs/textareas into view to prevent keyboard overlapping
             document.addEventListener('focusin', (e) => {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
                     const scrollTarget = e.target;
                     const modalBody = document.getElementById("modalBody");
                     
-                    setKeyboardActive(true);
+                    // Call keyboard state calculation on focus and during keyboard transition
+                    adjustKeyboardState();
+                    setTimeout(adjustKeyboardState, 100);
+                    setTimeout(adjustKeyboardState, 300);
+                    setTimeout(adjustKeyboardState, 500);
                     
                     const scrollFn = () => {
                         if (modalBody && modalBody.contains(scrollTarget)) {
@@ -1358,13 +1387,9 @@
             document.addEventListener('focusout', (e) => {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
                     // Slight delay to check if focus shifted to another input, otherwise dismiss shift
-                    setTimeout(() => {
-                        const activeEl = document.activeElement;
-                        const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
-                        if (!isInputFocused) {
-                            setKeyboardActive(false);
-                        }
-                    }, 50);
+                    setTimeout(adjustKeyboardState, 50);
+                    setTimeout(adjustKeyboardState, 150);
+                    setTimeout(adjustKeyboardState, 350);
                     
                     // Temporarily restore overflow to ensure standard browser scroll-back works correctly
                     const prevOverflow = document.body.style.overflow;
