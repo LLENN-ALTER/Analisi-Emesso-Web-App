@@ -58,8 +58,6 @@
 
         #registerModalCard {
             height: auto;
-            max-height: min(650px, calc(var(--visual-viewport-height, 100vh) - 16px));
-            min-height: min(280px, calc(var(--visual-viewport-height, 100vh) * 0.92));
         }
     </style>
 </head>
@@ -386,8 +384,8 @@
     </main>
 
     <!-- Registra Turno Dialog Modal -->
-    <div id="registerModal" class="fixed top-0 left-0 right-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-sm hidden">
-        <div id="registerModalFlex" class="flex min-h-full justify-center p-2 sm:p-4">
+    <div id="registerModal" class="fixed inset-0 z-50 overflow-hidden bg-slate-950/85 backdrop-blur-sm hidden">
+        <div id="registerModalFlex" class="flex w-full h-full justify-center p-2 sm:p-4">
             <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto">
             
             <!-- Modal Header -->
@@ -1306,6 +1304,16 @@
                     height = Math.min(height, window.visualViewport.height);
                 }
                 document.documentElement.style.setProperty('--visual-viewport-height', `${height}px`);
+                
+                const registerModal = document.getElementById("registerModal");
+                if (registerModal) {
+                    registerModal.style.height = `${height}px`;
+                }
+                const registerModalCard = document.getElementById("registerModalCard");
+                if (registerModalCard) {
+                    const maxH = Math.min(650, height - 16);
+                    registerModalCard.style.maxHeight = `${maxH}px`;
+                }
             };
             if (window.visualViewport) {
                 window.visualViewport.addEventListener('resize', updateViewportHeight);
