@@ -387,7 +387,7 @@
 
     <!-- Registra Turno Dialog Modal -->
     <div id="registerModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-sm hidden">
-        <div class="flex min-h-full justify-center p-2 sm:p-4">
+        <div id="registerModalFlex" class="flex min-h-full justify-center p-2 sm:p-4">
             <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto">
             
             <!-- Modal Header -->
@@ -1350,6 +1350,16 @@
                     const scrollTarget = e.target;
                     const modalBody = document.getElementById("modalBody");
                     const registerModal = document.getElementById("registerModal");
+                    const registerModalFlex = document.getElementById("registerModalFlex");
+                    const registerModalCard = document.getElementById("registerModalCard");
+                    
+                    if (registerModalFlex && registerModalCard) {
+                        // Align card to top of screen so it's not cut off by flex centering and remains fully scrollable
+                        registerModalFlex.classList.add('items-start');
+                        registerModalFlex.classList.remove('items-center');
+                        registerModalCard.classList.remove('my-auto');
+                        registerModalCard.classList.add('my-2');
+                    }
                     
                     // Start periodic height polling to perfectly track the keyboard's animated slide-up
                     startViewportUpdates();
@@ -1388,6 +1398,15 @@
                     // Stop the periodic height updates
                     stopViewportUpdates();
                     
+                    const registerModalFlex = document.getElementById("registerModalFlex");
+                    const registerModalCard = document.getElementById("registerModalCard");
+                    if (registerModalFlex && registerModalCard) {
+                        // Restore original centered modal styles
+                        registerModalFlex.classList.remove('items-start');
+                        registerModalCard.classList.remove('my-2');
+                        registerModalCard.classList.add('my-auto');
+                    }
+
                     // Temporarily restore overflow to ensure standard browser scroll-back works correctly
                     const prevOverflow = document.body.style.overflow;
                     document.body.style.overflow = "";
