@@ -52,10 +52,14 @@
             border-radius: 3px;
         }
 
+        #registerModal {
+            height: var(--visual-viewport-height, 100vh);
+        }
+
         #registerModalCard {
             height: auto;
-            max-height: min(650px, calc(100% - 16px));
-            min-height: min(480px, 92%);
+            max-height: min(650px, calc(var(--visual-viewport-height, 100vh) - 16px));
+            min-height: min(480px, calc(var(--visual-viewport-height, 100vh) * 0.92));
             transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
     </style>
@@ -1296,6 +1300,19 @@
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
+            // Track visual viewport changes (especially keyboard open/close on mobile devices)
+            const updateViewportHeight = () => {
+                const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                document.documentElement.style.setProperty('--visual-viewport-height', `${height}px`);
+            };
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', updateViewportHeight);
+                window.visualViewport.addEventListener('scroll', updateViewportHeight);
+            } else {
+                window.addEventListener('resize', updateViewportHeight);
+            }
+            updateViewportHeight();
+
             loadDatabase();
             // Set current day as selected initially
             const today = new Date();
@@ -1316,23 +1333,33 @@
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
                     const scrollTarget = e.target;
                     const modalBody = document.getElementById("modalBody");
+                    const registerModal = document.getElementById("registerModal");
                     
-                    const scrollFn = () => {
+                    const scrollFn = (isSmooth = true) => {
                         if (modalBody && modalBody.contains(scrollTarget)) {
-                            // Scroll the focused input smoothly into view within modalBody
-                            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                            const behavior = isSmooth ? 'smooth' : 'auto';
                             
-                            // If it's the daily notes input, scroll modalBody to the very bottom to ensure full visibility
+                            // Scroll the focused input smoothly into view within modalBody
+                            scrollTarget.scrollIntoView({ behavior: behavior, block: 'center', inline: 'nearest' });
+                            
+                            // If it's the daily notes input, scroll both modalBody and the outer registerModal container to the very bottom to ensure full visibility
                             if (scrollTarget.id === 'inputNote') {
-                                modalBody.scrollTo({ top: modalBody.scrollHeight, behavior: 'smooth' });
+                                modalBody.scrollTo({ top: modalBody.scrollHeight, behavior: behavior });
+                                if (registerModal) {
+                                    registerModal.scrollTo({ top: registerModal.scrollHeight, behavior: behavior });
+                                }
                             }
                         }
                     };
                     
                     // Trigger scroll multiple times to synchronize with different keyboard slide-up speeds/animations
-                    scrollFn();
-                    setTimeout(scrollFn, 80);
-                    setTimeout(scrollFn, 250);
+                    scrollFn(true);
+                    setTimeout(() => scrollFn(true), 50);
+                    setTimeout(() => scrollFn(true), 150);
+                    setTimeout(() => scrollFn(false), 300); // Use instant snapping for later stages to prevent lag and ensure it's up
+                    setTimeout(() => scrollFn(false), 450);
+                    setTimeout(() => scrollFn(false), 600);
+                    setTimeout(() => scrollFn(false), 800);
                 }
             });
 
