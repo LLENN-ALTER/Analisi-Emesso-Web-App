@@ -1342,7 +1342,7 @@
 
             // Track keyboard state using focus and input states for maximum reliability on mobile WebViews
             let maxViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-            let wasKeyboardOpen = false;
+            let keyboardOpenedInSession = false;
 
             const adjustKeyboardState = () => {
                 const activeEl = document.activeElement;
@@ -1364,19 +1364,16 @@
                     const heightDeficit = maxViewportHeight - currentHeight;
                     if (heightDeficit > 120) {
                         isKeyboardOpen = true;
+                        keyboardOpenedInSession = true; // Mark that keyboard was successfully opened in this focus session
+                    } else if (keyboardOpenedInSession) {
+                        // The keyboard was opened, but now heightDeficit is <= 120 (keyboard closed via back/down key)
+                        // but input is still technically focused. Force a blur to reset immediately!
+                        keyboardOpenedInSession = false;
+                        if (activeEl && typeof activeEl.blur === 'function') {
+                            activeEl.blur();
+                        }
                     }
                 }
-
-                // Handle transition: if the keyboard was open, but is now closed, blur the active element
-                // to completely reset focus and dismiss the raised card layout immediately.
-                if (wasKeyboardOpen && !isKeyboardOpen) {
-                    if (activeEl && typeof activeEl.blur === 'function') {
-                        activeEl.blur();
-                    }
-                }
-
-                // Update the tracked state
-                wasKeyboardOpen = isKeyboardOpen;
 
                 const modalCard = document.getElementById("registerModalCard");
                 const modal = document.getElementById("registerModal");
@@ -1407,6 +1404,7 @@
             // Auto scroll focused inputs/textareas into view to prevent keyboard overlapping
             document.addEventListener('focusin', (e) => {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                    keyboardOpenedInSession = false; // Reset session status on new focus
                     const scrollTarget = e.target;
                     const modalBody = document.getElementById("modalBody");
                     
