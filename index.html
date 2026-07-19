@@ -52,12 +52,9 @@
             border-radius: 3px;
         }
 
-        /* Dynamic slide-up/re-centering when keyboard is active to prevent overlapping */
+        /* Dynamic slide-up when keyboard is active to prevent overlapping */
         #registerModalCard.keyboard-active {
-            transform: translateY(0) !important;
-            min-height: unset !important;
-            height: auto !important;
-            max-height: 95% !important;
+            transform: translateY(-40px) !important;
         }
     </style>
 </head>
@@ -1312,34 +1309,28 @@
             updateUI();
             selectDay(selectedDateStr);
 
-            // Track keyboard state using visualViewport and window height
-            let baseViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-            let lastViewportWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-
+            // Track keyboard state using focus and input states for maximum reliability on mobile WebViews
             const adjustKeyboardState = () => {
+                const activeEl = document.activeElement;
+                const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+
                 const currentWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
                 const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
 
-                // Reset baseViewportHeight on orientation or width change
-                if (Math.abs(currentWidth - lastViewportWidth) > 30) {
-                    baseViewportHeight = currentHeight;
-                    lastViewportWidth = currentWidth;
+                // On mobile, if an input is focused, the keyboard is open.
+                // We also check if viewport height actually shrunk as additional verification.
+                let isKeyboardOpen = isInputFocused;
+                if (window.visualViewport) {
+                    const initialHeight = window.screen.height || window.innerHeight;
+                    const heightDiff = initialHeight - currentHeight;
+                    if (heightDiff > 120 && isInputFocused) {
+                        isKeyboardOpen = true;
+                    }
                 }
-
-                // If no input is focused, currentHeight should be considered the base viewport height
-                const activeEl = document.activeElement;
-                const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
-                if (!isInputFocused && currentHeight > baseViewportHeight) {
-                    baseViewportHeight = currentHeight;
-                }
-
-                // Keyboard is open if height difference is significant
-                const heightDiff = baseViewportHeight - currentHeight;
-                const isKeyboardOpen = heightDiff > 80;
 
                 const modalCard = document.getElementById("registerModalCard");
                 if (modalCard) {
-                    if (isKeyboardOpen && isInputFocused) {
+                    if (isKeyboardOpen) {
                         modalCard.classList.add("keyboard-active");
                     } else {
                         modalCard.classList.remove("keyboard-active");
