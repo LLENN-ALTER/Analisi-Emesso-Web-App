@@ -63,12 +63,29 @@
                         max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        /* Prevent outer modal wrapper from scrolling when keyboard is active, forcing inner modalBody to scroll instead */
+        #registerModal.keyboard-active {
+            overflow: hidden !important;
+        }
+
+        /* Constrain the flex container to exactly the viewport height so children height percentages calculate correctly */
+        #registerModal > div.keyboard-active {
+            min-height: 0 !important;
+            height: 100% !important;
+            align-items: flex-end !important;
+            padding-bottom: 8px !important;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+        }
+
         #registerModalCard.keyboard-active {
             margin-top: auto !important;
-            margin-bottom: 12px !important;
+            margin-bottom: 0 !important;
             min-height: 0 !important;
             height: auto !important;
-            max-height: calc(100% - 24px) !important;
+            max-height: calc(100% - 16px) !important;
+            border-bottom-left-radius: 0.75rem !important;
+            border-bottom-right-radius: 0.75rem !important;
         }
     </style>
 </head>
@@ -1332,11 +1349,21 @@
                 const isKeyboardOpen = isInputFocused && (window.innerWidth < 768);
 
                 const modalCard = document.getElementById("registerModalCard");
-                if (modalCard) {
+                const modal = document.getElementById("registerModal");
+                if (modalCard && modal) {
+                    const flexContainer = modalCard.parentElement;
                     if (isKeyboardOpen) {
+                        modal.classList.add("keyboard-active");
                         modalCard.classList.add("keyboard-active");
+                        if (flexContainer) {
+                            flexContainer.classList.add("keyboard-active");
+                        }
                     } else {
+                        modal.classList.remove("keyboard-active");
                         modalCard.classList.remove("keyboard-active");
+                        if (flexContainer) {
+                            flexContainer.classList.remove("keyboard-active");
+                        }
                     }
                 }
             };
