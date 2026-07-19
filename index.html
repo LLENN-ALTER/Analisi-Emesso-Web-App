@@ -51,6 +51,18 @@
             background: #334155;
             border-radius: 3px;
         }
+
+        /* Dynamic slide-up when keyboard is active on mobile to prevent overlapping */
+        @media (max-height: 840px) {
+            #registerModalCard.keyboard-active {
+                transform: translateY(-100px) !important;
+            }
+        }
+        @media (max-height: 680px) {
+            #registerModalCard.keyboard-active {
+                transform: translateY(-130px) !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-6 md:pb-12 transition-all duration-200">
@@ -376,8 +388,9 @@
     </main>
 
     <!-- Registra Turno Dialog Modal -->
-    <div id="registerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
-        <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform" style="height: 80vh; max-height: 620px; min-height: 480px; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);">
+    <div id="registerModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-sm hidden">
+        <div class="flex min-h-full items-center justify-center p-2 sm:p-4">
+            <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto" style="height: 80vh; max-height: 620px; min-height: 480px; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);">
             
             <!-- Modal Header -->
             <div class="py-3 px-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
@@ -540,6 +553,7 @@
             
         </div>
     </div>
+</div>
 
     <!-- Sub-Selection Dialog Modal -->
     <div id="subTypeModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm hidden">
@@ -772,23 +786,39 @@
             const modal = document.getElementById("registerModal");
             if (modal) {
                 modal.classList.remove("hidden");
+                modal.scrollTop = 0;
                 const formatted = formatHeaderDateShort(selectedDateStr);
                 const titleDate = document.getElementById("modalTitleDate");
                 if (titleDate) {
                     titleDate.innerText = `(${formatted})`;
                 }
             }
+            const modalBody = document.getElementById("modalBody");
+            if (modalBody) {
+                modalBody.scrollTop = 0;
+            }
+            document.body.style.overflow = "hidden";
         }
 
         function closeRegisterModal() {
             const modal = document.getElementById("registerModal");
             if (modal) {
                 modal.classList.add("hidden");
+                modal.scrollTop = 0;
+            }
+            const modalBody = document.getElementById("modalBody");
+            if (modalBody) {
+                modalBody.scrollTop = 0;
             }
             const modalCard = document.getElementById("registerModalCard");
             if (modalCard) {
                 modalCard.style.transform = 'none';
             }
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+                activeEl.blur();
+            }
+            document.body.style.overflow = "";
         }
 
         function formatHeaderDateShort(dateStr) {
@@ -1286,68 +1316,76 @@
             updateUI();
             selectDay(selectedDateStr);
 
+            // Simple & Bulletproof input/textarea focus events to trigger/close modal shift
+            const setKeyboardActive = (active) => {
+                const modalCard = document.getElementById("registerModalCard");
+                if (modalCard) {
+                    if (active) {
+                        modalCard.classList.add("keyboard-active");
+                    } else {
+                        modalCard.classList.remove("keyboard-active");
+                    }
+                }
+            };
+
             // Auto scroll focused inputs/textareas into view to prevent keyboard overlapping
             document.addEventListener('focusin', (e) => {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
                     const scrollTarget = e.target;
                     const modalBody = document.getElementById("modalBody");
                     
+                    setKeyboardActive(true);
+                    
                     const scrollFn = () => {
-                        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        if (scrollTarget.id === 'inputNote' && modalBody) {
-                            modalBody.scrollTop = modalBody.scrollHeight;
+                        if (modalBody && modalBody.contains(scrollTarget)) {
+                            // Scroll the focused input smoothly into view within modalBody
+                            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                            
+                            // If it's the daily notes input, scroll modalBody to the very bottom to ensure full visibility
+                            if (scrollTarget.id === 'inputNote') {
+                                modalBody.scrollTo({ top: modalBody.scrollHeight, behavior: 'smooth' });
+                            }
                         }
                     };
                     
-                    // Trigger scroll multiple times to sync with keyboard animation states
-                    setTimeout(scrollFn, 100);
-                    setTimeout(scrollFn, 350);
-                    setTimeout(scrollFn, 600);
+                    // Trigger scroll multiple times to synchronize with different keyboard slide-up speeds/animations
+                    setTimeout(scrollFn, 80);
+                    setTimeout(scrollFn, 250);
                 }
             });
 
-            // Smoothly slide the modal card upwards when notes input is focused to keep it fully visible above the keyboard
-            const noteInput = document.getElementById("inputNote");
-            const modalCard = document.getElementById("registerModalCard");
-
-            if (noteInput && modalCard) {
-                noteInput.addEventListener('focus', () => {
-                    if (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024) {
-                        modalCard.style.transform = 'translateY(-30px)';
-                    }
-                });
-
-                noteInput.addEventListener('blur', () => {
-                    modalCard.style.transform = 'none';
-                });
-
-                // Listen to visualViewport or window resize events to detect keyboard open/close state transitions smoothly
-                const handleViewportResize = () => {
-                    if (!window.matchMedia("(pointer: coarse)").matches && window.innerWidth >= 1024) return;
-                    
-                    const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-                    
-                    // 1. Keyboard is opened/opening (height is significantly less than baseline modal-opened height)
-                    if (currentHeight < modalOpenViewportHeight - 80) {
-                        if (document.activeElement === noteInput) {
-                            modalCard.style.transform = 'translateY(-30px)';
+            // Ensure complete scroll reset on input blur (keyboard hide) across iOS, Android, and emulator WebViews
+            document.addEventListener('focusout', (e) => {
+                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                    // Slight delay to check if focus shifted to another input, otherwise dismiss shift
+                    setTimeout(() => {
+                        const activeEl = document.activeElement;
+                        const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+                        if (!isInputFocused) {
+                            setKeyboardActive(false);
                         }
-                    }
-                    // 2. Keyboard is closed/closing (height returned close to baseline modal-opened height)
-                    else if (currentHeight >= modalOpenViewportHeight - 35) {
-                        modalCard.style.transform = 'none';
-                        if (document.activeElement === noteInput) {
-                            noteInput.blur();
-                        }
-                    }
-                };
+                    }, 50);
+                    
+                    // Temporarily restore overflow to ensure standard browser scroll-back works correctly
+                    const prevOverflow = document.body.style.overflow;
+                    document.body.style.overflow = "";
 
-                if (window.visualViewport) {
-                    window.visualViewport.addEventListener('resize', handleViewportResize);
-                } else {
-                    window.addEventListener('resize', handleViewportResize);
+                    window.scrollTo({ top: 0 });
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                    
+                    // Reset the modal scroll overlay to 0 in case the system tried to shift it
+                    const modal = document.getElementById("registerModal");
+                    if (modal) {
+                        modal.scrollTop = 0;
+                    }
+
+                    // Restore original overflow once scroll reset has been processed
+                    setTimeout(() => {
+                        document.body.style.overflow = prevOverflow;
+                    }, 50);
                 }
-            }
+            });
         });
 
         function updateUI() {
