@@ -386,7 +386,7 @@
     </main>
 
     <!-- Registra Turno Dialog Modal -->
-    <div id="registerModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-sm hidden">
+    <div id="registerModal" class="fixed top-0 left-0 right-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-sm hidden">
         <div id="registerModalFlex" class="flex min-h-full justify-center p-2 sm:p-4">
             <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto">
             
@@ -1301,7 +1301,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             // Track visual viewport changes (especially keyboard open/close on mobile devices)
             const updateViewportHeight = () => {
-                const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                let height = window.innerHeight;
+                if (window.visualViewport) {
+                    height = Math.min(height, window.visualViewport.height);
+                }
                 document.documentElement.style.setProperty('--visual-viewport-height', `${height}px`);
             };
             if (window.visualViewport) {
@@ -1361,6 +1364,11 @@
                         registerModalCard.classList.add('my-2');
                     }
                     
+                    if (modalBody) {
+                        // Add generous bottom padding to give plenty of scrolling runway above the keyboard
+                        modalBody.style.paddingBottom = "120px";
+                    }
+                    
                     // Start periodic height polling to perfectly track the keyboard's animated slide-up
                     startViewportUpdates();
                     
@@ -1405,6 +1413,12 @@
                         registerModalFlex.classList.remove('items-start');
                         registerModalCard.classList.remove('my-2');
                         registerModalCard.classList.add('my-auto');
+                    }
+
+                    const modalBody = document.getElementById("modalBody");
+                    if (modalBody) {
+                        // Reset bottom padding
+                        modalBody.style.paddingBottom = "";
                     }
 
                     // Temporarily restore overflow to ensure standard browser scroll-back works correctly
