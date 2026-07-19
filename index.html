@@ -52,9 +52,23 @@
             border-radius: 3px;
         }
 
-        /* Dynamic slide-up when keyboard is active is governed elegantly by JS */
+        #registerModalCard {
+            height: 80vh;
+            max-height: 620px;
+            min-height: 480px;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                        margin-top 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                        margin-bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                        height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                        max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         #registerModalCard.keyboard-active {
-            /* Handled dynamically by JS to sit perfectly above the keyboard */
+            margin-top: auto !important;
+            margin-bottom: 12px !important;
+            min-height: 0 !important;
+            height: auto !important;
+            max-height: calc(100% - 24px) !important;
         }
     </style>
 </head>
@@ -383,7 +397,7 @@
     <!-- Registra Turno Dialog Modal -->
     <div id="registerModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-sm hidden">
         <div class="flex min-h-full items-center justify-center p-2 sm:p-4">
-            <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto" style="height: 80vh; max-height: 620px; min-height: 480px; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);">
+            <div id="registerModalCard" class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-[92%] md:w-full flex flex-col shadow-2xl relative animate-fade-in transform my-auto">
             
             <!-- Modal Header -->
             <div class="py-3 px-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
@@ -1310,40 +1324,19 @@
             selectDay(selectedDateStr);
 
             // Track keyboard state using focus and input states for maximum reliability on mobile WebViews
-            let baselineHeight = window.innerHeight;
             const adjustKeyboardState = () => {
                 const activeEl = document.activeElement;
                 const isInputFocused = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
 
-                const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-
-                // Update baselineHeight if keyboard is confirmed closed (no input has focus)
-                if (!isInputFocused) {
-                    baselineHeight = currentHeight;
-                }
-
-                // Keyboard is open if we have input focused and the height has shrunk significantly
-                const heightDiff = baselineHeight - currentHeight;
-                const isKeyboardOpen = isInputFocused && heightDiff > 80;
+                // Keyboard is open if we have input focused and we are on mobile layouts (<768px)
+                const isKeyboardOpen = isInputFocused && (window.innerWidth < 768);
 
                 const modalCard = document.getElementById("registerModalCard");
                 if (modalCard) {
                     if (isKeyboardOpen) {
                         modalCard.classList.add("keyboard-active");
-                        
-                        // Calculate precise card height and its center position in the shrunken viewport
-                        const cardHeight = modalCard.offsetHeight;
-                        const currentBottom = (currentHeight + cardHeight) / 2;
-                        
-                        // Target exactly 12px above the viewport bottom (the keyboard top)
-                        const targetBottom = currentHeight - 12;
-                        
-                        // Only translate upwards if the card would overlap with the keyboard area
-                        const translation = Math.max(0, currentBottom - targetBottom);
-                        modalCard.style.transform = `translateY(-${translation}px)`;
                     } else {
                         modalCard.classList.remove("keyboard-active");
-                        modalCard.style.transform = '';
                     }
                 }
             };
