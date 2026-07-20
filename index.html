@@ -790,9 +790,13 @@
             
             const registerModal = document.getElementById("registerModal");
             if (registerModal) {
-                registerModal.style.top = `${offsetTop}px`;
-                registerModal.style.height = `${height}px`;
-                registerModal.style.bottom = 'auto';
+                // Ensure the blurred dark backdrop remains strictly locked full-screen covering 100% of the viewport
+                registerModal.style.top = '0';
+                registerModal.style.height = '100%';
+                registerModal.style.bottom = '0';
+                registerModal.style.left = '0';
+                registerModal.style.right = '0';
+                registerModal.style.position = 'fixed';
                 
                 // Lock outer page scroll whenever modal is open
                 if (!registerModal.classList.contains('hidden')) {
@@ -800,6 +804,16 @@
                     document.body.scrollTop = 0;
                     document.documentElement.scrollTop = 0;
                 }
+            }
+
+            const registerModalFlex = document.getElementById("registerModalFlex");
+            if (registerModalFlex) {
+                // Apply visual viewport sizing and shifting to the inner flex container only
+                registerModalFlex.style.position = 'absolute';
+                registerModalFlex.style.top = `${offsetTop}px`;
+                registerModalFlex.style.height = `${height}px`;
+                registerModalFlex.style.left = '0';
+                registerModalFlex.style.right = '0';
             }
             
             const registerModalCard = document.getElementById("registerModalCard");
@@ -1746,7 +1760,9 @@
                 'BIGLIETTERIA_ORIO': {
                     btn: 'btnShiftOrio',
                     dot: 'dotShiftOrio',
-                    activeClass: 'border-sky-500 bg-sky-950/20 text-sky-400',
+                    activeClass: activeIsCorso 
+                        ? 'border-blue-700 bg-blue-950/20 text-blue-400' 
+                        : 'border-sky-500 bg-sky-950/20 text-sky-400',
                     inactiveClass: 'border-slate-800 bg-slate-950/20 text-slate-400 hover:border-slate-700'
                 },
                 'FERIE': {
@@ -1787,7 +1803,18 @@
                 
                 if (key === type) {
                     btn.className = `flex items-center ${spaceClass} ${paddingClass} rounded-xl border transition-all text-left focus:outline-none ${conf.activeClass}`;
-                    if (dot) dot.classList.remove("hidden");
+                    if (dot) {
+                        dot.classList.remove("hidden");
+                        if (key === 'BIGLIETTERIA_ORIO') {
+                            if (activeIsCorso) {
+                                dot.classList.remove('bg-sky-500');
+                                dot.classList.add('bg-blue-700');
+                            } else {
+                                dot.classList.remove('bg-blue-700');
+                                dot.classList.add('bg-sky-500');
+                            }
+                        }
+                    }
                 } else {
                     btn.className = `flex items-center ${spaceClass} ${paddingClass} rounded-xl border transition-all text-left focus:outline-none ${conf.inactiveClass}`;
                     if (dot) dot.classList.add("hidden");
