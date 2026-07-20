@@ -749,6 +749,7 @@
         // Current UI Fields variables
         let activeShiftType = "CONTROLLERIA";
         let activeAzienda = "ATB";
+        let activeIsCorso = false;
         let isFormExpanded = false;
         let isSummaryExpanded = true;
 
@@ -949,7 +950,7 @@
 
                 let shiftClass = "";
                 let shiftLabel = "";
-                const isCorso = displayShiftType === "BIGLIETTERIA_ORIO" && record.note && record.note.toLowerCase() === "corso";
+                const isCorso = displayShiftType === "BIGLIETTERIA_ORIO" && (record.isCorso || (record.note && record.note.toLowerCase() === "corso"));
                 
                 if (displayShiftType === "CONTROLLERIA") {
                     shiftClass = "bg-white text-violet-600 border-violet-500 shadow-sm";
@@ -1159,7 +1160,7 @@
         // Sync legend highlights dynamically based on selected date's type
         function updateLegendHighlight(selectedShiftType) {
             const selectedRecord = shiftDatabase[selectedDateStr];
-            const isCorso = selectedRecord && selectedRecord.note && selectedRecord.note.toLowerCase() === 'corso' && (selectedRecord.shiftType === 'BIGLIETTERIA_ORIO' || selectedRecord.azienda === 'AEROPORTO');
+            const isCorso = selectedRecord && (selectedRecord.isCorso || (selectedRecord.note && selectedRecord.note.toLowerCase() === 'corso')) && (selectedRecord.shiftType === 'BIGLIETTERIA_ORIO' || selectedRecord.azienda === 'AEROPORTO');
 
             // Dynamically update legendAero text and dot color based on if selected is Corso
             const legendAeroEl = document.getElementById('legendAero');
@@ -1244,15 +1245,8 @@
 
         function selectSubType(type) {
             closeSubTypeModal();
+            activeIsCorso = (type === 'CORSO');
             setFormShiftType('BIGLIETTERIA_ORIO');
-            const noteInput = document.getElementById("inputNote");
-            if (type === 'CORSO') {
-                noteInput.value = "Corso";
-            } else {
-                if (noteInput.value.toLowerCase() === 'corso') {
-                    noteInput.value = "";
-                }
-            }
         }
 
         // Absence SubType Modal Dialog Interactions
@@ -1285,13 +1279,10 @@
             if (type) {
                 if (ref === 'CORSO') {
                     setFormAzienda('AEROPORTO');
-                    document.getElementById("inputNote").value = "Corso";
+                    activeIsCorso = true;
                 } else {
                     setFormAzienda(ref);
-                    const noteInput = document.getElementById("inputNote");
-                    if (noteInput && noteInput.value.toLowerCase() === 'corso') {
-                        noteInput.value = "";
-                    }
+                    activeIsCorso = false;
                 }
                 setFormShiftType(type);
             }
@@ -1304,8 +1295,7 @@
             let label = activeAzienda;
             if (label === "ARRIVA") label = "Arriva";
             if (label === "AEROPORTO") {
-                const noteVal = document.getElementById("inputNote") ? document.getElementById("inputNote").value : "";
-                if (noteVal.toLowerCase() === "corso") {
+                if (activeIsCorso) {
                     label = "Corso";
                 } else {
                     label = "Aeroporto";
@@ -1646,7 +1636,7 @@
                             }
                         }
                     } else if (refShift === "BIGLIETTERIA_ORIO") {
-                        const isCorso = record.note && record.note.toLowerCase() === 'corso';
+                        const isCorso = record.isCorso || (record.note && record.note.toLowerCase() === 'corso');
                         const dotBg = isCorso ? "bg-blue-700" : "bg-sky-500";
                         indicators.push(`<span class="w-1.5 h-1.5 rounded-full ${dotBg}"></span>`);
                     } else if (refShift === "FERIE") {
@@ -1685,6 +1675,7 @@
             const badge = document.getElementById("activeBadge");
 
             if (record) {
+                activeIsCorso = record.isCorso || (record.note && record.note.toLowerCase() === "corso");
                 // Load existing configurations Into HTML Controls
                 setFormShiftType(record.shiftType);
                 if (record.shiftType === "CONTROLLERIA" || record.shiftType === "PERMESSO" || record.shiftType === "MALATTIA") {
@@ -1706,10 +1697,11 @@
                 document.getElementById("inputNote").value = record.note || "";
                 
                 badge.className = "text-[9px] uppercase px-2 py-0.5 rounded-full font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/25 whitespace-nowrap shrink-0";
-                const isCorso = record.shiftType === "BIGLIETTERIA_ORIO" && record.note && record.note.toLowerCase() === "corso";
+                const isCorso = record.shiftType === "BIGLIETTERIA_ORIO" && (record.isCorso || (record.note && record.note.toLowerCase() === "corso"));
                 badge.innerText = isCorso ? "CORSO" : (record.shiftType === "BIGLIETTERIA_ORIO" ? "AEROPORTO" : record.shiftType.replace("_", " "));
                 document.getElementById("btnDelete").style.display = "block";
             } else {
+                activeIsCorso = false;
                 // Reset inputs to standard state for unused dates
                 setFormShiftType("CONTROLLERIA");
                 setFormAzienda("ATB");
@@ -1740,6 +1732,9 @@
         // Set actively chosen form shift type
         function setFormShiftType(type) {
             activeShiftType = type;
+            if (type !== 'BIGLIETTERIA_ORIO' && type !== 'MALATTIA' && type !== 'PERMESSO') {
+                activeIsCorso = false;
+            }
             
             const configs = {
                 'CONTROLLERIA': {
@@ -1917,6 +1912,7 @@
                 sanzioniPagateBordo: pagate,
                 azienda: azienda,
                 note: note,
+                isCorso: activeIsCorso,
                 permessoOre: permessoOre,
                 permessoMinuti: permessoMinuti,
                 malattiaOre: malattiaOre,
@@ -1982,7 +1978,7 @@
             }
 
             // 4. Aeroporto
-            const aeroportoDays = records.filter(r => r.shiftType === "BIGLIETTERIA_ORIO" && !(r.note && r.note.toLowerCase() === "corso")).length;
+            const aeroportoDays = records.filter(r => r.shiftType === "BIGLIETTERIA_ORIO" && !(r.isCorso || (r.note && r.note.toLowerCase() === "corso"))).length;
             if (aeroportoDays > 0) {
                 rowsHtml.push(`
                     <div class="flex items-center justify-between text-[11px] py-1">
@@ -1996,7 +1992,7 @@
             }
 
             // 5. Corso
-            const corsoDays = records.filter(r => r.shiftType === "BIGLIETTERIA_ORIO" && r.note && r.note.toLowerCase() === "corso").length;
+            const corsoDays = records.filter(r => r.shiftType === "BIGLIETTERIA_ORIO" && (r.isCorso || (r.note && r.note.toLowerCase() === "corso"))).length;
             if (corsoDays > 0) {
                 rowsHtml.push(`
                     <div class="flex items-center justify-between text-[11px] py-1">
