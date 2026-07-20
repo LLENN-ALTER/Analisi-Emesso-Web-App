@@ -1377,11 +1377,16 @@
                         flex.classList.remove('items-center');
                         card.classList.remove('my-auto');
                         card.classList.add('my-1');
+                        
+                        // Dynamically limit card maxHeight so the entire card fits above a ~300px keyboard
+                        // even on WebViews that do NOT natively resize the viewport on keyboard popups!
+                        const safeHeight = Math.max(280, Math.min(420, window.innerHeight - 300));
+                        card.style.setProperty('max-height', `${safeHeight}px`, 'important');
                     }
                     
                     if (modalBody) {
-                        // Add generous bottom padding to let inputs scroll up comfortably above the keyboard
-                        modalBody.style.paddingBottom = "140px";
+                        // Add proportioned bottom padding to let inputs scroll up comfortably
+                        modalBody.style.paddingBottom = "80px";
                     }
                     
                     // Allow CSS transitions to complete before scrolling
@@ -1404,6 +1409,10 @@
                         flex.classList.add('items-center');
                         card.classList.remove('my-1');
                         card.classList.add('my-auto');
+                        
+                        // Restore standard maxHeight based on current viewport
+                        card.style.removeProperty('max-height');
+                        updateViewportHeight();
                     }
 
                     const modalBody = document.getElementById("modalBody");
