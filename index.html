@@ -778,6 +778,36 @@
 
         let modalOpenViewportHeight = window.innerHeight;
 
+        // Global visual viewport resize/scroll handler to perfectly size modal around soft keyboard
+        function updateViewportHeight() {
+            let height = window.innerHeight;
+            let offsetTop = 0;
+            if (window.visualViewport) {
+                height = window.visualViewport.height;
+                offsetTop = window.visualViewport.offsetTop;
+            }
+            
+            const registerModal = document.getElementById("registerModal");
+            if (registerModal) {
+                registerModal.style.top = `${offsetTop}px`;
+                registerModal.style.height = `${height}px`;
+                registerModal.style.bottom = 'auto';
+                
+                // Lock outer page scroll whenever modal is open
+                if (!registerModal.classList.contains('hidden')) {
+                    window.scrollTo(0, 0);
+                    document.body.scrollTop = 0;
+                    document.documentElement.scrollTop = 0;
+                }
+            }
+            
+            const registerModalCard = document.getElementById("registerModalCard");
+            if (registerModalCard) {
+                const maxH = Math.min(650, height - 12);
+                registerModalCard.style.maxHeight = `${maxH}px`;
+            }
+        }
+
         // Modal Management
         function openRegisterModal() {
             modalOpenViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -796,6 +826,9 @@
                 modalBody.scrollTop = 0;
             }
             document.body.style.overflow = "hidden";
+            
+            // Force viewport height update immediately on open
+            updateViewportHeight();
         }
 
         function closeRegisterModal() {
@@ -1299,18 +1332,6 @@
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
-            // Track visual viewport changes (keep track of any dynamic scroll constraints)
-            const updateViewportHeight = () => {
-                const registerModal = document.getElementById("registerModal");
-                if (registerModal) {
-                    // Lock outer page scroll whenever modal is open
-                    if (!registerModal.classList.contains('hidden')) {
-                        window.scrollTo(0, 0);
-                        document.body.scrollTop = 0;
-                        document.documentElement.scrollTop = 0;
-                    }
-                }
-            };
             
             if (window.visualViewport) {
                 window.visualViewport.addEventListener('resize', updateViewportHeight);
