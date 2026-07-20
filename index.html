@@ -2073,8 +2073,22 @@
             }
 
             // 8. Permesso
-            let totalPermMinutesSum = records.reduce((acc, r) => acc + (r.permessoMinuti || 0), 0);
-            let totalPermHoursSum = records.reduce((acc, r) => acc + (r.permessoOre || 0), 0);
+            let totalPermMinutesSum = 0;
+            let totalPermHoursSum = 0;
+            records.forEach(r => {
+                if (r.shiftType === "PERMESSO") {
+                    if ((r.permessoOre || 0) === 0 && (r.permessoMinuti || 0) === 0) {
+                        totalPermHoursSum += 6;
+                        totalPermMinutesSum += 40;
+                    } else {
+                        totalPermHoursSum += (r.permessoOre || 0);
+                        totalPermMinutesSum += (r.permessoMinuti || 0);
+                    }
+                } else if ((r.permessoOre || 0) > 0 || (r.permessoMinuti || 0) > 0) {
+                    totalPermHoursSum += (r.permessoOre || 0);
+                    totalPermMinutesSum += (r.permessoMinuti || 0);
+                }
+            });
             totalPermHoursSum += Math.floor(totalPermMinutesSum / 60);
             totalPermMinutesSum = totalPermMinutesSum % 60;
             const totalPermMinutesTotal = totalPermHoursSum * 60 + totalPermMinutesSum;
