@@ -188,11 +188,11 @@
                             </div>
                             
                             <!-- Notes Space (Plain text with notepad icon) -->
-                            <div class="flex items-center space-x-1.5 text-right min-w-0 max-w-[65%] justify-end shrink">
-                                <svg class="w-3.5 h-3.5 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex items-start space-x-1.5 text-right min-w-0 max-w-[75%] justify-end shrink mt-0.5">
+                                <svg class="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                 </svg>
-                                <span id="summaryNotes" class="text-[11px] text-slate-450 font-medium leading-tight truncate italic">Nessuna nota</span>
+                                <span id="summaryNotes" class="text-[11.5px] text-slate-450 font-medium leading-normal break-words whitespace-normal italic">Nessuna nota</span>
                             </div>
                         </div>
 
@@ -328,8 +328,11 @@
                                     <span class="text-xs font-bold text-slate-200">Bonus Trimestrale</span>
                                     <p id="qLabelText" class="text-[10.5px] text-indigo-400 font-semibold">Trimestre</p>
                                 </div>
-                                <div class="text-right flex items-center space-x-2">
-                                    <h4 id="statQuarterlyBonusVal" class="text-sm font-extrabold text-emerald-400">€0.00</h4>
+                                <div class="flex items-center space-x-2 shrink-0">
+                                    <div class="flex flex-col items-end">
+                                        <h4 id="statQuarterlyBonusVal" class="text-sm font-extrabold text-emerald-400">€0.00</h4>
+                                        <span id="statQuarterlyBonusSub" class="text-[10.5px] text-indigo-400 font-semibold hidden"></span>
+                                    </div>
                                     <!-- Toggle button to open/close details -->
                                     <button onclick="toggleQuarterView()" class="p-1 hover:bg-slate-800 rounded transition" title="Dettagli e Modifica">
                                         <svg id="qToggleIcon" class="w-4 h-4 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2428,18 +2431,27 @@
 
             // Update unified quarterly bonus views
             const qBonusSpan = document.getElementById("statQuarterlyBonusVal");
+            const qBonusSubSpan = document.getElementById("statQuarterlyBonusSub");
             if (qBonusSpan) {
                 if (evaluationBonus !== null) {
                     qBonusSpan.innerText = `€${evaluationBonus.toFixed(2)}`;
                     qBonusSpan.className = "text-sm font-extrabold text-emerald-400";
+                    if (qBonusSubSpan) {
+                        qBonusSubSpan.innerText = activeQuarterLabel.toLowerCase();
+                        qBonusSubSpan.classList.remove("hidden");
+                    }
                 } else {
                     qBonusSpan.innerText = "Non inserito";
                     qBonusSpan.className = "text-sm font-semibold text-slate-450";
+                    if (qBonusSubSpan) {
+                        qBonusSubSpan.innerText = "";
+                        qBonusSubSpan.classList.add("hidden");
+                    }
                 }
             }
             const qLabelTextSpan = document.getElementById("qLabelText");
             if (qLabelTextSpan) {
-                qLabelTextSpan.innerText = activeQuarterLabel;
+                qLabelTextSpan.innerText = "Verifica Dati " + quarterLabel;
             }
 
             let qBadgesHtml = `<span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">${quarterLabel}</span>`;
@@ -2471,7 +2483,7 @@
                             <div class="flex items-center justify-between text-[11px]">
                                 <div class="flex items-center space-x-1.5 min-w-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
-                                    <span class="text-indigo-450 font-bold">Target ATB</span>
+                                    <span class="text-indigo-450 font-bold">Target ATB (Trimestre ${quarterIndex})</span>
                                     <span class="text-slate-500 text-[10px]">(${qAtbDays} gg)</span>
                                 </div>
                                 <div class="flex items-center space-x-2 shrink-0 text-[11px]">
@@ -2499,7 +2511,7 @@
                             <div class="flex items-center justify-between text-[11px]">
                                 <div class="flex items-center space-x-1.5 min-w-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
-                                    <span class="text-rose-450 font-bold">Target ARRIVA</span>
+                                    <span class="text-rose-450 font-bold">Target ARRIVA (Trimestre ${quarterIndex})</span>
                                     <span class="text-slate-500 text-[10px]">(${qArrivaDays} gg)</span>
                                 </div>
                                 <div class="flex items-center space-x-2 shrink-0 text-[11px]">
@@ -2540,7 +2552,6 @@
                         <div class="flex items-center justify-between">
                             <div class="space-y-0.5 text-left min-w-0">
                                 <span class="text-xs font-bold text-slate-200">Bonus ${qLbl}</span>
-                                <p class="text-[10px] text-slate-450">Inserisci l'importo per questo trimestre</p>
                             </div>
                             <div class="text-right shrink-0">
                                 <span class="text-sm font-extrabold ${commQuarterBonus !== null ? 'text-emerald-400' : 'text-slate-450'}">${commQuarterBonus !== null ? commQuarterBonus.toFixed(2) + ' €' : 'Non inserito'}</span>
