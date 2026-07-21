@@ -250,11 +250,11 @@
                 <div id="monthlyStatsGrid" class="bg-slate-900 rounded-2xl p-4 border border-slate-850 shadow-xl space-y-2"></div>
 
                 <!-- Objectives & Daily Averages Separated for ATB & Arriva -->
-                <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 space-y-4 shadow-xl">
+                <div id="objectivesCard" class="bg-slate-900 rounded-2xl p-4 border border-slate-850 space-y-4 shadow-xl">
                     <h4 class="text-xs font-bold text-indigo-400">Obiettivi & Medie Giornaliere</h4>
 
                     <!-- ATB Stats Row -->
-                    <div class="flex items-center justify-between">
+                    <div id="atbObjectiveRow" class="flex items-center justify-between">
                         <div class="space-y-0.5">
                             <h5 id="atbTitleAndDays" class="text-sm font-bold text-slate-200">ATB (0 gg)</h5>
                             <!-- Status text displaying missing or excess fines -->
@@ -273,10 +273,10 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-800/80"></div>
+                    <div id="objectivesSeparator" class="border-t border-slate-800/80"></div>
 
                     <!-- Arriva Stats Row -->
-                    <div class="flex items-center justify-between">
+                    <div id="arrivaObjectiveRow" class="flex items-center justify-between">
                         <div class="space-y-0.5">
                             <h5 id="arrivaTitleAndDays" class="text-sm font-bold text-slate-200">ARRIVA (0 gg)</h5>
                             <!-- Status text displaying missing or excess fines -->
@@ -296,70 +296,98 @@
                     </div>
                 </div>
 
-                <!-- Total Issued Monthly Stats (Fines & Bonus Card) -->
-                <div class="bg-gradient-to-br from-indigo-950/60 to-slate-900 rounded-2xl p-5 border border-indigo-900/50 space-y-4 shadow-xl">
-                    <div class="flex items-center justify-between">
-                        <div class="space-y-1">
-                            <span class="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">Sanzioni Totali Mese</span>
-                            <!-- Main statistics row -->
-                            <div class="flex items-center space-x-4">
-                                <div>
-                                    <h4 id="statTotalEmesse" class="text-2xl font-black text-slate-100">0</h4>
-                                    <p class="text-[10px] text-slate-400">Emesse Totali</p>
+                <!-- Unified Premi & Bonus Card -->
+                <div class="bg-slate-900 rounded-2xl p-4 border border-slate-850 shadow-xl space-y-3">
+                    <h4 class="text-[10px] uppercase font-bold text-indigo-400 tracking-wider text-left">Riepilogo Premi & Bonus</h4>
+                    
+                    <div class="divide-y divide-slate-800/40 space-y-3">
+                        <!-- 1. Bonus Mensile -->
+                        <div id="monthlyBonusRow" class="flex items-center justify-between pb-1">
+                            <div class="space-y-0.5 text-left">
+                                <span class="text-xs font-bold text-slate-200">Bonus Mensile</span>
+                                <div id="monthlyBonusDetails">
+                                    <p class="text-[10px] text-slate-400">
+                                        Emesse Totali: <strong id="statTotalEmesse" class="font-extrabold text-slate-300">0</strong> • 
+                                        Pagate a Bordo: <strong id="statTotalPagate" class="font-extrabold text-slate-300">0</strong>
+                                    </p>
                                 </div>
-                                <div class="w-px h-8 bg-slate-800"></div>
-                                <div>
-                                    <h4 id="statTotalPagate" class="text-2xl font-black text-slate-100">0</h4>
-                                    <p class="text-[10px] text-slate-400">Pagate a Bordo</p>
+                            </div>
+                            <div class="text-right">
+                                <div id="monthlyBonusValueContainer">
+                                    <h4 id="statMonthlyBonus" class="text-sm font-extrabold text-emerald-400">€0.00</h4>
+                                    <span class="text-[9px] text-slate-500 font-semibold flex justify-end">€1.50 cad.</span>
                                 </div>
+                                <span id="monthlyBonusPlaceholder" class="text-[10.5px] text-slate-450 italic hidden">Nessun turno registrato</span>
                             </div>
                         </div>
 
-                        <!-- Bonus Indicator Box -->
-                        <div class="text-right bg-indigo-900/40 p-3 rounded-xl border border-indigo-800/80">
-                            <span class="text-[9px] uppercase font-bold text-indigo-300">Bonus Stimato</span>
-                            <h4 id="statMonthlyBonus" class="text-xl font-extrabold text-emerald-400 mt-0.5">€0.00</h4>
-                            <p class="text-[9px] text-slate-400 font-semibold">€1.50 cad.</p>
+                        <!-- 2. Bonus Trimestrale -->
+                        <div class="flex flex-col pt-3 pb-1">
+                            <div class="flex items-center justify-between">
+                                <div class="space-y-0.5 text-left">
+                                    <span class="text-xs font-bold text-slate-200">Bonus Trimestrale</span>
+                                    <p id="qLabelText" class="text-[10.5px] text-indigo-400 font-semibold">Trimestre</p>
+                                </div>
+                                <div class="text-right flex items-center space-x-2">
+                                    <h4 id="statQuarterlyBonusVal" class="text-sm font-extrabold text-emerald-400">€0.00</h4>
+                                    <!-- Toggle button to open/close details -->
+                                    <button onclick="toggleQuarterView()" class="p-1 hover:bg-slate-800 rounded transition" title="Dettagli e Modifica">
+                                        <svg id="qToggleIcon" class="w-4 h-4 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden badge container for JS compatibility -->
+                            <div id="qHeaderBadges" class="hidden"></div>
+
+                            <!-- Expandable Details of Quarterly Bonus -->
+                            <div id="qBody" class="hidden mt-2 pt-2 border-t border-slate-800/20 space-y-3">
+                                <!-- Populated dynamically by JS -->
+                            </div>
                         </div>
+
+                        <!-- 3. Bonus Valutazione (Condizionale per determinati mesi o nascosto se non applicabile) -->
+                        <div id="evalBonusCardContainer" class="hidden flex-col pt-3 pb-1">
+                            <div class="flex items-center justify-between">
+                                <div class="space-y-0.5 text-left">
+                                    <span class="text-xs font-bold text-slate-200">Premio Valutazione</span>
+                                    <p id="evalLabelText" class="text-[10.5px] text-indigo-400 font-semibold">Trimestre</p>
+                                </div>
+                                <div class="text-right flex items-center space-x-2">
+                                    <h4 id="statEvalBonusVal" class="text-sm font-extrabold text-emerald-400">€0.00</h4>
+                                    <button onclick="toggleEvalView()" class="p-1 hover:bg-slate-800 rounded transition" title="Modifica Valutazione">
+                                        <svg id="evalToggleIcon" class="w-4 h-4 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Hidden badge container for JS compatibility -->
+                            <div id="evalHeaderBadges" class="hidden"></div>
+
+                            <!-- Expandable Details of Eval Bonus -->
+                            <div id="evalBody" class="hidden mt-2 pt-2 border-t border-slate-800/20 space-y-3">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- 4. Bonus Presenze (Solo a Dicembre) -->
+                        <div id="decPresenceRow" class="hidden flex-col pt-3">
+                            <div class="flex items-center justify-between">
+                                <div class="space-y-0.5 text-left">
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="text-xs font-bold text-slate-200">Premio Presenza Annuale</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-450">Tasso presenza annuale</p>
+                                </div>
+                                <div id="decPresenceAction" class="text-right"></div>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
-
-                <!-- Verifica Bonus Trimestrale Expanded/Collapsed Card -->
-                <div class="bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
-                    <!-- Clickable Header -->
-                    <button onclick="toggleQuarterView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
-                        <div class="flex items-center space-x-2 text-slate-100">
-                            <svg id="qToggleIcon" class="w-5 h-5 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                            <span class="text-sm font-bold text-indigo-400">Verifica Bonus Trimestrale</span>
-                        </div>
-                        <div id="qHeaderBadges" class="flex items-center space-x-1.5">
-                            <span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">Trimestre</span>
-                        </div>
-                    </button>
-
-                    <!-- Expendable Body -->
-                    <div id="qBody" class="hidden border-t border-slate-850/80 p-4 space-y-3"></div>
-                </div>
-
-                <!-- Premio Valutazione Trimestrale Card (Condizionale) -->
-                <div id="evalBonusCardContainer" class="hidden bg-slate-900 rounded-2xl border border-slate-850 overflow-hidden shadow-xl">
-                    <!-- Clickable Header -->
-                    <button onclick="toggleEvalView()" class="w-full flex items-center justify-between p-4 bg-slate-900/60 hover:bg-slate-850/40 transition-colors focus:outline-none">
-                        <div class="flex items-center space-x-2 text-slate-100">
-                            <svg id="evalToggleIcon" class="w-5 h-5 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                            <span class="text-sm font-bold text-indigo-400">Premio Valutazione Trimestrale</span>
-                        </div>
-                        <div id="evalHeaderBadges" class="flex items-center space-x-1.5">
-                            <span id="evalLabelText" class="text-[10px] bg-emerald-950/80 text-emerald-300 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">Valutazione</span>
-                        </div>
-                    </button>
-
-                    <!-- Expandable Body -->
-                    <div id="evalBody" class="hidden border-t border-slate-850/80 p-4 space-y-3"></div>
                 </div>
 
                 <!-- Verifica Premio Presenza Annuo Card -->
@@ -2047,27 +2075,36 @@
             }
 
             // 7. Malattia
-            let sicknessDays = 0.0;
-            records.forEach(record => {
-                if (record.shiftType === "MALATTIA") {
-                    if ((record.malattiaOre || 0) === 0 && (record.malattiaMinuti || 0) === 0) {
-                        sicknessDays += 1.0;
+            let totalMalattiaMinutesSum = 0;
+            let totalMalattiaHoursSum = 0;
+            records.forEach(r => {
+                if (r.shiftType === "MALATTIA") {
+                    if ((r.malattiaOre || 0) === 0 && (r.malattiaMinuti || 0) === 0) {
+                        totalMalattiaHoursSum += 6;
+                        totalMalattiaMinutesSum += 40;
                     } else {
-                        sicknessDays += ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                        totalMalattiaHoursSum += (r.malattiaOre || 0);
+                        totalMalattiaMinutesSum += (r.malattiaMinuti || 0);
                     }
-                } else if ((record.malattiaOre || 0) > 0 || (record.malattiaMinuti || 0) > 0) {
-                    sicknessDays += ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                } else if ((r.malattiaOre || 0) > 0 || (r.malattiaMinuti || 0) > 0) {
+                    totalMalattiaHoursSum += (r.malattiaOre || 0);
+                    totalMalattiaMinutesSum += (r.malattiaMinuti || 0);
                 }
             });
-            if (sicknessDays > 0) {
-                const formattedSickness = sicknessDays % 1 === 0 ? sicknessDays.toFixed(0) : sicknessDays.toFixed(2);
+            totalMalattiaHoursSum += Math.floor(totalMalattiaMinutesSum / 60);
+            totalMalattiaMinutesSum = totalMalattiaMinutesSum % 60;
+            const totalMalattiaMinutesTotal = totalMalattiaHoursSum * 60 + totalMalattiaMinutesSum;
+            const sicknessDays = totalMalattiaMinutesTotal / 400.0;
+            if (totalMalattiaMinutesTotal > 0) {
+                const eqSicknessDays = sicknessDays.toFixed(2);
+                const formattedSicknessDays = sicknessDays % 1 === 0 ? sicknessDays.toFixed(0) : eqSicknessDays;
                 rowsHtml.push(`
                     <div class="flex items-center justify-between text-[11px] py-1">
                         <div class="flex items-center space-x-1.5 min-w-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
                             <span class="text-slate-300 font-medium truncate">Malattia</span>
                         </div>
-                        <span class="text-rose-300 font-bold shrink-0">${formattedSickness} gg</span>
+                        <span class="text-rose-300 font-bold shrink-0">${totalMalattiaHoursSum}h ${totalMalattiaMinutesSum}m (${formattedSicknessDays} gg)</span>
                     </div>
                 `);
             }
@@ -2110,28 +2147,40 @@
                 const eligibleForBonus = totalAbsencesForBonus <= 1.5;
                 const formattedTotalAbsences = totalAbsencesForBonus % 1 === 0 ? totalAbsencesForBonus.toFixed(0) : totalAbsencesForBonus.toFixed(2);
 
+                // Convert totalAbsencesForBonus to equivalent total absence hours and minutes on the 400-minute-day scale
+                const totalAbsenceMinutes = Math.round(totalAbsencesForBonus * 400);
+                const absHours = Math.floor(totalAbsenceMinutes / 60);
+                const absMins = totalAbsenceMinutes % 60;
+
+                // Threshold is 1.5 days * 400 minutes = 600 minutes (10 hours)
+                const thresholdMinutes = 600;
+                const remainingMinutes = thresholdMinutes - totalAbsenceMinutes;
+
                 rowsHtml.push(`
-                    <div class="col-span-2 mt-2 pt-2 border-t border-slate-800/30 flex items-center justify-between text-[11px]">
-                        <div class="flex items-center space-x-1.5 min-w-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
-                            <span class="text-slate-300 font-bold">Totale Assenze (Soglia 1.5 gg)</span>
+                    <div class="col-span-2 mt-2 pt-2 border-t border-slate-800/30 flex flex-col space-y-1">
+                        <div class="flex items-center justify-between text-[11px]">
+                            <div class="flex items-center space-x-1.5 min-w-0">
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
+                                <span class="text-slate-300 font-bold">Totale Assenze</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5 shrink-0">
+                                <span class="text-slate-200 font-black">${absHours}h ${absMins.toString().padStart(2, '0')}m / 10h</span>
+                                ${eligibleForBonus ? `
+                                    <span class="inline-flex items-center text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider">
+                                        Bonus OK
+                                    </span>
+                                ` : `
+                                    <span class="inline-flex items-center text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20 text-[9px] font-bold uppercase tracking-wider">
+                                        No Bonus
+                                    </span>
+                                `}
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-1.5 shrink-0">
-                            <span class="text-slate-200 font-black">${formattedTotalAbsences} gg</span>
-                            ${eligibleForBonus ? `
-                                <span class="inline-flex items-center space-x-1 text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider">
-                                    <svg class="w-2.5 h-2.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span>Bonus Mensile</span>
-                                </span>
+                        <div class="text-right text-[10px] font-semibold">
+                            ${remainingMinutes >= 0 ? `
+                                <span class="text-emerald-400/90">Residuo: <strong class="font-bold text-emerald-400">${Math.floor(remainingMinutes / 60)}h ${(remainingMinutes % 60).toString().padStart(2, '0')}m</strong></span>
                             ` : `
-                                <span class="inline-flex items-center space-x-1 text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20 text-[9px] font-bold uppercase tracking-wider">
-                                    <svg class="w-2.5 h-2.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                    <span>Bonus Mensile</span>
-                                </span>
+                                <span class="text-rose-400/90">Sforato: <strong class="font-bold text-rose-400">${Math.floor(Math.abs(remainingMinutes) / 60)}h ${(Math.abs(remainingMinutes) % 60).toString().padStart(2, '0')}m</strong></span>
                             `}
                         </div>
                     </div>
@@ -2192,6 +2241,20 @@
             const monthlyBonus = totalPagate * 1.50;
             document.getElementById("statMonthlyBonus").innerText = `€${monthlyBonus.toFixed(2)}`;
 
+            const detailsEl = document.getElementById("monthlyBonusDetails");
+            const valueContainerEl = document.getElementById("monthlyBonusValueContainer");
+            const placeholderEl = document.getElementById("monthlyBonusPlaceholder");
+
+            if (records.length === 0) {
+                if (detailsEl) detailsEl.classList.add("hidden");
+                if (valueContainerEl) valueContainerEl.classList.add("hidden");
+                if (placeholderEl) placeholderEl.classList.remove("hidden");
+            } else {
+                if (detailsEl) detailsEl.classList.remove("hidden");
+                if (valueContainerEl) valueContainerEl.classList.remove("hidden");
+                if (placeholderEl) placeholderEl.classList.add("hidden");
+            }
+
             // Render ATB Objectives details & cumulative calculations
             document.getElementById("atbTitleAndDays").innerText = `ATB (${atbDays} gg)`;
             
@@ -2246,6 +2309,42 @@
 
                 arrivaLabelStatus.innerHTML = `Stato: ${emSignArriva} emesse / ${pagSignArriva} pagate<br><span class="text-slate-400 font-normal">Totale: ${totalEmArriva} emesse / ${totalPagArriva} pagate</span>`;
                 arrivaLabelStatus.className = `text-[11px] font-semibold ${(diffEmArriva >= 0 && diffPagArriva >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
+            }
+
+            // Conditionally show/hide based on whether shifts are registered for that month
+            const atbRow = document.getElementById("atbObjectiveRow");
+            const arrivaRow = document.getElementById("arrivaObjectiveRow");
+            const separator = document.getElementById("objectivesSeparator");
+            const objectivesCard = document.getElementById("objectivesCard");
+
+            if (atbDays === 0) {
+                atbRow.classList.add("hidden");
+                atbRow.classList.remove("flex");
+            } else {
+                atbRow.classList.remove("hidden");
+                atbRow.classList.add("flex");
+            }
+
+            if (arrivaDays === 0) {
+                arrivaRow.classList.add("hidden");
+                arrivaRow.classList.remove("flex");
+            } else {
+                arrivaRow.classList.remove("hidden");
+                arrivaRow.classList.add("flex");
+            }
+
+            // Separator between ATB and Arriva
+            if (atbDays > 0 && arrivaDays > 0) {
+                separator.classList.remove("hidden");
+            } else {
+                separator.classList.add("hidden");
+            }
+
+            // Entire Objectives Card
+            if (atbDays === 0 && arrivaDays === 0) {
+                objectivesCard.classList.add("hidden");
+            } else {
+                objectivesCard.classList.remove("hidden");
             }
 
             // --- Quarterly Statistics Calculation ---
@@ -2303,11 +2402,30 @@
             const savedBonusVal = safeLocalStorage.getItem(`bonus_${currentYear}_${quarterIndex}`) || safeLocalStorage.getItem(`quarter_bonus_${currentYear}_${quarterIndex}`);
             const evaluationBonus = savedBonusVal !== null ? parseFloat(savedBonusVal) : null;
 
+            // Update unified quarterly bonus views
+            const qBonusSpan = document.getElementById("statQuarterlyBonusVal");
+            if (qBonusSpan) {
+                if (evaluationBonus !== null) {
+                    qBonusSpan.innerText = `€${evaluationBonus.toFixed(2)}`;
+                    qBonusSpan.className = "text-sm font-extrabold text-emerald-400";
+                } else {
+                    qBonusSpan.innerText = "Non inserito";
+                    qBonusSpan.className = "text-sm font-semibold text-slate-450";
+                }
+            }
+            const qLabelTextSpan = document.getElementById("qLabelText");
+            if (qLabelTextSpan) {
+                qLabelTextSpan.innerText = quarterLabel;
+            }
+
             let qBadgesHtml = `<span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">${quarterLabel}</span>`;
             if (evaluationBonus !== null) {
                 qBadgesHtml += `<span class="text-[10px] bg-emerald-950/80 text-emerald-400 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">+${evaluationBonus.toFixed(2)} €</span>`;
             }
-            document.getElementById("qHeaderBadges").innerHTML = qBadgesHtml;
+            const qHeaderBadges = document.getElementById("qHeaderBadges");
+            if (qHeaderBadges) {
+                qHeaderBadges.innerHTML = qBadgesHtml;
+            }
 
             let htmlContent = "";
 
@@ -2319,63 +2437,51 @@
                 `;
             } else {
                 if (qAtbDays > 0) {
-                    const emDiffText = qAtbDiffEmesse >= 0 ? `+${qAtbDiffEmesse} in più 🎉` : `${qAtbDiffEmesse} mancanti`;
-                    const emDiffClass = qAtbDiffEmesse >= 0 ? "text-[11px] font-bold text-emerald-400 mt-1" : "text-[11px] font-bold text-red-500 mt-1";
-                    const pagDiffText = qAtbDiffPagate >= 0 ? `+${qAtbDiffPagate} in più 🎉` : `${qAtbDiffPagate} mancanti`;
-                    const pagDiffClass = qAtbDiffPagate >= 0 ? "text-[11px] font-bold text-emerald-400 mt-1" : "text-[11px] font-bold text-red-500 mt-1";
+                    const emDiffText = qAtbDiffEmesse >= 0 ? `+${qAtbDiffEmesse}` : `${qAtbDiffEmesse}`;
+                    const emDiffClass = qAtbDiffEmesse >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
+                    const pagDiffText = qAtbDiffPagate >= 0 ? `+${qAtbDiffPagate}` : `${qAtbDiffPagate}`;
+                    const pagDiffClass = qAtbDiffPagate >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
 
                     htmlContent += `
-                        <div class="space-y-3">
-                            <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">AZIENDA: ATB</h5>
-                            <p class="text-[11px] text-slate-400 text-left">
-                                Obiettivo trimestrale basato su una media di 11 emesse e 3 pagate per turno ATB (${qAtbDays} gg lavorati nel trimestre).
-                            </p>
-                            <div class="grid grid-cols-2 gap-3">
-                                <!-- Card 1: Emesse -->
-                                <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">EMESSE</span>
-                                    <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qAtbTotalEmesse} / ${qAtbTargetEmesse}</h4>
-                                    <p class="${emDiffClass}">${emDiffText}</p>
+                        <div class="space-y-1 text-left pb-1">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <div class="flex items-center space-x-1.5 min-w-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
+                                    <span class="text-indigo-450 font-bold">Target ATB</span>
+                                    <span class="text-slate-500 text-[10px]">(${qAtbDays} gg)</span>
                                 </div>
-                                <!-- Card 2: Pagate -->
-                                <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">PAGATE</span>
-                                    <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qAtbTotalPagate} / ${qAtbTargetPagate}</h4>
-                                    <p class="${pagDiffClass}">${pagDiffText}</p>
+                                <div class="flex items-center space-x-2 shrink-0 text-[11px]">
+                                    <span class="text-slate-200 font-medium">Emesse: <strong class="font-black">${qAtbTotalEmesse}/${qAtbTargetEmesse}</strong> <span class="${emDiffClass}">(${emDiffText})</span></span>
+                                    <span class="text-slate-600">•</span>
+                                    <span class="text-slate-200 font-medium">Pagate: <strong class="font-black">${qAtbTotalPagate}/${qAtbTargetPagate}</strong> <span class="${pagDiffClass}">(${pagDiffText})</span></span>
                                 </div>
-                             </div>
+                            </div>
                         </div>
                     `;
                 }
 
                 if (qAtbDays > 0 && qArrivaDays > 0) {
-                    htmlContent += `<hr class="border-slate-800/80 my-2">`;
+                    htmlContent += `<hr class="border-slate-800/40 my-2">`;
                 }
 
                 if (qArrivaDays > 0) {
-                    const emDiffText = qArrivaDiffEmesse >= 0 ? `+${qArrivaDiffEmesse} in più 🎉` : `${qArrivaDiffEmesse} mancanti`;
-                    const emDiffClass = qArrivaDiffEmesse >= 0 ? "text-[11px] font-bold text-emerald-400 mt-1" : "text-[11px] font-bold text-red-500 mt-1";
-                    const pagDiffText = qArrivaDiffPagate >= 0 ? `+${qArrivaDiffPagate} in più 🎉` : `${qArrivaDiffPagate} mancanti`;
-                    const pagDiffClass = qArrivaDiffPagate >= 0 ? "text-[11px] font-bold text-emerald-400 mt-1" : "text-[11px] font-bold text-red-500 mt-1";
+                    const emDiffText = qArrivaDiffEmesse >= 0 ? `+${qArrivaDiffEmesse}` : `${qArrivaDiffEmesse}`;
+                    const emDiffClass = qArrivaDiffEmesse >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
+                    const pagDiffText = qArrivaDiffPagate >= 0 ? `+${qArrivaDiffPagate}` : `${qArrivaDiffPagate}`;
+                    const pagDiffClass = qArrivaDiffPagate >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
 
                     htmlContent += `
-                        <div class="space-y-3">
-                            <h5 class="text-xs font-black text-rose-450 uppercase tracking-widest text-left">AZIENDA: ARRIVA</h5>
-                            <p class="text-[11px] text-slate-400 text-left">
-                                Obiettivo trimestrale basato su una media di 7 emesse e 1 pagata per turno ARRIVA (${qArrivaDays} gg lavorati nel trimestre).
-                            </p>
-                            <div class="grid grid-cols-2 gap-3">
-                                <!-- Card 1: Emesse -->
-                                <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">EMESSE</span>
-                                    <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qArrivaTotalEmesse} / ${qArrivaTargetEmesse}</h4>
-                                    <p class="${emDiffClass}">${emDiffText}</p>
+                        <div class="space-y-1 text-left pb-1">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <div class="flex items-center space-x-1.5 min-w-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
+                                    <span class="text-rose-450 font-bold">Target ARRIVA</span>
+                                    <span class="text-slate-500 text-[10px]">(${qArrivaDays} gg)</span>
                                 </div>
-                                <!-- Card 2: Pagate -->
-                                <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 text-center">
-                                    <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">PAGATE</span>
-                                    <h4 class="text-[17px] font-extrabold text-slate-100 mt-0.5">${qArrivaTotalPagate} / ${qArrivaTargetPagate}</h4>
-                                    <p class="${pagDiffClass}">${pagDiffText}</p>
+                                <div class="flex items-center space-x-2 shrink-0 text-[11px]">
+                                    <span class="text-slate-200 font-medium">Emesse: <strong class="font-black">${qArrivaTotalEmesse}/${qArrivaTargetEmesse}</strong> <span class="${emDiffClass}">(${emDiffText})</span></span>
+                                    <span class="text-slate-600">•</span>
+                                    <span class="text-slate-200 font-medium">Pagate: <strong class="font-black">${qArrivaTotalPagate}/${qArrivaTargetPagate}</strong> <span class="${pagDiffClass}">(${pagDiffText})</span></span>
                                 </div>
                             </div>
                         </div>
@@ -2410,10 +2516,9 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">Inserisci Bonus Trimestrale ${qLbl}</h5>
-                                <p class="text-[10px] text-slate-450 text-left">Comunicato in questo mese dal responsabile</p>
                             </div>
                             <div class="text-right">
-                                <span class="text-lg font-black text-emerald-450">${commQuarterBonus !== null ? commQuarterBonus.toFixed(2) + ' €' : 'Non inserito'}</span>
+                                <span class="text-sm font-extrabold ${commQuarterBonus !== null ? 'text-emerald-400' : 'text-slate-450'}">${commQuarterBonus !== null ? commQuarterBonus.toFixed(2) + ' €' : 'Non inserito'}</span>
                             </div>
                         </div>
                         
@@ -2458,7 +2563,7 @@
                             <p class="text-[10px] text-slate-450 text-left">${explanation}</p>
                         </div>
                         <div class="text-right">
-                            <span class="text-lg font-black text-emerald-400">${evaluationBonus !== null ? evaluationBonus.toFixed(2) + ' €' : 'Non ancora comunicato'}</span>
+                            <span class="text-sm font-extrabold ${evaluationBonus !== null ? 'text-emerald-400' : 'text-slate-450'}">${evaluationBonus !== null ? evaluationBonus.toFixed(2) + ' €' : 'Non ancora comunicato'}</span>
                         </div>
                     </div>
                 `;
@@ -2482,6 +2587,7 @@
 
             if (evalQuarterInfo !== null) {
                 evalContainer.classList.remove("hidden");
+                evalContainer.classList.add("flex");
                 const qIdx = evalQuarterInfo.quarterIndex;
                 const qYr = evalQuarterInfo.year;
                 const qLbl = evalQuarterInfo.label;
@@ -2492,58 +2598,73 @@
                 const evalBonus = savedEvalBonus !== null ? parseFloat(savedEvalBonus) : null;
                 const evalScore = savedEvalScore !== null ? parseFloat(savedEvalScore) : null;
 
-                let evalBadgesHtml = `<span id="evalLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">${qLbl}</span>`;
+                // Update unified evaluation views
+                const unifiedEvalVal = document.getElementById("statEvalBonusVal");
+                if (unifiedEvalVal) {
+                    if (evalBonus !== null) {
+                        unifiedEvalVal.innerText = `€${evalBonus.toFixed(2)}`;
+                        unifiedEvalVal.className = "text-sm font-extrabold text-emerald-400";
+                    } else {
+                        unifiedEvalVal.innerText = "Non inserito";
+                        unifiedEvalVal.className = "text-sm font-semibold text-slate-450";
+                    }
+                }
+                const unifiedEvalLabel = document.getElementById("evalLabelText");
+                if (unifiedEvalLabel) {
+                    unifiedEvalLabel.innerText = qLbl;
+                }
+
+                let evalBadgesHtml = `<span class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">${qLbl}</span>`;
                 if (evalScore !== null) {
                     evalBadgesHtml += `<span class="text-[10px] bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-full border border-slate-700">Voto: ${evalScore.toFixed(1)}/10</span>`;
                 }
                 if (evalBonus !== null) {
                     evalBadgesHtml += `<span class="text-[10px] bg-emerald-950/80 text-emerald-400 font-bold px-2.5 py-1 rounded-full border border-emerald-900/50">+${evalBonus.toFixed(2)} €</span>`;
                 }
-                document.getElementById("evalHeaderBadges").innerHTML = evalBadgesHtml;
+                const evalHeaderBadges = document.getElementById("evalHeaderBadges");
+                if (evalHeaderBadges) {
+                    evalHeaderBadges.innerHTML = evalBadgesHtml;
+                }
 
                 let evalBodyHtml = "";
 
                 if (!isEvalEditMode) {
-                    evalBodyHtml = `
-                        <div class="space-y-3 text-left">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest">Valutazione del Responsabile</h5>
-                                    <p class="text-[10px] text-slate-450 mt-0.5">Valutazione riferita al trimestre precedente</p>
+                    if (evalScore !== null || evalBonus !== null) {
+                        evalBodyHtml = `
+                            <div class="space-y-2 text-left">
+                                <div class="flex items-center justify-between text-[11px] pb-1">
+                                    <div class="flex items-center space-x-1.5 min-w-0">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
+                                        <span class="text-indigo-450 font-bold">Dettagli Valutazione</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2 shrink-0 text-[11px]">
+                                        ${evalScore !== null ? `<span class="text-slate-200 font-medium">Voto: <strong class="font-black text-indigo-300">${evalScore.toFixed(1)}/10</strong></span>` : ''}
+                                        ${(evalScore !== null && evalBonus !== null) ? `<span class="text-slate-600">•</span>` : ''}
+                                        ${evalBonus !== null ? `<span class="text-slate-200 font-medium">Premio: <strong class="font-black text-emerald-400">${evalBonus.toFixed(2)} €</strong></span>` : ''}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="flex space-x-3">
-                                ${(evalScore !== null || evalBonus !== null) ? `
-                                    ${evalScore !== null ? `
-                                        <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 flex-1 text-center">
-                                            <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">VOTO</span>
-                                            <h4 class="text-lg font-extrabold text-indigo-300 mt-0.5">${evalScore.toFixed(1)}/10</h4>
-                                        </div>
-                                    ` : ''}
-                                    ${evalBonus !== null ? `
-                                        <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-850 flex-1 text-center">
-                                            <span class="text-[9px] uppercase font-bold text-slate-450 tracking-wider">IMPORTO BONUS</span>
-                                            <h4 class="text-lg font-extrabold text-emerald-400 mt-0.5">${evalBonus.toFixed(2)} €</h4>
-                                        </div>
-                                    ` : ''}
-                                ` : `
-                                    <p class="text-xs italic text-slate-450">Non inserito</p>
-                                `}
-                            </div>
-
-                            <div class="flex space-x-2 pt-2">
-                                <button onclick="enableEvalEdit(${evalScore}, ${evalBonus})" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-xs font-bold rounded-lg transition">
-                                    ${(evalScore !== null || evalBonus !== null) ? 'Modifica Valutazione' : 'Inserisci Valutazione'}
-                                </button>
-                                ${(evalScore !== null || evalBonus !== null) ? `
-                                    <button onclick="deleteEvaluation(${qYr}, ${qIdx})" class="flex-1 py-1.5 bg-red-955/20 border border-red-900/30 text-red-400 text-xs font-bold rounded-lg transition">
+                                <div class="flex space-x-2 pt-1">
+                                    <button onclick="enableEvalEdit(${evalScore}, ${evalBonus})" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-[11px] font-bold rounded-lg transition">
+                                        Modifica Valutazione
+                                    </button>
+                                    <button onclick="deleteEvaluation(${qYr}, ${qIdx})" class="flex-1 py-1.5 bg-red-955/20 border border-red-900/30 text-red-400 text-[11px] font-bold rounded-lg transition">
                                         Rimuovi
                                     </button>
-                                ` : ''}
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        evalBodyHtml = `
+                            <div class="space-y-2 text-left">
+                                <div class="flex space-x-2 pt-1">
+                                    <button onclick="enableEvalEdit(${evalScore}, ${evalBonus})" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-[11px] font-bold rounded-lg transition">
+                                        Inserisci Valutazione
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
                 } else {
                     evalBodyHtml = `
                         <div class="space-y-3 text-left">
@@ -2577,6 +2698,7 @@
                 document.getElementById("evalBody").innerHTML = evalBodyHtml;
             } else {
                 evalContainer.classList.add("hidden");
+                evalContainer.classList.remove("flex");
             }
 
             // --- Verifica Premio Presenza Annuo ---
@@ -2605,29 +2727,31 @@
                     totalWorkedDaysYear += 1.0;
                 }
 
-                let sicknessDaysForRecord = 0.0;
+                let sicknessMinutesForRecord = 0;
                 if (record.shiftType === "MALATTIA") {
                     if ((record.malattiaOre || 0) === 0 && (record.malattiaMinuti || 0) === 0) {
-                        sicknessDaysForRecord = 1.0;
+                        sicknessMinutesForRecord = 400;
                     } else {
-                        sicknessDaysForRecord = ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                        sicknessMinutesForRecord = (record.malattiaOre || 0) * 60 + (record.malattiaMinuti || 0);
                     }
                 } else if ((record.malattiaOre || 0) > 0 || (record.malattiaMinuti || 0) > 0) {
-                    sicknessDaysForRecord = ((record.malattiaOre || 0) + ((record.malattiaMinuti || 0) / 60.0)) / 8.0;
+                    sicknessMinutesForRecord = (record.malattiaOre || 0) * 60 + (record.malattiaMinuti || 0);
                 }
+                const sicknessDaysForRecord = sicknessMinutesForRecord / 400.0;
                 monthlySicknessDays[m] += sicknessDaysForRecord;
                 totalSicknessDaysYear += sicknessDaysForRecord;
 
-                let permitDaysForRecord = 0.0;
+                let permitMinutesForRecord = 0;
                 if (record.shiftType === "PERMESSO") {
                     if ((record.permessoOre || 0) === 0 && (record.permessoMinuti || 0) === 0) {
-                        permitDaysForRecord = 1.0;
+                        permitMinutesForRecord = 400;
                     } else {
-                        permitDaysForRecord = ((record.permessoOre || 0) + ((record.permessoMinuti || 0) / 60.0)) / 8.0;
+                        permitMinutesForRecord = (record.permessoOre || 0) * 60 + (record.permessoMinuti || 0);
                     }
                 } else if ((record.permessoOre || 0) > 0 || (record.permessoMinuti || 0) > 0) {
-                    permitDaysForRecord = ((record.permessoOre || 0) + ((record.permessoMinuti || 0) / 60.0)) / 8.0;
+                    permitMinutesForRecord = (record.permessoOre || 0) * 60 + (record.permessoMinuti || 0);
                 }
+                const permitDaysForRecord = permitMinutesForRecord / 400.0;
                 monthlyPermitDays[m] += permitDaysForRecord;
                 totalPermitDaysYear += permitDaysForRecord;
             }
@@ -2665,12 +2789,34 @@
             const isDecember = currentMonth === 11;
             document.getElementById("paLabelText").innerText = currentYear;
 
+            const isPresenceConfirmed = safeLocalStorage.getItem(`presence_bonus_confirmed_${currentYear}`) === "true";
+
+            // Populate the dynamic December Presence Bonus row in our unified Premi & Bonus Card
+            const decPresenceRow = document.getElementById("decPresenceRow");
+            if (decPresenceRow) {
+                if (isDecember) {
+                    decPresenceRow.classList.remove("hidden");
+                    decPresenceRow.classList.add("flex");
+                    const decPresenceAction = document.getElementById("decPresenceAction");
+                    if (decPresenceAction) {
+                        if (isPresenceConfirmed) {
+                            decPresenceAction.innerHTML = `<h4 id="decPresenceBonus" class="text-sm font-extrabold text-emerald-400">€${finalAmount.toFixed(2)}</h4>`;
+                        } else {
+                            decPresenceAction.innerHTML = `
+                                <button onclick="scrollToAndOpenPresence()" class="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-slate-50 font-bold px-2.5 py-1 rounded transition">
+                                    Visualizza dettagli
+                                </button>
+                            `;
+                        }
+                    }
+                } else {
+                    decPresenceRow.classList.add("hidden");
+                    decPresenceRow.classList.remove("flex");
+                }
+            }
+
             let paBodyHtml = `
                 <div class="space-y-3 text-left">
-                    <p class="text-[11px] text-slate-450">
-                        Parametri di Calcolo (Base €300.00):
-                    </p>
-                    
                     <div class="space-y-2 text-xs">
                         <!-- Row for Attendance Rate -->
                         <div class="flex items-center justify-between">
@@ -2787,6 +2933,33 @@
                 `;
             }
 
+            if (isDecember && !isPresenceOverrideEditMode) {
+                if (isPresenceConfirmed) {
+                    paBodyHtml += `
+                        <div class="border-t border-slate-800/50 mt-2.5 pt-2.5 flex items-center justify-between">
+                            <span class="text-[10.5px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Importo confermato nel riepilogo
+                            </span>
+                            <button onclick="unconfirmPresenceBonus(${currentYear})" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-slate-300 text-[10px] font-bold rounded-lg transition">
+                                Annulla conferma
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    paBodyHtml += `
+                        <div class="border-t border-slate-800/50 mt-2.5 pt-2.5 flex items-center justify-between">
+                            <span class="text-[10px] text-slate-400 whitespace-nowrap">Conferma nel riepilogo</span>
+                            <button onclick="confirmPresenceBonus(${currentYear})" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-slate-50 text-[11px] font-bold rounded-lg transition whitespace-nowrap">
+                                Conferma Importo
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
             paBodyHtml += `
                     </div>
                 </div>
@@ -2884,6 +3057,28 @@
             }
         }
 
+        function confirmPresenceBonus(year) {
+            safeLocalStorage.setItem(`presence_bonus_confirmed_${year}`, "true");
+            updateUI();
+        }
+
+        function unconfirmPresenceBonus(year) {
+            safeLocalStorage.removeItem(`presence_bonus_confirmed_${year}`);
+            updateUI();
+        }
+
+        function scrollToAndOpenPresence() {
+            if (!isPresenzaAnnuoExpanded) {
+                togglePresenzaAnnuoView();
+            }
+            setTimeout(() => {
+                const cardElement = document.getElementById("paBody").parentElement;
+                if (cardElement) {
+                    cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 50);
+        }
+
         let isEvalExpanded = false;
         function toggleEvalView() {
             isEvalExpanded = !isEvalExpanded;
@@ -2919,12 +3114,14 @@
             err.classList.add("hidden");
             safeLocalStorage.setItem(`override_${year}`, val);
             safeLocalStorage.setItem(`presence_bonus_override_${year}`, val);
+            safeLocalStorage.setItem(`presence_bonus_confirmed_${year}`, "true");
             isPresenceOverrideEditMode = false;
             updateUI();
         }
         function resetPresenceOverride(year) {
             safeLocalStorage.removeItem(`override_${year}`);
             safeLocalStorage.removeItem(`presence_bonus_override_${year}`);
+            safeLocalStorage.removeItem(`presence_bonus_confirmed_${year}`);
             isPresenceOverrideEditMode = false;
             updateUI();
         }
