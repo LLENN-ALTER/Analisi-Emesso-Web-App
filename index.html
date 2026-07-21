@@ -323,18 +323,18 @@
 
                         <!-- 2. Bonus Trimestrale -->
                         <div class="flex flex-col pt-3 pb-1">
-                            <div class="flex items-center justify-between">
-                                <div class="space-y-0.5 text-left">
-                                    <span class="text-xs font-bold text-slate-200">Bonus Trimestrale</span>
-                                    <p id="qLabelText" class="text-[10.5px] text-indigo-400 font-semibold">Trimestre</p>
+                            <div class="flex items-start justify-between">
+                                <div class="flex flex-col text-left space-y-0.5">
+                                    <span class="text-xs font-bold text-slate-200 leading-tight">Bonus Trimestrale</span>
+                                    <p id="qLabelText" class="text-[10.5px] text-indigo-400 font-semibold leading-tight">Trimestre</p>
                                 </div>
-                                <div class="flex items-center space-x-2 shrink-0">
-                                    <div class="flex flex-col items-end">
-                                        <h4 id="statQuarterlyBonusVal" class="text-sm font-extrabold text-emerald-400">€0.00</h4>
-                                        <span id="statQuarterlyBonusSub" class="text-[10.5px] text-indigo-400 font-semibold hidden"></span>
+                                <div class="flex items-start space-x-2 shrink-0">
+                                    <div class="flex flex-col items-end text-right space-y-0.5">
+                                        <h4 id="statQuarterlyBonusVal" class="text-xs font-extrabold text-emerald-400 leading-tight">€0.00</h4>
+                                        <span id="statQuarterlyBonusSub" class="text-[10.5px] text-indigo-400 font-semibold leading-tight hidden"></span>
                                     </div>
                                     <!-- Toggle button to open/close details -->
-                                    <button onclick="toggleQuarterView()" class="p-1 hover:bg-slate-800 rounded transition" title="Dettagli e Modifica">
+                                    <button onclick="toggleQuarterView()" class="p-1 hover:bg-slate-800 rounded transition shrink-0 self-center" title="Dettagli e Modifica">
                                         <svg id="qToggleIcon" class="w-4 h-4 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
                                         </svg>
@@ -2441,19 +2441,14 @@
             if (qBonusSpan) {
                 if (evaluationBonus !== null) {
                     qBonusSpan.innerText = `€${evaluationBonus.toFixed(2)}`;
-                    qBonusSpan.className = "text-sm font-extrabold text-emerald-400";
+                    qBonusSpan.className = "text-sm font-extrabold text-emerald-400 leading-tight";
                     if (qBonusSubSpan) {
-                        qBonusSubSpan.innerText = activeQuarterLabel.toLowerCase();
+                        qBonusSubSpan.innerText = activeQuarterLabel;
                         qBonusSubSpan.classList.remove("hidden");
                     }
                 } else {
-                    if (isPaymentMonth) {
-                        qBonusSpan.innerText = "Non inserito";
-                        qBonusSpan.className = "text-sm font-semibold text-slate-450";
-                    } else {
-                        qBonusSpan.innerText = "Non ancora comunicato";
-                        qBonusSpan.className = "text-xs font-semibold text-slate-450";
-                    }
+                    qBonusSpan.innerText = "Non inserito";
+                    qBonusSpan.className = "text-sm font-semibold text-slate-450 leading-tight";
                     if (qBonusSubSpan) {
                         qBonusSubSpan.innerText = "";
                         qBonusSubSpan.classList.add("hidden");
@@ -2592,25 +2587,6 @@
                                 </div>
                                 <p id="qBonusError" class="text-[10px] text-red-500 text-left hidden"></p>
                             </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                let explanation = "";
-                if (quarterIndex === 1) explanation = "Inseribile a Giugno nel cedolino di Giugno.";
-                else if (quarterIndex === 2) explanation = "Inseribile a Settembre nel cedolino di Settembre.";
-                else if (quarterIndex === 3) explanation = "Inseribile a Dicembre nel cedolino di Dicembre.";
-                else explanation = "Inseribile a Marzo dell'anno successivo nel cedolino di Marzo.";
-
-                bonusHtml = `
-                    <hr class="border-slate-800/80 my-3">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">Importo Bonus Trimestrale</h5>
-                            <p class="text-[10px] text-slate-450 text-left">${explanation}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-sm font-extrabold ${evaluationBonus !== null ? 'text-emerald-400' : 'text-slate-450'}">${evaluationBonus !== null ? evaluationBonus.toFixed(2) + ' €' : 'Non ancora comunicato'}</span>
                         </div>
                     </div>
                 `;
