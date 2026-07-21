@@ -1484,13 +1484,17 @@
 
         // Month Selection Utilities
         function prevMonth() {
+            currentDate.setDate(1);
             currentDate.setMonth(currentDate.getMonth() - 1);
-            updateUI();
+            const firstDayStr = formatDateStr(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            selectDay(firstDayStr);
         }
 
         function nextMonth() {
+            currentDate.setDate(1);
             currentDate.setMonth(currentDate.getMonth() + 1);
-            updateUI();
+            const firstDayStr = formatDateStr(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            selectDay(firstDayStr);
         }
 
         // Month & Year Picker Dialog interactions
@@ -1579,7 +1583,8 @@
         function confirmMonthYearSelection() {
             currentDate = new Date(pickerSelectedYear, pickerSelectedMonth, 1);
             closeMonthYearModal();
-            updateUI();
+            const firstDayStr = formatDateStr(pickerSelectedYear, pickerSelectedMonth, 1);
+            selectDay(firstDayStr);
         }
 
         // Render Calendar Algorithm
@@ -2432,6 +2437,7 @@
             // Update unified quarterly bonus views
             const qBonusSpan = document.getElementById("statQuarterlyBonusVal");
             const qBonusSubSpan = document.getElementById("statQuarterlyBonusSub");
+            const isPaymentMonth = [2, 5, 8, 11].includes(currentDate.getMonth());
             if (qBonusSpan) {
                 if (evaluationBonus !== null) {
                     qBonusSpan.innerText = `€${evaluationBonus.toFixed(2)}`;
@@ -2441,8 +2447,13 @@
                         qBonusSubSpan.classList.remove("hidden");
                     }
                 } else {
-                    qBonusSpan.innerText = "Non inserito";
-                    qBonusSpan.className = "text-sm font-semibold text-slate-450";
+                    if (isPaymentMonth) {
+                        qBonusSpan.innerText = "Non inserito";
+                        qBonusSpan.className = "text-sm font-semibold text-slate-450";
+                    } else {
+                        qBonusSpan.innerText = "Non ancora comunicato";
+                        qBonusSpan.className = "text-xs font-semibold text-slate-450";
+                    }
                     if (qBonusSubSpan) {
                         qBonusSubSpan.innerText = "";
                         qBonusSubSpan.classList.add("hidden");
@@ -2480,13 +2491,13 @@
 
                     htmlContent += `
                         <div class="space-y-1 text-left pb-1">
-                            <div class="flex items-center justify-between text-[11px]">
-                                <div class="flex items-center space-x-1.5 min-w-0">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px]">
+                                <div class="flex items-center space-x-1.5 shrink-0 min-w-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
-                                    <span class="text-indigo-450 font-bold">Target ATB (Trimestre ${quarterIndex})</span>
-                                    <span class="text-slate-500 text-[10px]">(${qAtbDays} gg)</span>
+                                    <span class="text-indigo-450 font-bold whitespace-nowrap">Target ATB (Trimestre ${quarterIndex})</span>
+                                    <span class="text-slate-400 text-[10.5px] font-semibold whitespace-nowrap shrink-0">(${qAtbDays} gg)</span>
                                 </div>
-                                <div class="flex items-center space-x-2 shrink-0 text-[11px]">
+                                <div class="flex items-center space-x-2 shrink-0 text-[11px] pl-3 sm:pl-0">
                                     <span class="text-slate-200 font-medium">Emesse: <strong class="font-black">${qAtbTotalEmesse}/${qAtbTargetEmesse}</strong> <span class="${emDiffClass}">(${emDiffText})</span></span>
                                     <span class="text-slate-600">•</span>
                                     <span class="text-slate-200 font-medium">Pagate: <strong class="font-black">${qAtbTotalPagate}/${qAtbTargetPagate}</strong> <span class="${pagDiffClass}">(${pagDiffText})</span></span>
@@ -2508,13 +2519,13 @@
 
                     htmlContent += `
                         <div class="space-y-1 text-left pb-1">
-                            <div class="flex items-center justify-between text-[11px]">
-                                <div class="flex items-center space-x-1.5 min-w-0">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px]">
+                                <div class="flex items-center space-x-1.5 shrink-0 min-w-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
-                                    <span class="text-rose-450 font-bold">Target ARRIVA (Trimestre ${quarterIndex})</span>
-                                    <span class="text-slate-500 text-[10px]">(${qArrivaDays} gg)</span>
+                                    <span class="text-rose-450 font-bold whitespace-nowrap">Target ARRIVA (Trimestre ${quarterIndex})</span>
+                                    <span class="text-slate-400 text-[10.5px] font-semibold whitespace-nowrap shrink-0">(${qArrivaDays} gg)</span>
                                 </div>
-                                <div class="flex items-center space-x-2 shrink-0 text-[11px]">
+                                <div class="flex items-center space-x-2 shrink-0 text-[11px] pl-3 sm:pl-0">
                                     <span class="text-slate-200 font-medium">Emesse: <strong class="font-black">${qArrivaTotalEmesse}/${qArrivaTargetEmesse}</strong> <span class="${emDiffClass}">(${emDiffText})</span></span>
                                     <span class="text-slate-600">•</span>
                                     <span class="text-slate-200 font-medium">Pagate: <strong class="font-black">${qArrivaTotalPagate}/${qArrivaTargetPagate}</strong> <span class="${pagDiffClass}">(${pagDiffText})</span></span>
