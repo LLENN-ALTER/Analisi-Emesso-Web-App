@@ -2399,7 +2399,31 @@
             const qArrivaDiffEmesse = qArrivaTotalEmesse - qArrivaTargetEmesse;
             const qArrivaDiffPagate = qArrivaTotalPagate - qArrivaTargetPagate;
 
-            const savedBonusVal = safeLocalStorage.getItem(`bonus_${currentYear}_${quarterIndex}`) || safeLocalStorage.getItem(`quarter_bonus_${currentYear}_${quarterIndex}`);
+            // Determine active quarter info to display on the header line
+            let activeQuarterLabel = quarterLabel;
+            let activeQuarterIndex = quarterIndex;
+            let activeQuarterYear = currentYear;
+
+            const currentMonthIdxForComm = currentDate.getMonth();
+            if (currentMonthIdxForComm === 5) {
+                activeQuarterLabel = "Trimestre 1 (Gen-Mar)";
+                activeQuarterIndex = 1;
+                activeQuarterYear = currentYear;
+            } else if (currentMonthIdxForComm === 8) {
+                activeQuarterLabel = "Trimestre 2 (Apr-Giu)";
+                activeQuarterIndex = 2;
+                activeQuarterYear = currentYear;
+            } else if (currentMonthIdxForComm === 11) {
+                activeQuarterLabel = "Trimestre 3 (Lug-Set)";
+                activeQuarterIndex = 3;
+                activeQuarterYear = currentYear;
+            } else if (currentMonthIdxForComm === 2) {
+                activeQuarterLabel = "Trimestre 4 (Ott-Dic)";
+                activeQuarterIndex = 4;
+                activeQuarterYear = currentYear - 1;
+            }
+
+            const savedBonusVal = safeLocalStorage.getItem(`bonus_${activeQuarterYear}_${activeQuarterIndex}`) || safeLocalStorage.getItem(`quarter_bonus_${activeQuarterYear}_${activeQuarterIndex}`);
             const evaluationBonus = savedBonusVal !== null ? parseFloat(savedBonusVal) : null;
 
             // Update unified quarterly bonus views
@@ -2415,7 +2439,7 @@
             }
             const qLabelTextSpan = document.getElementById("qLabelText");
             if (qLabelTextSpan) {
-                qLabelTextSpan.innerText = quarterLabel;
+                qLabelTextSpan.innerText = activeQuarterLabel;
             }
 
             let qBadgesHtml = `<span id="qLabelText" class="text-[10px] bg-indigo-950/80 text-indigo-300 font-bold px-2.5 py-1 rounded-full border border-indigo-900/50">${quarterLabel}</span>`;
@@ -2514,10 +2538,11 @@
                     <hr class="border-slate-800/80 my-3">
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">Inserisci Bonus Trimestrale ${qLbl}</h5>
+                            <div class="space-y-0.5 text-left min-w-0">
+                                <span class="text-xs font-bold text-slate-200">Bonus ${qLbl}</span>
+                                <p class="text-[10px] text-slate-450">Inserisci l'importo per questo trimestre</p>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right shrink-0">
                                 <span class="text-sm font-extrabold ${commQuarterBonus !== null ? 'text-emerald-400' : 'text-slate-450'}">${commQuarterBonus !== null ? commQuarterBonus.toFixed(2) + ' €' : 'Non inserito'}</span>
                             </div>
                         </div>
@@ -2668,7 +2693,10 @@
                 } else {
                     evalBodyHtml = `
                         <div class="space-y-3 text-left">
-                            <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest">Inserisci Valutazione</h5>
+                            <div class="space-y-0.5 pb-1">
+                                <span class="text-xs font-bold text-slate-200">Inserisci Valutazione ${qLbl}</span>
+                                <p class="text-[10px] text-slate-450">Voto in decimi e importo del premio</p>
+                            </div>
                             
                             <div class="space-y-3">
                                 <div>
