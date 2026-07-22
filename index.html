@@ -359,11 +359,9 @@
                                     <p id="evalLabelText" class="text-[10.5px] text-indigo-400 font-semibold leading-tight">Trimestre</p>
                                 </div>
                                 <div class="flex items-center space-x-2 shrink-0">
-                                    <div class="flex items-center space-x-1.5 text-right">
-                                        <span id="statEvalBonusSub" class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-2.5 text-xs font-bold text-indigo-300 leading-tight hidden"></span>
-                                        <div class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-2.5">
-                                            <h4 id="statEvalBonusVal" class="text-xs font-extrabold text-emerald-400 leading-tight">€0.00</h4>
-                                        </div>
+                                    <div id="evalBonusValueContainer" class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-3 text-right inline-block">
+                                        <h4 id="statEvalBonusVal" class="text-xs font-extrabold text-emerald-400 leading-tight">€0.00</h4>
+                                        <span id="statEvalBonusSub" class="text-[9px] text-indigo-300 font-semibold block text-right leading-tight hidden"></span>
                                     </div>
                                     <button onclick="toggleEvalView()" class="p-1 hover:bg-slate-800 rounded transition shrink-0 self-center" title="Modifica Valutazione">
                                         <svg id="evalToggleIcon" class="w-4 h-4 text-indigo-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2449,7 +2447,9 @@
                     qBonusSpan.innerText = `€${evaluationBonus.toFixed(2)}`;
                     qBonusSpan.className = "text-xs font-extrabold text-emerald-400 leading-tight";
                     if (qBonusSubSpan) {
-                        qBonusSubSpan.innerText = activeQuarterLabel;
+                        const qShortLabels = { 1: "T1 (Gen-Mar)", 2: "T2 (Apr-Giu)", 3: "T3 (Lug-Set)", 4: "T4 (Ott-Dic)" };
+                        qBonusSubSpan.innerText = qShortLabels[activeQuarterIndex] || `T${activeQuarterIndex}`;
+                        qBonusSubSpan.className = "text-[9px] text-slate-500 font-semibold block text-right leading-tight";
                         qBonusSubSpan.classList.remove("hidden");
                     }
                     if (qBonusContainer) qBonusContainer.classList.remove("hidden");
@@ -2641,16 +2641,17 @@
                 if (unifiedEvalVal) {
                     if (evalBonus !== null) {
                         unifiedEvalVal.innerText = `€${evalBonus.toFixed(2)}`;
-                        unifiedEvalVal.className = "text-sm font-extrabold text-emerald-400 leading-tight";
+                        unifiedEvalVal.className = "text-xs font-extrabold text-emerald-400 leading-tight";
                     } else {
                         unifiedEvalVal.innerText = "Non inserito";
-                        unifiedEvalVal.className = "text-sm font-semibold text-slate-450 leading-tight";
+                        unifiedEvalVal.className = "text-xs font-semibold text-slate-450 leading-tight";
                     }
                 }
                 if (unifiedEvalSub) {
                     if (evalScore !== null) {
                         const scoreFormatted = Number.isInteger(evalScore) ? `${evalScore}/10` : `${evalScore.toFixed(1)}/10`;
                         unifiedEvalSub.innerText = `Voto: ${scoreFormatted}`;
+                        unifiedEvalSub.className = "text-[9px] text-indigo-300 font-semibold block text-right leading-tight";
                         unifiedEvalSub.classList.remove("hidden");
                     } else {
                         unifiedEvalSub.innerText = "";
