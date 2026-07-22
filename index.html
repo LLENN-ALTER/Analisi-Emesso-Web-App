@@ -2291,7 +2291,7 @@
                 const pagSign = diffPag >= 0 ? `+${diffPag}` : `${diffPag}`;
                 
                 atbLabelStatus.innerHTML = `Stato: ${emSign} emesse / ${pagSign} pagate<br><span class="text-slate-400 font-normal">Totale: ${totalEmAtb} emesse / ${totalPagAtb} pagate</span>`;
-                atbLabelStatus.className = `text-[11px] font-semibold ${(diffEm >= 0 && diffPag >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
+                atbLabelStatus.className = "text-[11px] font-semibold text-slate-200";
             }
 
             // Render ARRIVA Objectives details & cumulative calculations
@@ -2319,7 +2319,7 @@
                 const pagSignArriva = diffPagArriva >= 0 ? `+${diffPagArriva}` : `${diffPagArriva}`;
 
                 arrivaLabelStatus.innerHTML = `Stato: ${emSignArriva} emesse / ${pagSignArriva} pagate<br><span class="text-slate-400 font-normal">Totale: ${totalEmArriva} emesse / ${totalPagArriva} pagate</span>`;
-                arrivaLabelStatus.className = `text-[11px] font-semibold ${(diffEmArriva >= 0 && diffPagArriva >= 0) ? 'text-emerald-400' : 'text-slate-300'}`;
+                arrivaLabelStatus.className = "text-[11px] font-semibold text-slate-200";
             }
 
             // Conditionally show/hide based on whether shifts are registered for that month
