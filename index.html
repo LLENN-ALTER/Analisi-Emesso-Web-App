@@ -261,14 +261,14 @@
                             <p id="atbLabelStatus" class="text-[11px] text-slate-450">Nessun giorno registrato</p>
                         </div>
 
-                        <div class="flex space-x-3 items-center">
-                            <div class="text-right">
-                                <span id="atbAvgEmesse" class="text-base font-extrabold text-red-500">0.00</span>
-                                <p class="text-[9px] text-slate-400">media emesse</p>
+                        <div class="flex space-x-2 items-center">
+                            <div class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-2.5 text-center min-w-[64px]">
+                                <span id="atbAvgEmesse" class="text-sm font-extrabold text-red-500 leading-tight block">0.00</span>
+                                <p class="text-[9px] text-slate-400 leading-tight mt-0.5">media emesse</p>
                             </div>
-                            <div class="text-right">
-                                <span id="atbAvgPagate" class="text-base font-extrabold text-red-500">0.00</span>
-                                <p class="text-[9px] text-slate-400">media pagate</p>
+                            <div class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-2.5 text-center min-w-[64px]">
+                                <span id="atbAvgPagate" class="text-sm font-extrabold text-red-500 leading-tight block">0.00</span>
+                                <p class="text-[9px] text-slate-400 leading-tight mt-0.5">media pagate</p>
                             </div>
                         </div>
                     </div>
@@ -283,14 +283,14 @@
                             <p id="arrivaLabelStatus" class="text-[11px] text-slate-450">Nessun giorno registrato</p>
                         </div>
 
-                        <div class="flex space-x-3 items-center">
-                            <div class="text-right">
-                                <span id="arrivaAvgEmesse" class="text-base font-extrabold text-red-500">0.00</span>
-                                <p class="text-[9px] text-slate-400">media emesse</p>
+                        <div class="flex space-x-2 items-center">
+                            <div class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-2.5 text-center min-w-[64px]">
+                                <span id="arrivaAvgEmesse" class="text-sm font-extrabold text-red-500 leading-tight block">0.00</span>
+                                <p class="text-[9px] text-slate-400 leading-tight mt-0.5">media emesse</p>
                             </div>
-                            <div class="text-right">
-                                <span id="arrivaAvgPagate" class="text-base font-extrabold text-red-500">0.00</span>
-                                <p class="text-[9px] text-slate-400">media pagate</p>
+                            <div class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-2.5 text-center min-w-[64px]">
+                                <span id="arrivaAvgPagate" class="text-sm font-extrabold text-red-500 leading-tight block">0.00</span>
+                                <p class="text-[9px] text-slate-400 leading-tight mt-0.5">media pagate</p>
                             </div>
                         </div>
                     </div>
@@ -329,7 +329,7 @@
                                     <p id="qLabelText" class="text-[10.5px] text-indigo-400 font-semibold leading-tight">Trimestre</p>
                                 </div>
                                 <div class="flex items-center space-x-2 shrink-0">
-                                    <div class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-3 text-right flex flex-col justify-center items-end">
+                                    <div id="statQuarterlyBonusContainer" class="bg-[#11121a]/85 border border-slate-800/70 rounded-lg py-1 px-3 text-right flex flex-col justify-center items-end hidden">
                                         <h4 id="statQuarterlyBonusVal" class="text-xs font-extrabold text-emerald-400 leading-tight">€0.00</h4>
                                         <span id="statQuarterlyBonusSub" class="text-[10.5px] text-indigo-400 font-semibold leading-tight hidden"></span>
                                     </div>
@@ -2273,11 +2273,11 @@
             
             const atbEmesseSpan = document.getElementById("atbAvgEmesse");
             atbEmesseSpan.innerText = avgEmAtb.toFixed(2);
-            atbEmesseSpan.className = `text-base font-extrabold ${avgEmAtb >= 11 ? 'text-emerald-500' : 'text-red-500'}`;
+            atbEmesseSpan.className = `text-sm font-extrabold block leading-tight ${avgEmAtb >= 11 ? 'text-emerald-500' : 'text-red-500'}`;
 
             const atbPagateSpan = document.getElementById("atbAvgPagate");
             atbPagateSpan.innerText = avgPagAtb.toFixed(2);
-            atbPagateSpan.className = `text-base font-extrabold ${avgPagAtb >= 3 ? 'text-emerald-500' : 'text-red-500'}`;
+            atbPagateSpan.className = `text-sm font-extrabold block leading-tight ${avgPagAtb >= 3 ? 'text-emerald-500' : 'text-red-500'}`;
 
             const atbLabelStatus = document.getElementById("atbLabelStatus");
             if (atbDays === 0) {
@@ -2301,11 +2301,11 @@
 
             const arrivaEmesseSpan = document.getElementById("arrivaAvgEmesse");
             arrivaEmesseSpan.innerText = avgEmArriva.toFixed(2);
-            arrivaEmesseSpan.className = `text-base font-extrabold ${avgEmArriva >= 7 ? 'text-emerald-500' : 'text-red-500'}`;
+            arrivaEmesseSpan.className = `text-sm font-extrabold block leading-tight ${avgEmArriva >= 7 ? 'text-emerald-500' : 'text-red-500'}`;
 
             const arrivaPagateSpan = document.getElementById("arrivaAvgPagate");
             arrivaPagateSpan.innerText = avgPagArriva.toFixed(2);
-            arrivaPagateSpan.className = `text-base font-extrabold ${avgPagArriva >= 1 ? 'text-emerald-500' : 'text-red-500'}`;
+            arrivaPagateSpan.className = `text-sm font-extrabold block leading-tight ${avgPagArriva >= 1 ? 'text-emerald-500' : 'text-red-500'}`;
 
             const arrivaLabelStatus = document.getElementById("arrivaLabelStatus");
             if (arrivaDays === 0) {
@@ -2442,22 +2442,26 @@
             // Update unified quarterly bonus views
             const qBonusSpan = document.getElementById("statQuarterlyBonusVal");
             const qBonusSubSpan = document.getElementById("statQuarterlyBonusSub");
+            const qBonusContainer = document.getElementById("statQuarterlyBonusContainer");
             const isPaymentMonth = [2, 5, 8, 11].includes(currentDate.getMonth());
             if (qBonusSpan) {
                 if (evaluationBonus !== null) {
                     qBonusSpan.innerText = `€${evaluationBonus.toFixed(2)}`;
-                    qBonusSpan.className = "text-sm font-extrabold text-emerald-400 leading-tight";
+                    qBonusSpan.className = "text-xs font-extrabold text-emerald-400 leading-tight";
                     if (qBonusSubSpan) {
                         qBonusSubSpan.innerText = activeQuarterLabel;
                         qBonusSubSpan.classList.remove("hidden");
                     }
+                    if (qBonusContainer) qBonusContainer.classList.remove("hidden");
                 } else {
                     if (isPaymentMonth) {
                         qBonusSpan.innerText = "Non inserito";
-                        qBonusSpan.className = "text-sm font-semibold text-slate-450 leading-tight";
+                        qBonusSpan.className = "text-xs font-semibold text-slate-450 leading-tight";
+                        if (qBonusContainer) qBonusContainer.classList.remove("hidden");
                     } else {
                         qBonusSpan.innerText = "";
-                        qBonusSpan.className = "text-sm font-semibold text-slate-450 leading-tight";
+                        qBonusSpan.className = "text-xs font-semibold text-slate-450 leading-tight";
+                        if (qBonusContainer) qBonusContainer.classList.add("hidden");
                     }
                     if (qBonusSubSpan) {
                         qBonusSubSpan.innerText = "";
@@ -2676,13 +2680,6 @@
                     if (evalScore !== null || evalBonus !== null) {
                         evalBodyHtml = `
                             <div class="space-y-2 text-left">
-                                <div class="flex items-center justify-between text-[11px] pb-1">
-                                    <div class="flex items-center space-x-1.5 min-w-0">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
-                                        <span class="text-indigo-450 font-bold">Dettagli Valutazione</span>
-                                    </div>
-                                </div>
-
                                 <div class="flex space-x-2 pt-1">
                                     <button onclick="enableEvalEdit(${evalScore}, ${evalBonus})" class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-slate-50 text-[11px] font-bold rounded-lg transition">
                                         Modifica Valutazione
